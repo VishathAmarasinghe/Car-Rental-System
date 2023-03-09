@@ -50,6 +50,16 @@ public class PanelAction extends javax.swing.JPanel {
         cmdDelete = new raven.cell.ActionButton();
 
         cmdEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/raven/cell/edit.png"))); // NOI18N
+        cmdEdit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cmdEditMouseClicked(evt);
+            }
+        });
+        cmdEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdEditActionPerformed(evt);
+            }
+        });
 
         cmdDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/raven/cell/delete.png"))); // NOI18N
 
@@ -74,6 +84,15 @@ public class PanelAction extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cmdEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmdEditActionPerformed
+
+    private void cmdEditMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmdEditMouseClicked
+        // TODO add your handling code here:
+        System.out.println("abc aaa");
+    }//GEN-LAST:event_cmdEditMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

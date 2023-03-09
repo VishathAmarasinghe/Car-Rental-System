@@ -14,6 +14,11 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     public CustomerRegistrationForm() {
         initComponents();
     }
+    
+    public void SetRegistrationFrameTitle(String RegisterTitle,String AddbtnTitle){
+        RegTitle.setText(RegisterTitle);
+        addbtnRegister.setText(AddbtnTitle);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -27,7 +32,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         DriverLastName = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        RegTitle = new javax.swing.JLabel();
         DriverEmail = new javax.swing.JTextField();
         driverFirstName = new javax.swing.JTextField();
         DriverAddress2 = new javax.swing.JTextField();
@@ -45,7 +50,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        addbtnDriver1 = new javax.swing.JButton();
+        addbtnRegister = new javax.swing.JButton();
         CustomerAddingCancelation = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -75,9 +80,9 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel1.setText("Customer Registration");
+        RegTitle.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        RegTitle.setForeground(new java.awt.Color(0, 0, 0));
+        RegTitle.setText("Customer Registration");
 
         driverFirstName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -145,10 +150,10 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         jLabel10.setForeground(new java.awt.Color(0, 0, 0));
         jLabel10.setText("NIC No");
 
-        addbtnDriver1.setText("Add Customer");
-        addbtnDriver1.addActionListener(new java.awt.event.ActionListener() {
+        addbtnRegister.setText("Add Customer");
+        addbtnRegister.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addbtnDriver1ActionPerformed(evt);
+                addbtnRegisterActionPerformed(evt);
             }
         });
 
@@ -165,7 +170,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
+                .addComponent(RegTitle)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
@@ -199,7 +204,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                                     .addGap(0, 0, Short.MAX_VALUE))
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                     .addGap(0, 0, Short.MAX_VALUE)
-                                    .addComponent(addbtnDriver1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(addbtnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGap(18, 18, 18)
                             .addComponent(CustomerAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel5)
@@ -212,7 +217,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(RegTitle)
                 .addGap(11, 11, 11)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -251,7 +256,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                 .addComponent(LicenseID, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addbtnDriver1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addbtnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CustomerAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
@@ -286,9 +291,9 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_LicenseIDActionPerformed
 
-    private void addbtnDriver1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addbtnDriver1ActionPerformed
+    private void addbtnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addbtnRegisterActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_addbtnDriver1ActionPerformed
+    }//GEN-LAST:event_addbtnRegisterActionPerformed
 
     private void CustomerAddingCancelationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CustomerAddingCancelationActionPerformed
         CarRentalSystem.closeWindows(this);
@@ -342,9 +347,9 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     private javax.swing.JTextField DriverphoneNo1;
     private javax.swing.JTextField DriverphoneNo2;
     private javax.swing.JTextField LicenseID;
-    private javax.swing.JButton addbtnDriver1;
+    private javax.swing.JLabel RegTitle;
+    private javax.swing.JButton addbtnRegister;
     private javax.swing.JTextField driverFirstName;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

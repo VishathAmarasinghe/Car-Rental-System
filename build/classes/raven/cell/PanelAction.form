@@ -45,6 +45,10 @@
           <Image iconType="3" name="/raven/cell/edit.png"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="cmdEditMouseClicked"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdEditActionPerformed"/>
+      </Events>
     </Component>
     <Component class="raven.cell.ActionButton" name="cmdDelete">
       <Properties>
