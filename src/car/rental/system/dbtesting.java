@@ -17,15 +17,14 @@ public class dbtesting {
         try {
             
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/image", "root", "akila123");
-            String s="SELECT * FROM imageaddings";
-            PreparedStatement ps = con.prepareStatement(s);
-            ResultSet rs=ps.executeQuery();
-            while (rs.next()) {                
-                String name=rs.getString("Car_Type");
-                System.out.println(name);
-
-            }
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/apple", "root", "akila123");
+            Statement st=con.createStatement();
+            String s="insert into details values(1,\"vvs\",\"lls\")";
+            st.executeUpdate(s);
+            
+            con.close();
+            
+            
                         
             
             
@@ -33,7 +32,15 @@ public class dbtesting {
         } catch (Exception e) {
             System.out.println(e);
         }
+
+        randomNumberGenarator("ada");
         
+    }
+    
+    private static String randomNumberGenarator(String initailName){
+       int value=(int)((Math.random())*(5000-2000+1)+2000);
+        System.out.println(value);
+        return "";
     }
     
 }

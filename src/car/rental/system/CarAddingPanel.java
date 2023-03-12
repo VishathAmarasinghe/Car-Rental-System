@@ -4,6 +4,18 @@
  */
 package car.rental.system;
 
+import java.awt.Image;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Akila
@@ -18,10 +30,36 @@ public class CarAddingPanel extends javax.swing.JFrame {
     public CarAddingPanel(boolean btnType) {
         
         initComponents();
+        loadOwnerDetails();
         if (btnType==true) {
             updateCarBtn.setText("Add Car");
         }else{
             updateCarBtn.setText("Update Car");
+        }
+    }
+    
+    private void loadOwnerDetails(){
+        try {
+            
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String s="select firstname,lastname from employee where role=\"VOwner\"";
+       
+            PreparedStatement ps = con.prepareStatement(s);
+            ResultSet rs=ps.executeQuery();
+            while (rs.next()) {                
+                String Fname=rs.getString("FirstName");
+                String Lname=rs.getString("lastName");
+                ownerComboBox.addItem(Fname+" "+Lname);
+
+            }
+            rs.close();
+            ps.close();
+            con.close();
+            ownerComboBox.setSelectedItem(null);
+ 
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 
@@ -40,7 +78,7 @@ public class CarAddingPanel extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        ownerComboBox = new javax.swing.JComboBox<>();
         VehicalTypeSelecter = new javax.swing.JComboBox<>();
         ACTypeSelecter = new javax.swing.JComboBox<>();
         jTextField4 = new javax.swing.JTextField();
@@ -53,7 +91,7 @@ public class CarAddingPanel extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         OwnerSelector = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
+        imageShower = new javax.swing.JLabel();
         updateCarBtn = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -95,8 +133,6 @@ public class CarAddingPanel extends javax.swing.JFrame {
             }
         });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         VehicalTypeSelecter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Car", "Van" }));
 
         ACTypeSelecter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "AC", "Non AC" }));
@@ -132,7 +168,7 @@ public class CarAddingPanel extends javax.swing.JFrame {
         OwnerSelector.setForeground(new java.awt.Color(0, 0, 0));
         OwnerSelector.setText("Car Owner");
 
-        jLabel9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        imageShower.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         updateCarBtn.setText("Update Car");
 
@@ -144,6 +180,11 @@ public class CarAddingPanel extends javax.swing.JFrame {
         });
 
         jButton3.setText("Add Image");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -174,7 +215,7 @@ public class CarAddingPanel extends javax.swing.JFrame {
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
                                 .addComponent(jTextField1)
-                                .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(ownerComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(ACTypeSelecter, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jTextField4)
                                 .addComponent(VehicalTypeSelecter, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -182,7 +223,7 @@ public class CarAddingPanel extends javax.swing.JFrame {
                             .addComponent(OwnerSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 152, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(imageShower, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE))
                         .addGap(118, 118, 118))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
@@ -218,7 +259,7 @@ public class CarAddingPanel extends javax.swing.JFrame {
                         .addGap(2, 2, 2)
                         .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(imageShower, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -236,7 +277,7 @@ public class CarAddingPanel extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(OwnerSelector)
                 .addGap(2, 2, 2)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ownerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -266,6 +307,28 @@ public class CarAddingPanel extends javax.swing.JFrame {
         // TODO add your handling code here:
         CarRentalSystem.closeWindows(this);
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        JFileChooser browser=new JFileChooser();
+        FileNameExtensionFilter filerExtention=new FileNameExtensionFilter("Images","png","jpg","jpeg");
+        browser.addChoosableFileFilter(filerExtention);
+        int showopenDialog=browser.showOpenDialog(null);
+        
+        if (showopenDialog==JFileChooser.APPROVE_OPTION) {
+            File selectedImage=browser.getSelectedFile();
+            String selectedImagePath=selectedImage.getAbsolutePath();
+            JOptionPane.showMessageDialog(null, selectedImagePath);
+            
+            ImageIcon image=new ImageIcon(selectedImagePath);
+            Image im=image.getImage();
+            Image myimage=im.getScaledInstance(imageShower.getWidth(), imageShower.getHeight(), Image.SCALE_SMOOTH);
+            ImageIcon newimage=new ImageIcon(myimage);
+            
+            imageShower.setIcon(newimage);
+            
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -307,9 +370,9 @@ public class CarAddingPanel extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> FuelTypeSelector;
     private javax.swing.JLabel OwnerSelector;
     private javax.swing.JComboBox<String> VehicalTypeSelecter;
+    private javax.swing.JLabel imageShower;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -318,13 +381,13 @@ public class CarAddingPanel extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
+    private javax.swing.JComboBox<String> ownerComboBox;
     private javax.swing.JButton updateCarBtn;
     // End of variables declaration//GEN-END:variables
 }

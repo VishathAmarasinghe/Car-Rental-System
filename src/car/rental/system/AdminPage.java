@@ -4,10 +4,15 @@
  */
 package car.rental.system;
 
+import java.awt.Image;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import raven.cell.TableActionCellEditor;
 import raven.cell.TableActionCellRender;
@@ -21,43 +26,61 @@ public class AdminPage extends javax.swing.JFrame {
 
     /**
      * Creates new form AdminPage
+     * 
+     * 
+     
      */
+    
+    
+    private int tableSelectedIndex=0;
+    private String clickedIndexID="";
     public AdminPage() {
         initComponents();
-        loadOwnerData();
+        loadOwnerData("ALL");
+        renderCarTable();
         TableActionEvent event = new TableActionEvent() {
             @Override
             public void onEdit(int row) {
                 System.out.println("Edit row : " + row);
+                if (CarTable.isEditing()) {
+                    
+                }else{
+                    System.out.println("Car table edit check   "+CarTable.isEditing());
+                    editselectedData(row);
+                }
+                
             }
 
             @Override
             public void onDelete(int row) {
+                System.out.println("Delete row : " + row);
                 if (vehicalOwnerTable.isEditing()) {
                     vehicalOwnerTable.getCellEditor().stopCellEditing();
                 }
                 DefaultTableModel model = (DefaultTableModel) vehicalOwnerTable.getModel();
-                model.removeRow(row);
+                
+               int resultofDelete= JOptionPane.showConfirmDialog(null,"Are you sure that you want to delete record","Deleting Confirmation",
+                       JOptionPane.YES_NO_OPTION);
+                if (resultofDelete==0) {
+                    deleteSelectedRaw(row);
+                    model.removeRow(row);
+                }
+                
             }
 
         };
-        vehicalOwnerTable.getColumnModel().getColumn(7).setCellRenderer(new TableActionCellRender());
-        vehicalOwnerTable.getColumnModel().getColumn(7).setCellEditor(new TableActionCellEditor(event));
+        vehicalOwnerTable.getColumnModel().getColumn(9).setCellRenderer(new TableActionCellRender());
+        vehicalOwnerTable.getColumnModel().getColumn(9).setCellEditor(new TableActionCellEditor(event));
         
-        AdminTable.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
-        AdminTable.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
         
-       cashierTable.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
-       cashierTable.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
         
         discountTable.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
         discountTable.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
         
-        DriverTable.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
-        DriverTable.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
         
-        CarTable.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
-        CarTable.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
+        CarTable.getColumnModel().getColumn(7).setCellRenderer(new TableActionCellRender());
+        CarTable.getColumnModel().getColumn(6).setCellRenderer(new tableImageCellRender());
+        CarTable.getColumnModel().getColumn(7).setCellEditor(new TableActionCellEditor(event));
     }
 
     /**
@@ -67,12 +90,21 @@ public class AdminPage extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     
-    private void loadOwnerData(){
+    private void loadOwnerData(String searchType){
         try {
+            DefaultTableModel ownerTableLoad=(DefaultTableModel)vehicalOwnerTable.getModel();
+            ownerTableLoad.getDataVector().removeAllElements();
+            ownerTableLoad.fireTableDataChanged();
             
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            String s="select empID, firstname,lastname,NIC,email,city from employee where role=\"VOwner\"";
+            String s="";
+            if (searchType.equalsIgnoreCase("all")) {
+                s="select empID, role, firstname,lastname,NIC,email,city from employee";
+            }else{
+                s="select empID,role, firstname,lastname,NIC,email,city from employee where role=\""+searchType+"\"";
+            }
+            
             PreparedStatement ps = con.prepareStatement(s);
             ResultSet rs=ps.executeQuery();
             while (rs.next()) {                
@@ -88,29 +120,111 @@ public class AdminPage extends javax.swing.JFrame {
                 }
                 psd.close();
                 numberResult.close();
+                String role=rs.getString("role");
                 String Fname=rs.getString("FirstName");
                 String Lname=rs.getString("lastName");
                 String NICno=rs.getString("NIC");
                 String email=rs.getString("Email");
                 String city=rs.getString("city");
-                System.out.println(Fname);
-                System.out.println(email);
-                System.out.println(city);
-                System.out.println(numberArray[0]);
-                System.out.println(numberArray[1]);
+               
+                String[] ownerData={empID,Fname,Lname,role,email,NICno,city,numberArray[0],numberArray[1]};
                 
-                String[] ownerData={Fname,Lname,email,NICno,city,numberArray[0],numberArray[1]};
-                DefaultTableModel ownerTableLoad=(DefaultTableModel)vehicalOwnerTable.getModel();
                 ownerTableLoad.addRow(ownerData);
 
             }
             rs.close();
             ps.close();
             con.close();
-                        
+ 
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    
+    private void deleteSelectedRaw(int rawNo){
+        DefaultTableModel ownerTableclicked=(DefaultTableModel)vehicalOwnerTable.getModel();
+        clickedIndexID=(String) ownerTableclicked.getValueAt(rawNo, 0);
+        System.out.println("Clicked indez  "+clickedIndexID);
+        
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String deletePhoneNoRaw="delete from employeephone where empId=\""+clickedIndexID+"\"";
+            Statement st=con.createStatement();
             
+            st.executeUpdate(deletePhoneNoRaw);
             
+            String deleteRaw="delete from employee where empId=\""+clickedIndexID+"\"";
+            st.executeUpdate(deleteRaw);
             
+            con.close();
+        } catch (Exception e) {
+            System.out.println("Error from adminpanel 154  "+e);
+        }
+        
+    }
+    private void editselectedData(int raw){
+        DefaultTableModel ownerTableclicked=(DefaultTableModel)vehicalOwnerTable.getModel();
+        clickedIndexID=(String) ownerTableclicked.getValueAt(raw, 0);
+        try {
+            
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String singleData="select * from employee where empID=\""+clickedIndexID+"\"";
+            PreparedStatement ps = con.prepareStatement(singleData);
+            ResultSet rs=ps.executeQuery();
+            
+            String singleDataPhoneNumbers="select * from employeephone where empID=\""+clickedIndexID+"\"";
+            PreparedStatement psnumbers = con.prepareStatement(singleDataPhoneNumbers);
+            ResultSet rs2=psnumbers.executeQuery();
+            
+            CustomerRegistrationForm form1=new CustomerRegistrationForm(rs, rs2);
+            form1.setVisible(true);
+            
+            con.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    private void renderCarTable(){
+        try {
+            DefaultTableModel CartableLoad=(DefaultTableModel)CarTable.getModel();
+            CartableLoad.getDataVector().removeAllElements();
+            CartableLoad.fireTableDataChanged();
+            
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/image", "root", "akila123");
+            String s="select * from imageaddings";
+            PreparedStatement ps = con.prepareStatement(s);
+            ResultSet rs=ps.executeQuery();
+            
+            while (rs.next()) {            
+                int car_keyValue=Integer.parseInt(rs.getString("keyvalue"));
+                String car_type=rs.getString("Car_Type");
+                String car_model=rs.getString("Car_Model");
+                String seat_no=rs.getString("Seat_No");
+                String ac_Type=rs.getString("AC_Type");
+                String fuel_type=rs.getString("Fuel_Type"); 
+                byte[] img=rs.getBytes("imageva");
+                
+                ImageIcon image=new ImageIcon(img);
+                Image im=image.getImage();
+                Image myimage=im.getScaledInstance(120, 100, Image.SCALE_SMOOTH);
+                ImageIcon newimage=new ImageIcon(myimage);
+                
+                JLabel imageLable=new JLabel();
+                imageLable.setIcon(newimage);
+               
+               CartableLoad.addRow(new Object[]{car_keyValue,car_model,car_type,seat_no,ac_Type,fuel_type,imageLable});
+
+            }
+            rs.close();
+            ps.close();
+            con.close();
+ 
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -136,21 +250,6 @@ public class AdminPage extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
-        AdminPanel = new javax.swing.JPanel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        AdminTable = new javax.swing.JTable();
-        jLabel5 = new javax.swing.JLabel();
-        DriverPanel = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        DriverTable = new javax.swing.JTable();
-        jLabel4 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        cashierPanel = new javax.swing.JPanel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        cashierTable = new javax.swing.JTable();
-        jLabel3 = new javax.swing.JLabel();
         CarAddingPanel = new javax.swing.JPanel();
         jScrollPane6 = new javax.swing.JScrollPane();
         CarTable = new javax.swing.JTable();
@@ -168,11 +267,9 @@ public class AdminPage extends javax.swing.JFrame {
         OwnerSearch = new javax.swing.JTextField();
         jButton5 = new javax.swing.JButton();
         employeeTypeSelector = new javax.swing.JComboBox<>();
+        selectQueryEmp = new javax.swing.JComboBox<>();
         jPanel1 = new javax.swing.JPanel();
-        adminbtn = new javax.swing.JButton();
         vehicalownerbtn = new javax.swing.JButton();
-        driverbtn = new javax.swing.JButton();
-        cashierbtn = new javax.swing.JButton();
         discountbtn = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
@@ -385,200 +482,22 @@ public class AdminPage extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("tab6", DashboardPanel);
 
-        AdminPanel.setBackground(new java.awt.Color(241, 241, 241));
-
-        AdminTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, true
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        AdminTable.setRowHeight(30);
-        AdminTable.setSelectionBackground(new java.awt.Color(153, 255, 153));
-        jScrollPane5.setViewportView(AdminTable);
-
-        jLabel5.setForeground(new java.awt.Color(0, 204, 204));
-        jLabel5.setText("admin panel");
-
-        javax.swing.GroupLayout AdminPanelLayout = new javax.swing.GroupLayout(AdminPanel);
-        AdminPanel.setLayout(AdminPanelLayout);
-        AdminPanelLayout.setHorizontalGroup(
-            AdminPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AdminPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(AdminPanelLayout.createSequentialGroup()
-                .addGap(253, 253, 253)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        AdminPanelLayout.setVerticalGroup(
-            AdminPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(AdminPanelLayout.createSequentialGroup()
-                .addContainerGap(73, Short.MAX_VALUE)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37))
-        );
-
-        jTabbedPane1.addTab("admin", AdminPanel);
-
-        DriverPanel.setBackground(new java.awt.Color(241, 241, 241));
-
-        jButton1.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        jButton1.setText("Add Driver");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        DriverTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, true
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        DriverTable.setRowHeight(30);
-        DriverTable.setSelectionBackground(new java.awt.Color(153, 255, 153));
-        jScrollPane4.setViewportView(DriverTable);
-
-        jLabel4.setForeground(new java.awt.Color(0, 204, 204));
-        jLabel4.setText("Driver panel");
-
-        jButton2.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        jButton2.setText("Search");
-
-        javax.swing.GroupLayout DriverPanelLayout = new javax.swing.GroupLayout(DriverPanel);
-        DriverPanel.setLayout(DriverPanelLayout);
-        DriverPanelLayout.setHorizontalGroup(
-            DriverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(DriverPanelLayout.createSequentialGroup()
-                .addContainerGap(62, Short.MAX_VALUE)
-                .addGroup(DriverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(DriverPanelLayout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(90, 90, 90)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(63, Short.MAX_VALUE))
-        );
-        DriverPanelLayout.setVerticalGroup(
-            DriverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(DriverPanelLayout.createSequentialGroup()
-                .addContainerGap(60, Short.MAX_VALUE)
-                .addGroup(DriverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(46, 46, 46))
-        );
-
-        jTabbedPane1.addTab("Driver", DriverPanel);
-
-        cashierPanel.setBackground(new java.awt.Color(241, 241, 241));
-
-        cashierTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, true
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        cashierTable.setRowHeight(30);
-        cashierTable.setSelectionBackground(new java.awt.Color(153, 255, 153));
-        jScrollPane3.setViewportView(cashierTable);
-
-        jLabel3.setForeground(new java.awt.Color(0, 204, 204));
-        jLabel3.setText("Cashier panel");
-
-        javax.swing.GroupLayout cashierPanelLayout = new javax.swing.GroupLayout(cashierPanel);
-        cashierPanel.setLayout(cashierPanelLayout);
-        cashierPanelLayout.setHorizontalGroup(
-            cashierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cashierPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(cashierPanelLayout.createSequentialGroup()
-                .addGap(253, 253, 253)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        cashierPanelLayout.setVerticalGroup(
-            cashierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cashierPanelLayout.createSequentialGroup()
-                .addContainerGap(73, Short.MAX_VALUE)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37))
-        );
-
-        jTabbedPane1.addTab("cashier", cashierPanel);
-
         CarAddingPanel.setBackground(new java.awt.Color(241, 241, 241));
 
+        CarTable.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         CarTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Car Number", "Car Model", "Car Type", "Seat No", "AC Type", "Fuel Type", "Image", "Settings"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, true
+                false, false, false, false, false, true, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -586,7 +505,7 @@ public class AdminPage extends javax.swing.JFrame {
             }
         });
         CarTable.setRowHeight(30);
-        CarTable.setSelectionBackground(new java.awt.Color(153, 255, 153));
+        CarTable.setSelectionBackground(new java.awt.Color(28, 78, 128));
         jScrollPane6.setViewportView(CarTable);
 
         jLabel13.setForeground(new java.awt.Color(0, 204, 204));
@@ -700,11 +619,11 @@ public class AdminPage extends javax.swing.JFrame {
 
             },
             new String [] {
-                "First Name", "Last Name", "Email", "NIC", "City", "Phone No 1", "Phone No 2", "Settings"
+                "ID", "First Name", "Last Name", "Role", "Email", "NIC", "City", "Phone No 1", "Phone No 2", "Settings"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -713,14 +632,22 @@ public class AdminPage extends javax.swing.JFrame {
         });
         vehicalOwnerTable.setRowHeight(30);
         vehicalOwnerTable.setSelectionBackground(new java.awt.Color(28, 78, 128));
+        vehicalOwnerTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                vehicalOwnerTableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(vehicalOwnerTable);
         if (vehicalOwnerTable.getColumnModel().getColumnCount() > 0) {
-            vehicalOwnerTable.getColumnModel().getColumn(2).setResizable(false);
-            vehicalOwnerTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+            vehicalOwnerTable.getColumnModel().getColumn(0).setResizable(false);
+            vehicalOwnerTable.getColumnModel().getColumn(0).setPreferredWidth(15);
+            vehicalOwnerTable.getColumnModel().getColumn(4).setResizable(false);
+            vehicalOwnerTable.getColumnModel().getColumn(4).setPreferredWidth(100);
             vehicalOwnerTable.getColumnModel().getColumn(5).setResizable(false);
-            vehicalOwnerTable.getColumnModel().getColumn(5).setPreferredWidth(50);
-            vehicalOwnerTable.getColumnModel().getColumn(6).setResizable(false);
-            vehicalOwnerTable.getColumnModel().getColumn(6).setPreferredWidth(50);
+            vehicalOwnerTable.getColumnModel().getColumn(7).setResizable(false);
+            vehicalOwnerTable.getColumnModel().getColumn(7).setPreferredWidth(50);
+            vehicalOwnerTable.getColumnModel().getColumn(8).setResizable(false);
+            vehicalOwnerTable.getColumnModel().getColumn(8).setPreferredWidth(50);
         }
 
         jButton5.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
@@ -734,19 +661,29 @@ public class AdminPage extends javax.swing.JFrame {
             }
         });
 
+        selectQueryEmp.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        selectQueryEmp.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Show All Employees", "Show All Admins", "Show All Cashiers", "Show All Drivers", "Show All Vehical Owners" }));
+        selectQueryEmp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectQueryEmpActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout vehicalOwnerpanelLayout = new javax.swing.GroupLayout(vehicalOwnerpanel);
         vehicalOwnerpanel.setLayout(vehicalOwnerpanelLayout);
         vehicalOwnerpanelLayout.setHorizontalGroup(
             vehicalOwnerpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(vehicalOwnerpanelLayout.createSequentialGroup()
                 .addContainerGap(65, Short.MAX_VALUE)
-                .addGroup(vehicalOwnerpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(vehicalOwnerpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(vehicalOwnerpanelLayout.createSequentialGroup()
                         .addComponent(employeeTypeSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(488, 488, 488)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(OwnerSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(selectQueryEmp, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(65, Short.MAX_VALUE))
         );
@@ -757,7 +694,8 @@ public class AdminPage extends javax.swing.JFrame {
                 .addGroup(vehicalOwnerpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(OwnerSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(employeeTypeSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(employeeTypeSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(selectQueryEmp, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
@@ -769,47 +707,14 @@ public class AdminPage extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(28, 78, 128));
 
-        adminbtn.setBackground(new java.awt.Color(28, 78, 128));
-        adminbtn.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        adminbtn.setForeground(new java.awt.Color(255, 255, 255));
-        adminbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
-        adminbtn.setText("Admin");
-        adminbtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                adminbtnActionPerformed(evt);
-            }
-        });
-
         vehicalownerbtn.setBackground(new java.awt.Color(28, 78, 128));
         vehicalownerbtn.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         vehicalownerbtn.setForeground(new java.awt.Color(255, 255, 255));
         vehicalownerbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
-        vehicalownerbtn.setText("Vehical Owners");
+        vehicalownerbtn.setText("Employee");
         vehicalownerbtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 vehicalownerbtnActionPerformed(evt);
-            }
-        });
-
-        driverbtn.setBackground(new java.awt.Color(28, 78, 128));
-        driverbtn.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        driverbtn.setForeground(new java.awt.Color(255, 255, 255));
-        driverbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
-        driverbtn.setText("Driver");
-        driverbtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                driverbtnActionPerformed(evt);
-            }
-        });
-
-        cashierbtn.setBackground(new java.awt.Color(28, 78, 128));
-        cashierbtn.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        cashierbtn.setForeground(new java.awt.Color(255, 255, 255));
-        cashierbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
-        cashierbtn.setText("Cashier");
-        cashierbtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cashierbtnActionPerformed(evt);
             }
         });
 
@@ -853,33 +758,24 @@ public class AdminPage extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(46, 46, 46)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(adminbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(discountbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cashierbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(driverbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(vehicalownerbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(54, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(64, 64, 64)
                 .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
-                .addComponent(adminbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
-                .addComponent(driverbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
-                .addComponent(cashierbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33)
-                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
-                .addComponent(discountbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
+                .addGap(36, 36, 36)
                 .addComponent(vehicalownerbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(200, Short.MAX_VALUE))
+                .addGap(36, 36, 36)
+                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36)
+                .addComponent(discountbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(404, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 270, -1));
@@ -888,47 +784,30 @@ public class AdminPage extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void adminbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminbtnActionPerformed
-        // TODO add your handling code here:
-        jTabbedPane1.setSelectedIndex(1);
-        
-    }//GEN-LAST:event_adminbtnActionPerformed
-
     private void vehicalownerbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vehicalownerbtnActionPerformed
         // TODO add your handling code here:
-        jTabbedPane1.setSelectedIndex(6);
+        jTabbedPane1.setSelectedIndex(3);
+        CarTable.getCellEditor().stopCellEditing();
     }//GEN-LAST:event_vehicalownerbtnActionPerformed
 
-    private void driverbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_driverbtnActionPerformed
-        // TODO add your handling code here:
-        jTabbedPane1.setSelectedIndex(2);
-    }//GEN-LAST:event_driverbtnActionPerformed
-
-    private void cashierbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cashierbtnActionPerformed
-        // TODO add your handling code here:
-        jTabbedPane1.setSelectedIndex(3);
-    }//GEN-LAST:event_cashierbtnActionPerformed
-
     private void discountbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discountbtnActionPerformed
-        jTabbedPane1.setSelectedIndex(5);
+        jTabbedPane1.setSelectedIndex(2);
         // TODO add your handling code here:
     }//GEN-LAST:event_discountbtnActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        jTabbedPane1.setSelectedIndex(4);
+        
+        jTabbedPane1.setSelectedIndex(1);
+        if (vehicalOwnerTable.isEditing()) {
+            vehicalOwnerTable.getCellEditor().stopCellEditing();
+        }
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
         jTabbedPane1.setSelectedIndex(0);
     }//GEN-LAST:event_jButton7ActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        DriverRegistrationForm D1=new DriverRegistrationForm();
-        D1.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
@@ -943,8 +822,41 @@ public class AdminPage extends javax.swing.JFrame {
             CustomerRegistrationForm c1=new CustomerRegistrationForm();
             c1.SetRegistrationFrameTitle("Car Owner Registration", "Add Owner");
             c1.setVisible(true);
+        }else if (employeeTypeSelector.getSelectedIndex()==2) {
+            CustomerRegistrationForm c1=new CustomerRegistrationForm();
+            c1.SetRegistrationFrameTitle("Driver Registration", "Add Driver");
+            c1.setVisible(true);
+        }else if (employeeTypeSelector.getSelectedIndex()==1) {
+            CustomerRegistrationForm c1=new CustomerRegistrationForm();
+            c1.SetRegistrationFrameTitle("Cashier Registration", "Add Cashier");
+            c1.setVisible(true);
+        }else if (employeeTypeSelector.getSelectedIndex()==0) {
+            CustomerRegistrationForm c1=new CustomerRegistrationForm();
+            c1.SetRegistrationFrameTitle("Admin Registration", "Add Admin");
+            c1.setVisible(true);
         }
     }//GEN-LAST:event_employeeTypeSelectorActionPerformed
+
+    private void selectQueryEmpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectQueryEmpActionPerformed
+        // TODO add your handling code here:
+        if (selectQueryEmp.getSelectedIndex()==0) {
+            loadOwnerData("All");
+        }else if(selectQueryEmp.getSelectedIndex()==1){
+            loadOwnerData("Admin");
+        }else if(selectQueryEmp.getSelectedIndex()==2){
+            loadOwnerData("Cashier");
+        }else if(selectQueryEmp.getSelectedIndex()==3){
+            loadOwnerData("Driver");
+        }else if(selectQueryEmp.getSelectedIndex()==4){
+            loadOwnerData("VOwner");
+        }
+    }//GEN-LAST:event_selectQueryEmpActionPerformed
+
+    private void vehicalOwnerTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vehicalOwnerTableMouseClicked
+        // TODO add your handling code here:
+        
+        
+    }//GEN-LAST:event_vehicalOwnerTableMouseClicked
 
     /**
      * @param args the command line arguments
@@ -984,27 +896,16 @@ public class AdminPage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel AdminPanel;
-    private javax.swing.JTable AdminTable;
     private javax.swing.JPanel CarAddingPanel;
     private javax.swing.JTextField CarSearchBar;
     private javax.swing.JTable CarTable;
     private javax.swing.JPanel DashboardPanel;
-    private javax.swing.JPanel DriverPanel;
-    private javax.swing.JTable DriverTable;
     private javax.swing.JTextField OwnerSearch;
     private javax.swing.JPanel SidepanelAdminboard;
-    private javax.swing.JButton adminbtn;
-    private javax.swing.JPanel cashierPanel;
-    private javax.swing.JTable cashierTable;
-    private javax.swing.JButton cashierbtn;
     private javax.swing.JPanel discountPanel;
     private javax.swing.JTable discountTable;
     private javax.swing.JButton discountbtn;
-    private javax.swing.JButton driverbtn;
     private javax.swing.JComboBox<String> employeeTypeSelector;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
@@ -1014,9 +915,6 @@ public class AdminPage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -1030,13 +928,10 @@ public class AdminPage extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JButton searchCarIcon;
+    private javax.swing.JComboBox<String> selectQueryEmp;
     private javax.swing.JTable vehicalOwnerTable;
     private javax.swing.JPanel vehicalOwnerpanel;
     private javax.swing.JButton vehicalownerbtn;

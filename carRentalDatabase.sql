@@ -40,3 +40,18 @@ insert into employeephone values("A005",0714100000);
 
 select empID, firstname,lastname,email,city,NIC from employee where role="VOwner";
 select phoneNo from employeephone where empID="A005";
+
+select max(EmpID) as maxID from employee;
+
+describe employee;
+select * from employee;
+
+delete from employeephone where empId="A011";
+delete from employee where empId="A011";
+
+select * from employee where empID="A001";
+
+update employee set firstName="Nimals",lastName="Perera",Email="nimalperera123@gmail.com",Address1="no 13",Address2="Galawilawatta",city="Homagama",NIC="200133600703",LicenceNo=null where empID="A001";
+
+
+update employeephone set phoneNo="0786070411" where empID="A001";

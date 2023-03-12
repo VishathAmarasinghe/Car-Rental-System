@@ -96,7 +96,7 @@
                               <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="jTextField3" pref="269" max="32767" attributes="0"/>
                                   <Component id="jTextField1" max="32767" attributes="0"/>
-                                  <Component id="jComboBox1" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="ownerComboBox" alignment="0" max="32767" attributes="0"/>
                                   <Component id="ACTypeSelecter" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jTextField4" alignment="0" max="32767" attributes="0"/>
                                   <Component id="VehicalTypeSelecter" alignment="1" max="32767" attributes="0"/>
@@ -106,7 +106,7 @@
                           </Group>
                           <EmptySpace pref="152" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="jLabel9" max="32767" attributes="0"/>
+                              <Component id="imageShower" max="32767" attributes="0"/>
                               <Component id="jButton3" pref="179" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="118" max="-2" attributes="0"/>
@@ -152,7 +152,7 @@
                           <Component id="jTextField4" min="-2" pref="32" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="jLabel9" min="-2" pref="170" max="-2" attributes="0"/>
+                          <Component id="imageShower" min="-2" pref="170" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jButton3" max="32767" attributes="0"/>
                       </Group>
@@ -172,7 +172,7 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="OwnerSelector" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                  <Component id="jComboBox1" min="-2" pref="32" max="-2" attributes="0"/>
+                  <Component id="ownerComboBox" min="-2" pref="32" max="-2" attributes="0"/>
                   <EmptySpace pref="41" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jButton2" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
@@ -207,15 +207,10 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField3ActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JComboBox" name="jComboBox1">
+        <Component class="javax.swing.JComboBox" name="ownerComboBox">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
-                <StringItem index="0" value="Item 1"/>
-                <StringItem index="1" value="Item 2"/>
-                <StringItem index="2" value="Item 3"/>
-                <StringItem index="3" value="Item 4"/>
-              </StringArray>
+              <StringArray count="0"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -330,7 +325,7 @@
             <Property name="text" type="java.lang.String" value="Car Owner"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel9">
+        <Component class="javax.swing.JLabel" name="imageShower">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -356,6 +351,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Add Image"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

@@ -76,36 +76,36 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="DriverCity" min="-2" pref="243" max="-2" attributes="0"/>
-                          <Component id="DriverEmail" alignment="0" max="32767" attributes="0"/>
-                          <Component id="DriverAddress1" alignment="0" max="32767" attributes="0"/>
-                          <Component id="DriverAddress2" alignment="0" max="32767" attributes="0"/>
+                          <Component id="regCity" min="-2" pref="243" max="-2" attributes="0"/>
+                          <Component id="RegEmail" alignment="0" max="32767" attributes="0"/>
+                          <Component id="RegAddress1" alignment="0" max="32767" attributes="0"/>
+                          <Component id="RegAddress2" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="driverFirstName" min="-2" pref="240" max="-2" attributes="0"/>
+                                  <Component id="RegFirstName" min="-2" pref="240" max="-2" attributes="0"/>
                                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="DriverLastName" min="-2" pref="240" max="-2" attributes="0"/>
+                                  <Component id="RegLastName" min="-2" pref="240" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="DriverphoneNo1" min="-2" pref="243" max="-2" attributes="0"/>
+                                  <Component id="RegPhoneNo1" min="-2" pref="243" max="-2" attributes="0"/>
                                   <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
-                                  <Component id="DriverphoneNo2" min="-2" pref="240" max="-2" attributes="0"/>
+                                  <Component id="regPhoneNo2" min="-2" pref="240" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <Component id="LicenseID" min="-2" pref="243" max="-2" attributes="0"/>
+                                      <Component id="RegNIC" min="-2" pref="243" max="-2" attributes="0"/>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="1" attributes="0">
@@ -120,7 +120,7 @@
                       <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="NIC_licence" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="66" max="32767" attributes="0"/>
               </Group>
@@ -138,25 +138,25 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="driverFirstName" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
-                      <Component id="DriverLastName" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
+                      <Component id="RegFirstName" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
+                      <Component id="RegLastName" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                  <Component id="DriverEmail" min="-2" pref="40" max="-2" attributes="0"/>
+                  <Component id="RegEmail" min="-2" pref="40" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                   <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="DriverAddress1" min="-2" pref="39" max="-2" attributes="0"/>
+                  <Component id="RegAddress1" min="-2" pref="39" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                  <Component id="DriverAddress2" min="-2" pref="40" max="-2" attributes="0"/>
+                  <Component id="RegAddress2" min="-2" pref="40" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                  <Component id="DriverCity" min="-2" pref="40" max="-2" attributes="0"/>
+                  <Component id="regCity" min="-2" pref="40" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -164,13 +164,13 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="DriverphoneNo1" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                      <Component id="DriverphoneNo2" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                      <Component id="RegPhoneNo1" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                      <Component id="regPhoneNo2" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                  <Component id="NIC_licence" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                  <Component id="LicenseID" min="-2" pref="40" max="-2" attributes="0"/>
+                  <Component id="RegNIC" min="-2" pref="40" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="addbtnRegister" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
@@ -182,9 +182,9 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JTextField" name="DriverLastName">
+        <Component class="javax.swing.JTextField" name="RegLastName">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="DriverLastNameActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RegLastNameActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="RegTitle">
@@ -198,35 +198,35 @@
             <Property name="text" type="java.lang.String" value="Customer Registration"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="DriverEmail">
+        <Component class="javax.swing.JTextField" name="RegEmail">
         </Component>
-        <Component class="javax.swing.JTextField" name="driverFirstName">
+        <Component class="javax.swing.JTextField" name="RegFirstName">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="driverFirstNameActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RegFirstNameActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JTextField" name="DriverAddress2">
+        <Component class="javax.swing.JTextField" name="RegAddress2">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="DriverAddress2ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RegAddress2ActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JTextField" name="DriverAddress1">
+        <Component class="javax.swing.JTextField" name="RegAddress1">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="DriverAddress1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RegAddress1ActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JTextField" name="DriverphoneNo1">
+        <Component class="javax.swing.JTextField" name="RegPhoneNo1">
         </Component>
-        <Component class="javax.swing.JTextField" name="DriverCity">
+        <Component class="javax.swing.JTextField" name="regCity">
         </Component>
-        <Component class="javax.swing.JTextField" name="DriverphoneNo2">
+        <Component class="javax.swing.JTextField" name="regPhoneNo2">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="DriverphoneNo2ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="regPhoneNo2ActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JTextField" name="LicenseID">
+        <Component class="javax.swing.JTextField" name="RegNIC">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="LicenseIDActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RegNICActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
@@ -317,7 +317,7 @@
             <Property name="text" type="java.lang.String" value="Phone No1"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel10">
+        <Component class="javax.swing.JLabel" name="NIC_licence">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Dialog" size="12" style="0"/>
