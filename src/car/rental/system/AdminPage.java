@@ -4,6 +4,7 @@
  */
 package car.rental.system;
 
+import com.mysql.cj.protocol.Resultset;
 import java.awt.Image;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -34,6 +35,7 @@ public class AdminPage extends javax.swing.JFrame {
     
     private int tableSelectedIndex=0;
     private String clickedIndexID="";
+    private String currentPageHolder="dashboardPage";
     public AdminPage() {
         initComponents();
         loadOwnerData("ALL");
@@ -43,10 +45,13 @@ public class AdminPage extends javax.swing.JFrame {
             public void onEdit(int row) {
                 System.out.println("Edit row : " + row);
                 if (CarTable.isEditing()) {
-                    
-                }else{
+                    editSelectedCarData(row);
+                }else if(vehicalOwnerTable.isEditing()){
                     System.out.println("Car table edit check   "+CarTable.isEditing());
-                    editselectedData(row);
+                    editSelectedEmployeeData(row);
+                }else if(discountTable.isEditing()){
+                    System.out.println("edit dis available");
+                    editSelectedDiscountData(row);
                 }
                 
             }
@@ -57,31 +62,38 @@ public class AdminPage extends javax.swing.JFrame {
                 if (vehicalOwnerTable.isEditing()) {
                     vehicalOwnerTable.getCellEditor().stopCellEditing();
                 }
-                DefaultTableModel model = (DefaultTableModel) vehicalOwnerTable.getModel();
+                
                 
                int resultofDelete= JOptionPane.showConfirmDialog(null,"Are you sure that you want to delete record","Deleting Confirmation",
                        JOptionPane.YES_NO_OPTION);
                 if (resultofDelete==0) {
                     deleteSelectedRaw(row);
-                    model.removeRow(row);
                 }
                 
             }
 
         };
+        
+        
+       
         vehicalOwnerTable.getColumnModel().getColumn(9).setCellRenderer(new TableActionCellRender());
         vehicalOwnerTable.getColumnModel().getColumn(9).setCellEditor(new TableActionCellEditor(event));
         
         
         
-        discountTable.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
-        discountTable.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
+        discountTable.getColumnModel().getColumn(4).setCellRenderer(new TableActionCellRender());
+        discountTable.getColumnModel().getColumn(4).setCellEditor(new TableActionCellEditor(event));
         
         
         CarTable.getColumnModel().getColumn(7).setCellRenderer(new TableActionCellRender());
         CarTable.getColumnModel().getColumn(6).setCellRenderer(new tableImageCellRender());
         CarTable.getColumnModel().getColumn(7).setCellEditor(new TableActionCellEditor(event));
     }
+    
+    
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -109,6 +121,7 @@ public class AdminPage extends javax.swing.JFrame {
             ResultSet rs=ps.executeQuery();
             while (rs.next()) {                
                 String empID=rs.getString("empID");
+                System.out.println("Substring check "+empID.substring(0,4));
                 String sd="select phoneNo from employeephone where empID=\""+empID+"\"";
                 PreparedStatement psd = con.prepareStatement(sd);
                 ResultSet numberResult=psd.executeQuery();
@@ -143,28 +156,47 @@ public class AdminPage extends javax.swing.JFrame {
     
     
     private void deleteSelectedRaw(int rawNo){
-        DefaultTableModel ownerTableclicked=(DefaultTableModel)vehicalOwnerTable.getModel();
-        clickedIndexID=(String) ownerTableclicked.getValueAt(rawNo, 0);
-        System.out.println("Clicked indez  "+clickedIndexID);
-        
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            String deletePhoneNoRaw="delete from employeephone where empId=\""+clickedIndexID+"\"";
-            Statement st=con.createStatement();
+
+        DefaultTableModel carModel=(DefaultTableModel) CarTable.getModel();
+        DefaultTableModel ownerTableclicked=(DefaultTableModel)vehicalOwnerTable.getModel();
+        DefaultTableModel discountTableclicked=(DefaultTableModel)discountTable.getModel();
+        
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+        
+        String deletePhoneNoRaw="";
+        Statement st=con.createStatement();
+        System.out.println("Clicked indez  "+clickedIndexID);
             
-            st.executeUpdate(deletePhoneNoRaw);
+        if (currentPageHolder.equalsIgnoreCase("CarPage")) {
+                    clickedIndexID=(String) carModel.getValueAt(rawNo, 0);
+                    deletePhoneNoRaw="delete from cars where CarNumber=\""+clickedIndexID+"\"";
+                    st.executeUpdate(deletePhoneNoRaw);
+                    carModel.removeRow(rawNo);
             
-            String deleteRaw="delete from employee where empId=\""+clickedIndexID+"\"";
-            st.executeUpdate(deleteRaw);
-            
-            con.close();
+        }else if(currentPageHolder.equalsIgnoreCase("employeePage")){
+                    clickedIndexID=(String) ownerTableclicked.getValueAt(rawNo, 0);
+                    deletePhoneNoRaw="delete from employeephone where empId=\""+clickedIndexID+"\"";
+                    st.executeUpdate(deletePhoneNoRaw);
+                    String deleteRaw="delete from employee where empId=\""+clickedIndexID+"\"";
+                    st.executeUpdate(deleteRaw);
+                    ownerTableclicked.removeRow(rawNo);
+        }
+        else if(currentPageHolder.equalsIgnoreCase("discountPage")){
+                    clickedIndexID=(String) discountTable.getValueAt(rawNo, 0);
+                    deletePhoneNoRaw="delete from discount where discountID=\""+clickedIndexID+"\"";
+                    st.executeUpdate(deletePhoneNoRaw);
+                    discountTableclicked.removeRow(rawNo);
+        }
+         
+        con.close();
         } catch (Exception e) {
             System.out.println("Error from adminpanel 154  "+e);
         }
         
     }
-    private void editselectedData(int raw){
+    private void editSelectedEmployeeData(int raw){
         DefaultTableModel ownerTableclicked=(DefaultTableModel)vehicalOwnerTable.getModel();
         clickedIndexID=(String) ownerTableclicked.getValueAt(raw, 0);
         try {
@@ -189,6 +221,56 @@ public class AdminPage extends javax.swing.JFrame {
         }
     }
     
+    private void editSelectedCarData(int raw){
+        DefaultTableModel CarTableclicked=(DefaultTableModel)CarTable.getModel();
+        clickedIndexID=(String) CarTableclicked.getValueAt(raw, 0);
+        try {
+            
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String singleData="select * from cars where CarNumber=\""+clickedIndexID+"\"";
+            PreparedStatement ps = con.prepareStatement(singleData);
+            ResultSet rs=ps.executeQuery();
+            
+           
+            CarAddingPanel carAdd1=new CarAddingPanel(rs);
+            carAdd1.setVisible(true);
+            
+            con.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    
+    private void editSelectedDiscountData(int raw){
+        DefaultTableModel discountclicked=(DefaultTableModel)discountTable.getModel();
+        clickedIndexID=(String) discountclicked.getValueAt(raw, 0);
+        try {
+            
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String singleData="select * from discount where discountID=\""+clickedIndexID+"\"";
+            PreparedStatement ps = con.prepareStatement(singleData);
+            ResultSet rs=ps.executeQuery();
+            
+           
+            DiscountAdder disc1=new DiscountAdder(rs);
+            disc1.setVisible(true);
+            
+            con.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    
+    
+    
+    
+    
     private void renderCarTable(){
         try {
             DefaultTableModel CartableLoad=(DefaultTableModel)CarTable.getModel();
@@ -196,19 +278,19 @@ public class AdminPage extends javax.swing.JFrame {
             CartableLoad.fireTableDataChanged();
             
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/image", "root", "akila123");
-            String s="select * from imageaddings";
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String s="select * from cars";
             PreparedStatement ps = con.prepareStatement(s);
             ResultSet rs=ps.executeQuery();
             
             while (rs.next()) {            
-                int car_keyValue=Integer.parseInt(rs.getString("keyvalue"));
-                String car_type=rs.getString("Car_Type");
-                String car_model=rs.getString("Car_Model");
-                String seat_no=rs.getString("Seat_No");
-                String ac_Type=rs.getString("AC_Type");
-                String fuel_type=rs.getString("Fuel_Type"); 
-                byte[] img=rs.getBytes("imageva");
+                String car_keyValue=rs.getString("CarNumber");
+                String car_type=rs.getString("CarType");
+                String car_model=rs.getString("CarModel");
+                String seat_no=rs.getString("SeatNo");
+                String ac_Type=rs.getString("ACType");
+                String fuel_type=rs.getString("FuelType"); 
+                byte[] img=rs.getBytes("CarImage");
                 
                 ImageIcon image=new ImageIcon(img);
                 Image im=image.getImage();
@@ -229,6 +311,44 @@ public class AdminPage extends javax.swing.JFrame {
             System.out.println(e);
         }
     }
+    
+    
+    
+    private void renderDiscountTable(){
+        try {
+            DefaultTableModel discountTableRender=(DefaultTableModel)discountTable.getModel();
+            discountTableRender.getDataVector().removeAllElements();
+            discountTableRender.fireTableDataChanged();
+            
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String s="select * from discount";
+            PreparedStatement ps = con.prepareStatement(s);
+            ResultSet rs=ps.executeQuery();
+            
+            while (rs.next()) {            
+                String discountID=rs.getString("discountID");
+                String discountName=rs.getString("discountName");
+                String discountPrecentage=rs.getString("precentage");
+                String discountDiscription=rs.getString("Description");
+                
+                
+               
+               
+               discountTableRender.addRow(new String[]{discountID,discountName,discountPrecentage,discountDiscription});
+
+            }
+            rs.close();
+            ps.close();
+            con.close();
+ 
+        } catch (Exception e) {
+            System.out.println("Discount Table Render "+e);
+        }
+    }
+    
+    
+    
     
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -261,6 +381,7 @@ public class AdminPage extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         discountTable = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         vehicalOwnerpanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         vehicalOwnerTable = new javax.swing.JTable();
@@ -560,19 +681,20 @@ public class AdminPage extends javax.swing.JFrame {
 
         discountPanel.setBackground(new java.awt.Color(241, 241, 241));
 
+        discountTable.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         discountTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Discount ID", "Discount Name", "Precentage", "Description", "Settings"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, true
+                false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -580,31 +702,45 @@ public class AdminPage extends javax.swing.JFrame {
             }
         });
         discountTable.setRowHeight(30);
-        discountTable.setSelectionBackground(new java.awt.Color(153, 255, 153));
+        discountTable.setSelectionBackground(new java.awt.Color(28, 78, 128));
         jScrollPane2.setViewportView(discountTable);
+        if (discountTable.getColumnModel().getColumnCount() > 0) {
+            discountTable.getColumnModel().getColumn(3).setResizable(false);
+            discountTable.getColumnModel().getColumn(3).setPreferredWidth(200);
+        }
 
         jLabel2.setForeground(new java.awt.Color(0, 204, 204));
         jLabel2.setText("Discount panel");
+
+        jButton1.setText("Add Discount");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout discountPanelLayout = new javax.swing.GroupLayout(discountPanel);
         discountPanel.setLayout(discountPanelLayout);
         discountPanelLayout.setHorizontalGroup(
             discountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, discountPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(discountPanelLayout.createSequentialGroup()
-                .addGap(253, 253, 253)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(65, Short.MAX_VALUE)
+                .addGroup(discountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(discountPanelLayout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(539, 539, 539)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(65, Short.MAX_VALUE))
         );
         discountPanelLayout.setVerticalGroup(
             discountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(discountPanelLayout.createSequentialGroup()
-                .addContainerGap(73, Short.MAX_VALUE)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addContainerGap(61, Short.MAX_VALUE)
+                .addGroup(discountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37))
         );
@@ -786,17 +922,26 @@ public class AdminPage extends javax.swing.JFrame {
 
     private void vehicalownerbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vehicalownerbtnActionPerformed
         // TODO add your handling code here:
+        currentPageHolder="employeePage";
+        loadOwnerData("all");
         jTabbedPane1.setSelectedIndex(3);
-        CarTable.getCellEditor().stopCellEditing();
+        if (CarTable.isEditing()) {
+            CarTable.getCellEditor().stopCellEditing();
+        }
+        
     }//GEN-LAST:event_vehicalownerbtnActionPerformed
 
     private void discountbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discountbtnActionPerformed
         jTabbedPane1.setSelectedIndex(2);
+        renderDiscountTable();
+        currentPageHolder="discountPage";
         // TODO add your handling code here:
     }//GEN-LAST:event_discountbtnActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
+        currentPageHolder="CarPage";
+        renderCarTable();
         
         jTabbedPane1.setSelectedIndex(1);
         if (vehicalOwnerTable.isEditing()) {
@@ -811,7 +956,7 @@ public class AdminPage extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        CarAddingPanel carUpdate1=new CarAddingPanel(true);
+        CarAddingPanel carUpdate1=new CarAddingPanel();
         carUpdate1.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -857,6 +1002,12 @@ public class AdminPage extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_vehicalOwnerTableMouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        DiscountAdder di=new DiscountAdder();
+        di.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -906,6 +1057,7 @@ public class AdminPage extends javax.swing.JFrame {
     private javax.swing.JTable discountTable;
     private javax.swing.JButton discountbtn;
     private javax.swing.JComboBox<String> employeeTypeSelector;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;

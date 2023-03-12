@@ -92,7 +92,7 @@ public class CustomSearch1 extends javax.swing.JFrame {
     public ResultSet databaseExecuation(String s){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/image", "root", "akila123");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
             ps = con.prepareStatement(s);
             rs=ps.executeQuery();
             
@@ -105,13 +105,13 @@ public class CustomSearch1 extends javax.swing.JFrame {
     
     public void RequestCardEditor(ItemModel data){
         try{
-            String query="Select * from imageaddings where keyvalue="+data.car_keyValue;
+            String query="Select * from cars where CarNumber=\""+data.car_keyValue+"\"";
             ResultSet result =databaseExecuation(query);
             result.next();
             String foundType=result.getString(1);
             System.out.println("found Type "+foundType);
         
-            byte[] img=result.getBytes("imageva");
+            byte[] img=result.getBytes("CarImage");
             ImageIcon image=new ImageIcon(img);
             Image im=image.getImage();
             Image myimage=im.getScaledInstance(609, 361, Image.SCALE_SMOOTH);
@@ -132,20 +132,20 @@ public class CustomSearch1 extends javax.swing.JFrame {
               System.out.println("added");
         try {
             cardContainer.setLayout(new  WrapLayout());
-            String s="Select * from imageaddings";
+            String s="Select * from cars";
             ResultSet rs=databaseExecuation(s);
             while(rs.next()) {    
 //                Card c3=new Card();
                 
-                byte[] img=rs.getBytes("imageva");
+                byte[] img=rs.getBytes("CarImage");
 
                 
-                int car_keyValue=Integer.parseInt(rs.getString("keyvalue"));
-                String car_type=rs.getString("Car_Type");
-                String car_model=rs.getString("Car_Model");
-                String seat_no=rs.getString("Seat_No");
-                String ac_Type=rs.getString("AC_Type");
-                String fuel_type=rs.getString("Fuel_Type");
+                String car_keyValue=rs.getString("CarNumber");
+                String car_type=rs.getString("CarType");
+                String car_model=rs.getString("CarModel");
+                String seat_no=rs.getString("SeatNo");
+                String ac_Type=rs.getString("ACType");
+                String fuel_type=rs.getString("FuelType");
                 System.out.println(car_keyValue);
                 System.out.println("car type "+car_type);
                 System.out.println("car model "+car_model);

@@ -55,3 +55,10 @@ update employee set firstName="Nimals",lastName="Perera",Email="nimalperera123@g
 
 
 update employeephone set phoneNo="0786070411" where empID="A001";
+
+
+alter table cars drop column OwnerID;
+
+alter table cars modify OwnerID varchar(20) ;
+
+alter table cars add foreign key (OwnerID) references employee(EmpID);

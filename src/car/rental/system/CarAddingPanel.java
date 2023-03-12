@@ -6,10 +6,15 @@ package car.rental.system;
 
 import java.awt.Image;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -22,20 +27,36 @@ import javax.swing.table.DefaultTableModel;
  */
 public class CarAddingPanel extends javax.swing.JFrame {
     
-    private boolean btntype=true;
+    
+    public int CarAddingIndicator=1;
+    String selectedImagePath="";
+    String previousCarNumber="";
 
     /**
      * Creates new form CarAddingPanel
      */
-    public CarAddingPanel(boolean btnType) {
+    public CarAddingPanel(ResultSet CarResult) {
         
         initComponents();
         loadOwnerDetails();
-        if (btnType==true) {
-            updateCarBtn.setText("Add Car");
-        }else{
-            updateCarBtn.setText("Update Car");
-        }
+        updateCarBtn.setText("Update Car");
+        updateSettingCar(CarResult);
+        
+        
+        
+        
+        
+        
+//        if (btnType==true) {
+//            updateCarBtn.setText("Add Car");
+//        }else{
+//            updateCarBtn.setText("Update Car");
+//        }
+    }
+    
+    public CarAddingPanel(){
+        initComponents();
+        loadOwnerDetails();
     }
     
     private void loadOwnerDetails(){
@@ -43,14 +64,16 @@ public class CarAddingPanel extends javax.swing.JFrame {
             
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            String s="select firstname,lastname from employee where role=\"VOwner\"";
+            String s="select EmpID, firstname,lastname from employee where role=\"VOwner\"";
        
             PreparedStatement ps = con.prepareStatement(s);
             ResultSet rs=ps.executeQuery();
-            while (rs.next()) {                
+            while (rs.next()) {          
+                String empID=rs.getString("EmpID");
                 String Fname=rs.getString("FirstName");
                 String Lname=rs.getString("lastName");
-                ownerComboBox.addItem(Fname+" "+Lname);
+                ownerComboBox.addItem(empID+" "+Fname+" "+Lname);
+                
 
             }
             rs.close();
@@ -62,6 +85,116 @@ public class CarAddingPanel extends javax.swing.JFrame {
             System.out.println(e);
         }
     }
+    
+    
+    private void addNewCar(){
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String querys="insert into cars(CarNumber,VehicalType,CarType,CarModel,SeatNo,ACType,FuelType,CarImage,OwnerID) values(?,?,?,?,?,?,?,?,?)";
+            PreparedStatement ps=con.prepareStatement(querys);
+            InputStream iss=new FileInputStream(new File(selectedImagePath));
+            ps.setString(1, carNumberPlate.getText());
+            ps.setString(2, VehicalTypeSelecter.getSelectedItem().toString());
+            ps.setBlob(8,iss );
+            ps.setString(3, CarTypeSelector.getText());
+            ps.setString(4, CarModel.getText());
+            ps.setString(5, seatCountSelector.getText());
+            ps.setString(6, ACTypeSelecter.getSelectedItem().toString());
+            ps.setString(7, FuelTypeSelector.getSelectedItem().toString());
+            ps.setString(9, ownerComboBox.getSelectedItem().toString().substring(0,4));
+            
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Car Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
+            CarAddingIndicator=CarAddingIndicator+1;
+            ps.close();
+            con.close();
+            CarRentalSystem.closeWindows(this);
+        } catch (Exception e) {
+            System.out.println("DB Error : "+e);
+        }
+    }
+    
+    private void updateSettingCar(ResultSet CarResult ){
+        try {
+            while (CarResult.next()) {        
+                previousCarNumber=CarResult.getString("CarNumber");
+//                carNumberPlate.setText(CarResult.getString("CarNumber"));
+                carNumberPlate.disable();
+                
+                CarTypeSelector.setText(CarResult.getString("CarType"));
+                CarModel.setText(CarResult.getString("CarModel"));
+                seatCountSelector.setText(CarResult.getString("SeatNo"));
+                if (CarResult.getString("ACType").equalsIgnoreCase("AC")) {
+                    ACTypeSelecter.setSelectedIndex(0);
+                }else{
+                    ACTypeSelecter.setSelectedIndex(1);
+                }
+                
+                if (CarResult.getString("FuelType").equalsIgnoreCase("Petrol")) {
+                    FuelTypeSelector.setSelectedIndex(0);
+                }else{
+                    FuelTypeSelector.setSelectedIndex(1);
+                }
+                
+                VehicalTypeSelecter.setSelectedItem(new String(CarResult.getString("VehicalType")));
+                for (int i = 0; i < ownerComboBox.getItemCount(); i++) {
+                    if (CarResult.getString("OwnerID").equalsIgnoreCase(ownerComboBox.getItemAt(i).substring(0,4))) {
+                        ownerComboBox.setSelectedIndex(i);
+                    }
+                }
+                byte[] img=CarResult.getBytes("CarImage");
+                ImageIcon image=new ImageIcon(img);
+                Image im=image.getImage();
+                Image myimage=im.getScaledInstance(imageShower.getWidth(), imageShower.getHeight(), Image.SCALE_SMOOTH);
+                ImageIcon Scaledimage=new ImageIcon(myimage);
+                imageShower.setIcon(Scaledimage);
+                
+            }
+        } catch (Exception e) {
+            System.out.println("CarRendering Error "+e);
+        }
+    }
+    private void updateExistingCar(){
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            Statement st=con.createStatement();
+            String query="update cars set VehicalType= \""+VehicalTypeSelecter.getSelectedItem().toString()
+                    +"\", CarType= \""+CarTypeSelector.getText()+"\",CarModel= \""+CarModel.getText()+"\",SeatNo= \""+seatCountSelector.getText()+"\","
+                    + "ACType= \""+ACTypeSelecter.getSelectedItem().toString()+"\", FuelType= \""+FuelTypeSelector.getSelectedItem().toString()+"\","
+                    + "OwnerID= \""+ownerComboBox.getSelectedItem().toString().substring(0,4)+"\" where CarNumber= \""+previousCarNumber+"\"";
+            st.executeUpdate(query);
+            if (selectedImagePath!="") {
+                try{
+                    String updateImageQuary="update cars set CarImage= (?) where carNumber=\""+previousCarNumber+"\"";
+                    PreparedStatement ps=con.prepareStatement(updateImageQuary);
+                    InputStream iss=new FileInputStream(new File(selectedImagePath));
+                    ps.setBlob(1, iss);
+                    ps.executeUpdate();
+                }catch(Exception e){
+                    System.out.println("Car IMage Updating Error");
+                }
+
+            }
+            JOptionPane.showMessageDialog(null, "Car Updated Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
+            CarRentalSystem.closeWindows(this);
+            
+            
+            
+        } catch (Exception ex) {
+            System.out.println("Update Existing Car "+ex);
+        }
+       
+            
+    }
+    
+    
+    
+    
+        private void resetTextFields(){
+            
+        }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -75,13 +208,13 @@ public class CarAddingPanel extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        seatCountSelector = new javax.swing.JTextField();
+        carNumberPlate = new javax.swing.JTextField();
+        CarTypeSelector = new javax.swing.JTextField();
         ownerComboBox = new javax.swing.JComboBox<>();
         VehicalTypeSelecter = new javax.swing.JComboBox<>();
         ACTypeSelecter = new javax.swing.JComboBox<>();
-        jTextField4 = new javax.swing.JTextField();
+        CarModel = new javax.swing.JTextField();
         FuelTypeSelector = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -121,15 +254,15 @@ public class CarAddingPanel extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Car Registration");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        seatCountSelector.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                seatCountSelectorActionPerformed(evt);
             }
         });
 
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        CarTypeSelector.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                CarTypeSelectorActionPerformed(evt);
             }
         });
 
@@ -170,7 +303,12 @@ public class CarAddingPanel extends javax.swing.JFrame {
 
         imageShower.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        updateCarBtn.setText("Update Car");
+        updateCarBtn.setText("Add Car");
+        updateCarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateCarBtnActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Cancel");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -211,13 +349,13 @@ public class CarAddingPanel extends javax.swing.JFrame {
                             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(carNumberPlate, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
-                                .addComponent(jTextField1)
+                                .addComponent(CarTypeSelector, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
+                                .addComponent(seatCountSelector)
                                 .addComponent(ownerComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(ACTypeSelecter, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTextField4)
+                                .addComponent(CarModel)
                                 .addComponent(VehicalTypeSelecter, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(FuelTypeSelector, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(OwnerSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -245,7 +383,7 @@ public class CarAddingPanel extends javax.swing.JFrame {
                         .addGap(4, 4, 4)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(carNumberPlate, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel3)
                         .addGap(2, 2, 2)
@@ -253,11 +391,11 @@ public class CarAddingPanel extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel5)
                         .addGap(2, 2, 2)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(CarTypeSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel4)
                         .addGap(2, 2, 2)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(CarModel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(imageShower, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -265,7 +403,7 @@ public class CarAddingPanel extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel6)
                 .addGap(2, 2, 2)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(seatCountSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel8)
                 .addGap(2, 2, 2)
@@ -291,17 +429,17 @@ public class CarAddingPanel extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void CarTypeSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CarTypeSelectorActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }//GEN-LAST:event_CarTypeSelectorActionPerformed
 
     private void ACTypeSelecterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ACTypeSelecterActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_ACTypeSelecterActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void seatCountSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seatCountSelectorActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_seatCountSelectorActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
@@ -317,7 +455,7 @@ public class CarAddingPanel extends javax.swing.JFrame {
         
         if (showopenDialog==JFileChooser.APPROVE_OPTION) {
             File selectedImage=browser.getSelectedFile();
-            String selectedImagePath=selectedImage.getAbsolutePath();
+            selectedImagePath=selectedImage.getAbsolutePath();
             JOptionPane.showMessageDialog(null, selectedImagePath);
             
             ImageIcon image=new ImageIcon(selectedImagePath);
@@ -329,6 +467,16 @@ public class CarAddingPanel extends javax.swing.JFrame {
             
         }
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void updateCarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateCarBtnActionPerformed
+        // TODO add your handling code here:
+        if (updateCarBtn.getText().equalsIgnoreCase("Update Car")) {
+            updateExistingCar();
+        }else{
+            addNewCar();
+        }
+    
+    }//GEN-LAST:event_updateCarBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -360,16 +508,19 @@ public class CarAddingPanel extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CarAddingPanel(false).setVisible(true);
+                new CarAddingPanel().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> ACTypeSelecter;
+    private javax.swing.JTextField CarModel;
+    private javax.swing.JTextField CarTypeSelector;
     private javax.swing.JComboBox<String> FuelTypeSelector;
     private javax.swing.JLabel OwnerSelector;
     private javax.swing.JComboBox<String> VehicalTypeSelecter;
+    private javax.swing.JTextField carNumberPlate;
     private javax.swing.JLabel imageShower;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -383,11 +534,8 @@ public class CarAddingPanel extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JComboBox<String> ownerComboBox;
+    private javax.swing.JTextField seatCountSelector;
     private javax.swing.JButton updateCarBtn;
     // End of variables declaration//GEN-END:variables
 }

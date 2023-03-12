@@ -14,7 +14,7 @@ public class Card extends javax.swing.JPanel {
     
     
     
-    int keyvalue;
+    String keyvalue;
     private boolean viewMoreBtnStatus;
 
     public boolean isViewMoreBtnStatus() {

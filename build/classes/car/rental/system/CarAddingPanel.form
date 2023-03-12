@@ -92,13 +92,13 @@
                               <Component id="jLabel5" alignment="0" min="-2" pref="133" max="-2" attributes="0"/>
                               <Component id="jLabel4" alignment="0" min="-2" pref="133" max="-2" attributes="0"/>
                               <Component id="jLabel3" alignment="0" min="-2" pref="133" max="-2" attributes="0"/>
-                              <Component id="jTextField2" alignment="0" min="-2" pref="269" max="-2" attributes="0"/>
+                              <Component id="carNumberPlate" alignment="0" min="-2" pref="269" max="-2" attributes="0"/>
                               <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jTextField3" pref="269" max="32767" attributes="0"/>
-                                  <Component id="jTextField1" max="32767" attributes="0"/>
+                                  <Component id="CarTypeSelector" pref="269" max="32767" attributes="0"/>
+                                  <Component id="seatCountSelector" max="32767" attributes="0"/>
                                   <Component id="ownerComboBox" alignment="0" max="32767" attributes="0"/>
                                   <Component id="ACTypeSelecter" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jTextField4" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="CarModel" alignment="0" max="32767" attributes="0"/>
                                   <Component id="VehicalTypeSelecter" alignment="1" max="32767" attributes="0"/>
                                   <Component id="FuelTypeSelector" alignment="0" max="32767" attributes="0"/>
                               </Group>
@@ -137,7 +137,7 @@
                   </Group>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="jTextField2" min="-2" pref="32" max="-2" attributes="0"/>
+                          <Component id="carNumberPlate" min="-2" pref="32" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
@@ -145,11 +145,11 @@
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                          <Component id="jTextField3" min="-2" pref="32" max="-2" attributes="0"/>
+                          <Component id="CarTypeSelector" min="-2" pref="32" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                          <Component id="jTextField4" min="-2" pref="32" max="-2" attributes="0"/>
+                          <Component id="CarModel" min="-2" pref="32" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="imageShower" min="-2" pref="170" max="-2" attributes="0"/>
@@ -160,7 +160,7 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                  <Component id="jTextField1" min="-2" pref="32" max="-2" attributes="0"/>
+                  <Component id="seatCountSelector" min="-2" pref="32" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
@@ -195,16 +195,16 @@
             <Property name="text" type="java.lang.String" value="Car Registration"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField1">
+        <Component class="javax.swing.JTextField" name="seatCountSelector">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="seatCountSelectorActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField2">
+        <Component class="javax.swing.JTextField" name="carNumberPlate">
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField3">
+        <Component class="javax.swing.JTextField" name="CarTypeSelector">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField3ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CarTypeSelectorActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JComboBox" name="ownerComboBox">
@@ -246,7 +246,7 @@
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField4">
+        <Component class="javax.swing.JTextField" name="CarModel">
         </Component>
         <Component class="javax.swing.JComboBox" name="FuelTypeSelector">
           <Properties>
@@ -336,8 +336,11 @@
         </Component>
         <Component class="javax.swing.JButton" name="updateCarBtn">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Update Car"/>
+            <Property name="text" type="java.lang.String" value="Add Car"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="updateCarBtnActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton2">
           <Properties>

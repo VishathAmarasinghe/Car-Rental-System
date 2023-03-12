@@ -18,13 +18,13 @@ public class ItemModel {
     String ac_Type;
     String fuel_type;
     ImageIcon carimage;
-    int car_keyValue;
+    String car_keyValue;
 
-    public int getCar_keyValue() {
+    public String getCar_keyValue() {
         return car_keyValue;
     }
 
-    public void setCar_keyValue(int car_keyValue) {
+    public void setCar_keyValue(String car_keyValue) {
         this.car_keyValue = car_keyValue;
     }
 
@@ -76,7 +76,7 @@ public class ItemModel {
         this.carimage = carimage;
     }
 
-    public ItemModel(int car_keyValue ,String car_type, String car_model, String seat_no, String ac_Type, String fuel_type, ImageIcon carimage) {
+    public ItemModel(String car_keyValue ,String car_type, String car_model, String seat_no, String ac_Type, String fuel_type, ImageIcon carimage) {
         this.car_type = car_type;
         this.car_model = car_model;
         this.seat_no = seat_no;
