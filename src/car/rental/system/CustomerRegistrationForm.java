@@ -19,28 +19,34 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     
     String employeeLastIndex="";
     String EmployeeUpadingIndex="";
+    String customerLastIndex="";
 
     
-    public CustomerRegistrationForm() {
+    public CustomerRegistrationForm(String tableType) {
         initComponents();
-        getLastIndexEmployeeTable();
+        getLastIndexEmployeeTable(tableType);
         
         
     }
     
-    public CustomerRegistrationForm(ResultSet details,ResultSet phoneDetails){
+    public CustomerRegistrationForm(ResultSet details,ResultSet phoneDetails,String tableType){
         initComponents();
-        getLastIndexEmployeeTable();
-        SetUpdateComponents(details, phoneDetails);
+        getLastIndexEmployeeTable(tableType);
+        SetUpdateComponents(details, phoneDetails,tableType);
     }
     
     
-    private void SetUpdateComponents(ResultSet detaiSet,ResultSet phoneDetails){
+    private void SetUpdateComponents(ResultSet detaiSet,ResultSet phoneDetails,String tableType){
         try{
             
             while (detaiSet.next()) {                
                 String role=detaiSet.getString("role");
-                EmployeeUpadingIndex=detaiSet.getString("EmpID");
+                if (tableType.equalsIgnoreCase("customer")) {
+                    EmployeeUpadingIndex=detaiSet.getString("customerID");
+                }else{
+                    EmployeeUpadingIndex=detaiSet.getString("EmpID");
+                }
+                
                 
                 
                 System.out.println("EMPID UPdating "+EmployeeUpadingIndex );
@@ -67,6 +73,11 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                     RegNIC.setText(detaiSet.getString("NIC"));
                     RegTitle.setText("Update car Owner");
                     addbtnRegister.setText("Update Owner");
+                    
+                }if (role.equalsIgnoreCase("customer")) {
+                    RegNIC.setText(detaiSet.getString("NIC"));
+                    RegTitle.setText("Update Customer");
+                    addbtnRegister.setText("Update Customer");
                 }
                 
                
@@ -99,11 +110,17 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         }
     }
     
-    private void getLastIndexEmployeeTable(){
+    private void getLastIndexEmployeeTable(String peopleType){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            String slectMax="Select max(EmpID) as maxID from employee";
+            String slectMax="";
+            if (peopleType.equalsIgnoreCase("customer")) {
+                slectMax="Select max(CustomerID) as maxID from customer";
+            }else{
+                slectMax="Select max(EmpID) as maxID from employee";
+            }
+            
             PreparedStatement ps = con.prepareStatement(slectMax);
             ResultSet rs=ps.executeQuery();
             while (rs.next()) {                
@@ -123,8 +140,14 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         int currentValue=Integer.parseInt(empID.substring(1));
         int newValue=currentValue+1;
         String newGenaratedID=String.format("%03d", newValue);
-        System.out.println("new one    "+"A"+newGenaratedID);
-        return "A"+newGenaratedID;
+        if (empID.charAt(0)=='A') {
+            System.out.println("new one    "+"A"+newGenaratedID);
+            return "A"+newGenaratedID;
+        }else{
+            System.out.println("new one    "+"C"+newGenaratedID);
+            return "C"+newGenaratedID;
+        }
+        
       
     }
     
@@ -190,7 +213,18 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                             + "city=\""+city+"\",LicenceNo=\""+NIC_or_Licence+"\" where empID=\""+typeFormat[1]+"\"";
                 }
                 
-            }else{
+            }else if(dataType.equalsIgnoreCase("customer")){
+                if (typeFormat[0].equalsIgnoreCase("added")) {
+                    query="insert into customer values(\""+GeneratedIDEmp+"\",\"Customer\",\""+firstName+"\",\""+LastName+"\",\""+email+"\",\""+address1+"\",\""+address2+"\",\""+city+"\",\""+NIC_or_Licence+"\")";
+            
+                }else{
+                    System.out.println("update Custimer icon");
+                    query="update customer set FirstName=\""+firstName+"\",LastName=\""+LastName+"\",Email=\""+email+"\",Address1=\""+address1+"\",Address2=\""+address2+"\","
+                            + "city=\""+city+"\" where CustomerID=\""+typeFormat[1]+"\"";
+                }
+                
+            }
+            else{
                 
                 if (typeFormat[0].equalsIgnoreCase("added")) {
                     query="insert into employee values(\""+GeneratedIDEmp+"\",\""+dataType+"\",\""+firstName+"\",\""+LastName+"\",\""+email+"\",\""+address1+"\",\""+address2+"\",\""+city+"\","
@@ -205,15 +239,28 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
             
             System.out.println("Quary "+query);
             st.executeUpdate(query);
-            if (typeFormat[0].equalsIgnoreCase("added")) {
-                String phoneNoQuery1="insert into employeephone values(\""+GeneratedIDEmp+"\","+phoneno1+")";
-                st.executeUpdate(phoneNoQuery1);
-                 String phoneNoQuery2="insert into employeephone values(\""+GeneratedIDEmp+"\","+phoneno2+")";
-                st.executeUpdate(phoneNoQuery2);
-            }else{
-                String updatePhoneNo="update employeephone set phoneNo="+phoneno1+" where empID=\""+typeFormat[1]+"\"";
-                st.executeUpdate(updatePhoneNo);
+            if (dataType.equalsIgnoreCase("customer")) {
+                if (typeFormat[0].equalsIgnoreCase("added")) {
+                    String phoneNoQuery1="insert into customerphone values(\""+GeneratedIDEmp+"\","+phoneno1+")";
+                    st.executeUpdate(phoneNoQuery1);
+                    String phoneNoQuery2="insert into customerphone values(\""+GeneratedIDEmp+"\","+phoneno2+")";
+                    st.executeUpdate(phoneNoQuery2);
+                }else{
+                    String updatePhoneNo="update customerphone set phoneNo="+phoneno1+" where customerID=\""+typeFormat[1]+"\"";
+                    st.executeUpdate(updatePhoneNo);
             }
+            }else{
+                if (typeFormat[0].equalsIgnoreCase("added")) {
+                    String phoneNoQuery1="insert into employeephone values(\""+GeneratedIDEmp+"\","+phoneno1+")";
+                    st.executeUpdate(phoneNoQuery1);
+                    String phoneNoQuery2="insert into employeephone values(\""+GeneratedIDEmp+"\","+phoneno2+")";
+                    st.executeUpdate(phoneNoQuery2);
+                }else{
+                    String updatePhoneNo="update employeephone set phoneNo="+phoneno1+" where empID=\""+typeFormat[1]+"\"";
+                    st.executeUpdate(updatePhoneNo);
+            }
+            }
+            
             
             
             
@@ -512,10 +559,12 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
             addDataToTheTables("Cashier",updateType);
         }else if(addbtnRegister.getText().equalsIgnoreCase("Add Admin")){
             addDataToTheTables("Admin",updateType);
-            
-         
-            
-        } 
+        }else if(addbtnRegister.getText().equalsIgnoreCase("Add Customer")){
+            addDataToTheTables("customer",updateType);
+        }
+        
+        
+        
         updateType[0]="Updated";
         if (addbtnRegister.getText().equalsIgnoreCase("Update Driver")) {
             addDataToTheTables("Driver",updateType);
@@ -525,6 +574,8 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
             addDataToTheTables("Cashier",updateType);
         }else if(addbtnRegister.getText().equalsIgnoreCase("Update Owner")){
             addDataToTheTables("Owner",updateType);
+        }else if(addbtnRegister.getText().equalsIgnoreCase("Update Customer")){
+            addDataToTheTables("customer",updateType);
         }
     }//GEN-LAST:event_addbtnRegisterActionPerformed
 
@@ -565,7 +616,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CustomerRegistrationForm().setVisible(true);
+                new CustomerRegistrationForm("All").setVisible(true);
             }
         });
     }

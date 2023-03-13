@@ -211,7 +211,7 @@ public class AdminPage extends javax.swing.JFrame {
             PreparedStatement psnumbers = con.prepareStatement(singleDataPhoneNumbers);
             ResultSet rs2=psnumbers.executeQuery();
             
-            CustomerRegistrationForm form1=new CustomerRegistrationForm(rs, rs2);
+            CustomerRegistrationForm form1=new CustomerRegistrationForm(rs, rs2,"All");
             form1.setVisible(true);
             
             con.close();
@@ -964,19 +964,19 @@ public class AdminPage extends javax.swing.JFrame {
         // TODO add your handling code here:
         System.out.println(employeeTypeSelector.getSelectedIndex());
         if (employeeTypeSelector.getSelectedIndex()==3) {
-            CustomerRegistrationForm c1=new CustomerRegistrationForm();
+            CustomerRegistrationForm c1=new CustomerRegistrationForm("All");
             c1.SetRegistrationFrameTitle("Car Owner Registration", "Add Owner");
             c1.setVisible(true);
         }else if (employeeTypeSelector.getSelectedIndex()==2) {
-            CustomerRegistrationForm c1=new CustomerRegistrationForm();
+            CustomerRegistrationForm c1=new CustomerRegistrationForm("All");
             c1.SetRegistrationFrameTitle("Driver Registration", "Add Driver");
             c1.setVisible(true);
         }else if (employeeTypeSelector.getSelectedIndex()==1) {
-            CustomerRegistrationForm c1=new CustomerRegistrationForm();
+            CustomerRegistrationForm c1=new CustomerRegistrationForm("All");
             c1.SetRegistrationFrameTitle("Cashier Registration", "Add Cashier");
             c1.setVisible(true);
         }else if (employeeTypeSelector.getSelectedIndex()==0) {
-            CustomerRegistrationForm c1=new CustomerRegistrationForm();
+            CustomerRegistrationForm c1=new CustomerRegistrationForm("All");
             c1.SetRegistrationFrameTitle("Admin Registration", "Add Admin");
             c1.setVisible(true);
         }

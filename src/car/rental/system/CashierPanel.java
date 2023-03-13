@@ -4,6 +4,12 @@
  */
 package car.rental.system;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import raven.cell.TableActionCellEditor;
 import raven.cell.TableActionCellRender;
@@ -18,21 +24,39 @@ public class CashierPanel extends javax.swing.JFrame {
     /**
      * Creates new form AdminPage
      */
+    
+    private String clickedIndexID="";
+    private String currentPageHolder="dashboardPage";
     public CashierPanel() {
         initComponents();
+        loadOwnerData("All");
         TableActionEvent event = new TableActionEvent() {
             @Override
             public void onEdit(int row) {
                 System.out.println("Edit row : " + row);
+                if (customerTable.isEditing()) {
+                    editSelectedCustomerData(row);
+                }else if(PendingReservationsTable.isEditing()){
+//                    System.out.println("Car table edit check   "+CarTable.isEditing());
+//                    editSelectedCustomerData(row);
+                }else if(ProceededReservationTable.isEditing()){
+                    System.out.println("edit dis available");
+//                    editSelectedDiscountData(row);
+                }
             }
 
             @Override
             public void onDelete(int row) {
                 if (customerTable.isEditing()) {
                     customerTable.getCellEditor().stopCellEditing();
+                System.out.println("Delete row : " + row);
                 }
-                DefaultTableModel model = (DefaultTableModel) customerTable.getModel();
-                model.removeRow(row);
+                
+               int resultofDelete= JOptionPane.showConfirmDialog(null,"Are you sure that you want to delete record","Deleting Confirmation",
+                       JOptionPane.YES_NO_OPTION);
+                if (resultofDelete==0) {
+                    deleteSelectedRaw(row);
+                }
             }
 
         };
@@ -40,14 +64,142 @@ public class CashierPanel extends javax.swing.JFrame {
         PendingReservationsTable.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
         PendingReservationsTable.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
         
-       ProceededReservations.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
-       ProceededReservations.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
+       ProceededReservationTable.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
+       ProceededReservationTable.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
         
       
         
-        customerTable.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
-        customerTable.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
+        customerTable.getColumnModel().getColumn(7).setCellRenderer(new TableActionCellRender());
+        customerTable.getColumnModel().getColumn(7).setCellEditor(new TableActionCellEditor(event));
     }
+    
+    
+    
+    
+    
+    
+    private void loadOwnerData(String searchType){
+        try {
+            DefaultTableModel customerTableLoad=(DefaultTableModel)customerTable.getModel();
+            customerTableLoad.getDataVector().removeAllElements();
+            customerTableLoad.fireTableDataChanged();
+            
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String s="";
+            if (searchType.equalsIgnoreCase("all")) {
+                s="select CustomerID, role, firstname,lastname,NIC,email,city from customer";
+            }else{
+                s="select customerID,role, firstname,lastname,NIC,email,city from customer where role=\""+searchType+"\"";
+            }
+            
+            PreparedStatement ps = con.prepareStatement(s);
+            ResultSet rs=ps.executeQuery();
+            while (rs.next()) {                
+                String empID=rs.getString("customerID");
+                System.out.println("Substring check "+empID.substring(0,4));
+                String sd="select phoneNo from customerphone where customerID=\""+empID+"\"";
+                PreparedStatement psd = con.prepareStatement(sd);
+                ResultSet numberResult=psd.executeQuery();
+                String[] numberArray=new String[2];
+                int count=0;
+                while (numberResult.next()) {                    
+                    numberArray[count]=numberResult.getString("phoneNo");
+                    count++;
+                }
+                psd.close();
+                numberResult.close();
+                String role=rs.getString("role");
+                String Fname=rs.getString("FirstName");
+                String Lname=rs.getString("lastName");
+                String NICno=rs.getString("NIC");
+                String email=rs.getString("Email");
+                String city=rs.getString("city");
+               
+                String[] ownerData={empID,Fname,Lname,role,NICno,email,city,numberArray[0],numberArray[1]};
+                
+                customerTableLoad.addRow(ownerData);
+
+            }
+            rs.close();
+            ps.close();
+            con.close();
+ 
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    private void editSelectedCustomerData(int raw){
+        DefaultTableModel ownerTableclicked=(DefaultTableModel)customerTable.getModel();
+        clickedIndexID=(String) ownerTableclicked.getValueAt(raw, 0);
+        try {
+            
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String singleData="select * from customer where customerID=\""+clickedIndexID+"\"";
+            PreparedStatement ps = con.prepareStatement(singleData);
+            ResultSet rs=ps.executeQuery();
+            
+            String singleDataPhoneNumbers="select * from customerphone where customerID=\""+clickedIndexID+"\"";
+            PreparedStatement psnumbers = con.prepareStatement(singleDataPhoneNumbers);
+            ResultSet rs2=psnumbers.executeQuery();
+            
+            CustomerRegistrationForm form1=new CustomerRegistrationForm(rs, rs2,"customer");
+            form1.setVisible(true);
+            
+            con.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    
+    
+    
+    private void deleteSelectedRaw(int rawNo){
+        try {
+
+        DefaultTableModel customerTableModel=(DefaultTableModel) customerTable.getModel();
+        DefaultTableModel proceedReservationTableClicked=(DefaultTableModel)ProceededReservationTable.getModel();
+        DefaultTableModel PendingReservationTableClicked=(DefaultTableModel)PendingReservationsTable.getModel();
+        
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+        
+        String deletePhoneNoRaw="";
+        Statement st=con.createStatement();
+        System.out.println("Clicked indez  "+clickedIndexID);
+            
+        if (currentPageHolder.equalsIgnoreCase("customerPage")) {
+                    clickedIndexID=(String) customerTableModel.getValueAt(rawNo, 0);
+                    deletePhoneNoRaw="delete from customerphone where customerId=\""+clickedIndexID+"\"";
+                    st.executeUpdate(deletePhoneNoRaw);
+                    String deleteRaw="delete from customer where customerId=\""+clickedIndexID+"\"";
+                    st.executeUpdate(deleteRaw);
+                    customerTableModel.removeRow(rawNo);
+            
+        }else if(currentPageHolder.equalsIgnoreCase("ProceedReservationPage")){
+                    clickedIndexID=(String) proceedReservationTableClicked.getValueAt(rawNo, 0);
+                    
+                    proceedReservationTableClicked.removeRow(rawNo);
+        }
+        else if(currentPageHolder.equalsIgnoreCase("PendingReservationPage")){
+                    clickedIndexID=(String) PendingReservationTableClicked.getValueAt(rawNo, 0);
+//                    deletePhoneNoRaw="delete from discount where discountID=\""+clickedIndexID+"\"";
+//                    st.executeUpdate(deletePhoneNoRaw);
+//                    PendingReservationTableClicked.removeRow(rawNo);
+        }
+         
+        con.close();
+        } catch (Exception e) {
+            System.out.println("Error from casherPanel 154  "+e);
+        }
+        
+    }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -87,7 +239,7 @@ public class CashierPanel extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         ProceedReservationPanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        ProceededReservations = new javax.swing.JTable();
+        ProceededReservationTable = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         CashierDashboard = new javax.swing.JButton();
@@ -314,19 +466,20 @@ public class CashierPanel extends javax.swing.JFrame {
             }
         });
 
+        customerTable.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         customerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "CustomerID", "Role", "First Name", "LastName", "NIC", "Email", "City", "Settings"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, true
+                false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -334,8 +487,13 @@ public class CashierPanel extends javax.swing.JFrame {
             }
         });
         customerTable.setRowHeight(30);
-        customerTable.setSelectionBackground(new java.awt.Color(153, 255, 153));
+        customerTable.setSelectionBackground(new java.awt.Color(28, 78, 128));
         jScrollPane4.setViewportView(customerTable);
+        if (customerTable.getColumnModel().getColumnCount() > 0) {
+            customerTable.getColumnModel().getColumn(5).setResizable(false);
+            customerTable.getColumnModel().getColumn(5).setPreferredWidth(150);
+            customerTable.getColumnModel().getColumn(7).setResizable(false);
+        }
 
         jLabel4.setForeground(new java.awt.Color(0, 204, 204));
         jLabel4.setText("Customer panel");
@@ -432,7 +590,7 @@ public class CashierPanel extends javax.swing.JFrame {
 
         ProceedReservationPanel.setBackground(new java.awt.Color(241, 241, 241));
 
-        ProceededReservations.setModel(new javax.swing.table.DefaultTableModel(
+        ProceededReservationTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -451,9 +609,9 @@ public class CashierPanel extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        ProceededReservations.setRowHeight(30);
-        ProceededReservations.setSelectionBackground(new java.awt.Color(153, 255, 153));
-        jScrollPane3.setViewportView(ProceededReservations);
+        ProceededReservationTable.setRowHeight(30);
+        ProceededReservationTable.setSelectionBackground(new java.awt.Color(153, 255, 153));
+        jScrollPane3.setViewportView(ProceededReservationTable);
 
         jLabel3.setForeground(new java.awt.Color(0, 204, 204));
         jLabel3.setText("Proceeded Reservations");
@@ -580,22 +738,27 @@ public class CashierPanel extends javax.swing.JFrame {
 
     private void CashierDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CashierDashboardActionPerformed
         // TODO add your handling code here:
+        currentPageHolder="dashboardPage";
         jTabbedPane1.setSelectedIndex(0);
         
     }//GEN-LAST:event_CashierDashboardActionPerformed
 
     private void addCustomerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCustomerBtnActionPerformed
         // TODO add your handling code here:
+        currentPageHolder="customerPage";
+        loadOwnerData("All");
         jTabbedPane1.setSelectedIndex(1);
     }//GEN-LAST:event_addCustomerBtnActionPerformed
 
     private void proceedReservationBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proceedReservationBtnActionPerformed
         // TODO add your handling code here:
+        currentPageHolder="ProceedReservationPage";
         jTabbedPane1.setSelectedIndex(3);
     }//GEN-LAST:event_proceedReservationBtnActionPerformed
 
     private void pendingreservationsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pendingreservationsBtnActionPerformed
         jTabbedPane1.setSelectedIndex(2);
+        currentPageHolder="PendingReservationPage";
         // TODO add your handling code here:
     }//GEN-LAST:event_pendingreservationsBtnActionPerformed
 
@@ -605,7 +768,7 @@ public class CashierPanel extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        CustomerRegistrationForm customer1=new CustomerRegistrationForm();
+        CustomerRegistrationForm customer1=new CustomerRegistrationForm("customer");
         customer1.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -653,7 +816,7 @@ public class CashierPanel extends javax.swing.JFrame {
     private javax.swing.JPanel PendingReservationsPanel;
     private javax.swing.JTable PendingReservationsTable;
     private javax.swing.JPanel ProceedReservationPanel;
-    private javax.swing.JTable ProceededReservations;
+    private javax.swing.JTable ProceededReservationTable;
     private javax.swing.JPanel SidepanelAdminboard;
     private javax.swing.JButton addCustomerBtn;
     private javax.swing.JPanel customerAddingPanel;
