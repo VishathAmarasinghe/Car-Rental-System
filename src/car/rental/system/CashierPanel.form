@@ -603,11 +603,14 @@
                 <Component class="javax.swing.JTable" name="PendingReservationsTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="4" rowCount="4">
-                        <Column editable="false" title="Title 1" type="java.lang.Object"/>
-                        <Column editable="false" title="Title 2" type="java.lang.Object"/>
-                        <Column editable="false" title="Title 3" type="java.lang.Object"/>
-                        <Column editable="true" title="Title 4" type="java.lang.Object"/>
+                      <Table columnCount="7" rowCount="4">
+                        <Column editable="false" title="ReservationID" type="java.lang.Object"/>
+                        <Column editable="false" title="PickedUp Date" type="java.lang.Object"/>
+                        <Column editable="false" title="Drop Off Date" type="java.lang.Object"/>
+                        <Column editable="false" title="Vehical Number" type="java.lang.Object"/>
+                        <Column editable="false" title="Driver Request" type="java.lang.Object"/>
+                        <Column editable="false" title="Customer Name" type="java.lang.Object"/>
+                        <Column editable="false" title="Settings" type="java.lang.Object"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -632,11 +635,26 @@
                           <Editor/>
                           <Renderer/>
                         </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="120" resizable="false">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
                       </TableColumnModel>
                     </Property>
                     <Property name="rowHeight" type="int" value="30"/>
                     <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="99" green="ff" red="99" type="rgb"/>
+                      <Color blue="80" green="4e" red="1c" type="rgb"/>
                     </Property>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
@@ -740,7 +758,7 @@
                     </Property>
                     <Property name="rowHeight" type="int" value="30"/>
                     <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="99" green="ff" red="99" type="rgb"/>
+                      <Color blue="80" green="4e" red="1c" type="rgb"/>
                     </Property>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>

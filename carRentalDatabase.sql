@@ -62,3 +62,27 @@ alter table cars drop column OwnerID;
 alter table cars modify OwnerID varchar(20) ;
 
 alter table cars add foreign key (OwnerID) references employee(EmpID);
+
+delete from cars where carNumber="GQ2525";
+
+alter table customerphone add foreign key (customerID) references customer(customerID);
+
+describe employee;
+
+alter table customer modify firstname varchar(20);
+
+describe cars;
+
+select count(carNumber) from cars;
+
+alter table cars add primary key (carNumber);
+
+alter table reservation add foreign key (vehicalNumber) references cars(CarNumber);
+
+select count(cars.carNumber) from cars where carNumber not in
+ (select VehicalNumber from reservation 
+ where pickedUpdate between "2023-03-15" and "2023-03-18" and dropOffdate between "2023-13-15" and "2023-03-18" ) and vehicalType="Car" ;
+ 
+ 
+ select VehicalNumber from reservation 
+ where pickedUpdate between "2023-03-15" and "2023-03-18" and dropOffdate between "2023-13-15" and "2023-03-18" ;

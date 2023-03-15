@@ -23,6 +23,10 @@ import com.raven.datechooser.EventDateChooser;
 import com.raven.datechooser.SelectedAction;
 import com.raven.datechooser.SelectedDate;
 import java.awt.Color;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Akila
@@ -38,6 +42,7 @@ public class CustomSearch1 extends javax.swing.JFrame {
     private ResultSet rs;
     private Connection con;
     private PreparedStatement ps;
+    String selectedCarNumer="";
 
     public EventHandle getEvent() {
         return event;
@@ -68,7 +73,6 @@ public class CustomSearch1 extends javax.swing.JFrame {
                 }
             }
         });
-        test();
     }
     
     public void addItem(ItemModel data){
@@ -106,6 +110,7 @@ public class CustomSearch1 extends javax.swing.JFrame {
     public void RequestCardEditor(ItemModel data){
         try{
             String query="Select * from cars where CarNumber=\""+data.car_keyValue+"\"";
+            selectedCarNumer=data.car_keyValue;
             ResultSet result =databaseExecuation(query);
             result.next();
             String foundType=result.getString(1);
@@ -121,6 +126,12 @@ public class CustomSearch1 extends javax.swing.JFrame {
             SeatCount2.setText(data.seat_no);
             AcTypeRequestCard.setText(data.ac_Type);
             FuelTypeRequestCard.setText(data.fuel_type);
+            
+            individucalComPickupDate.setText(startDate.getText());
+            individuvalComDropOffDate.setText(endDate.getText());
+            
+            withOutDriverRadio.setSelected(true);
+            
         }catch (Exception e){
             System.out.println("DB Error req card : "+e);
         }
@@ -128,11 +139,28 @@ public class CustomSearch1 extends javax.swing.JFrame {
     
     
     public void test(){
+        
+        
+        cardContainer.removeAll();
+        cardContainer.revalidate();
+        cardContainer.repaint();
                 
               System.out.println("added");
         try {
+            
+            String pickupDate=dateChanger(startDate.getText());
+            String droupOutDate=dateChanger(endDate.getText());
+            
+            
+            System.out.println("start Date "+pickupDate);
+            System.out.println("end date "+droupOutDate);
+            System.out.println("type vehical "+vehicalTypeSearchBox.getSelectedItem().toString());
+            
+            
+            
             cardContainer.setLayout(new  WrapLayout());
-            String s="Select * from cars";
+            String s=   "select * from cars where carNumber not in (select VehicalNumber from reservation where pickedUpdate between \""+pickupDate+"\" "
+                    + "and \""+droupOutDate+"\" and dropOffdate between \""+pickupDate+"\"and \""+droupOutDate+"\") and vehicalType= \""+vehicalTypeSearchBox.getSelectedItem().toString()+"\"";
             ResultSet rs=databaseExecuation(s);
             while(rs.next()) {    
 //                Card c3=new Card();
@@ -162,12 +190,17 @@ public class CustomSearch1 extends javax.swing.JFrame {
                 addItem(new ItemModel(car_keyValue,car_type,car_model,seat_no,ac_Type,fuel_type,newimage));
                 
             }
-            rs.close();
-            ps.close();
-            con.close();
+            
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("text runner "+e);
         }        
+    }
+    
+    private String dateChanger(String date){
+        String day=date.substring(0,2);
+        String month=date.substring(3,5);
+        String year=date.substring(6);
+        return year+"-"+month+"-"+day;
     }
     
     public void changeStateOfJTabbedPane(){
@@ -185,6 +218,9 @@ public class CustomSearch1 extends javax.swing.JFrame {
 
         endDateChooser = new com.raven.datechooser.DateChooser();
         startDateChooser = new com.raven.datechooser.DateChooser();
+        driverbtngroup = new javax.swing.ButtonGroup();
+        jPanel6 = new javax.swing.JPanel();
+        jButton2 = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -194,8 +230,7 @@ public class CustomSearch1 extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         endDate = new javax.swing.JTextField();
         startDate = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jButton2 = new javax.swing.JButton();
+        vehicalTypeSearchBox = new javax.swing.JComboBox<>();
         SearchBarImage = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -210,10 +245,10 @@ public class CustomSearch1 extends javax.swing.JFrame {
         CarName = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        individuvalComDropOffDate = new javax.swing.JLabel();
+        individucalComPickupDate = new javax.swing.JLabel();
+        withOutDriverRadio = new javax.swing.JRadioButton();
+        withDriverRadio = new javax.swing.JRadioButton();
         jButton1 = new javax.swing.JButton();
         FuelTypeRequestCard = new javax.swing.JLabel();
         SeatCount2 = new javax.swing.JLabel();
@@ -223,7 +258,7 @@ public class CustomSearch1 extends javax.swing.JFrame {
         jLabel16 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        dummyValue = new javax.swing.JTextField();
         jLabel19 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
@@ -233,12 +268,47 @@ public class CustomSearch1 extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jPanel6.setBackground(new java.awt.Color(255, 255, 255));
+
+        jButton2.setBackground(new java.awt.Color(217, 241, 255));
+        jButton2.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(0, 0, 0));
+        jButton2.setText("LOGIN");
+        jButton2.setBorder(null);
+        jButton2.setBorderPainted(false);
+        jButton2.setFocusPainted(false);
+        jButton2.setFocusable(false);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addContainerGap(958, Short.MAX_VALUE)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addContainerGap(14, Short.MAX_VALUE)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        getContentPane().add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1130, 50));
+
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setFont(new java.awt.Font("Segoe UI Variable", 1, 36)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("Create Your own travel comfort!");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 130, 540, 50));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 110, 540, 50));
 
         jLabel9.setForeground(new java.awt.Color(0, 0, 0));
         jLabel9.setText("Vehical Type");
@@ -276,23 +346,8 @@ public class CustomSearch1 extends javax.swing.JFrame {
         });
         jPanel1.add(startDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 230, 220, 40));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Car", "Van" }));
-        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 230, 130, 40));
-
-        jButton2.setBackground(new java.awt.Color(217, 241, 255));
-        jButton2.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(0, 0, 0));
-        jButton2.setText("LOGIN");
-        jButton2.setBorder(null);
-        jButton2.setBorderPainted(false);
-        jButton2.setFocusPainted(false);
-        jButton2.setFocusable(false);
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 20, 140, 30));
+        vehicalTypeSearchBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Car", "Van" }));
+        jPanel1.add(vehicalTypeSearchBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 230, 130, 40));
 
         SearchBarImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/searchform.png"))); // NOI18N
         jPanel1.add(SearchBarImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
@@ -410,21 +465,28 @@ public class CustomSearch1 extends javax.swing.JFrame {
         jLabel6.setForeground(new java.awt.Color(0, 0, 0));
         jLabel6.setText("Drop Off Date");
 
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel3.setText("25th October 2023");
+        individuvalComDropOffDate.setForeground(new java.awt.Color(0, 0, 0));
+        individuvalComDropOffDate.setText("25th October 2023");
 
-        jLabel7.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel7.setText("25th October 2023");
+        individucalComPickupDate.setForeground(new java.awt.Color(0, 0, 0));
+        individucalComPickupDate.setText("25th October 2023");
 
-        jRadioButton1.setForeground(new java.awt.Color(0, 0, 0));
-        jRadioButton1.setText("Without Driver");
+        driverbtngroup.add(withOutDriverRadio);
+        withOutDriverRadio.setForeground(new java.awt.Color(0, 0, 0));
+        withOutDriverRadio.setText("Without Driver");
 
-        jRadioButton2.setForeground(new java.awt.Color(0, 0, 0));
-        jRadioButton2.setText("With Driver");
+        driverbtngroup.add(withDriverRadio);
+        withDriverRadio.setForeground(new java.awt.Color(0, 0, 0));
+        withDriverRadio.setText("With Driver");
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(0, 0, 0));
         jButton1.setText("Send Booking Request");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         FuelTypeRequestCard.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         FuelTypeRequestCard.setForeground(new java.awt.Color(0, 0, 0));
@@ -458,9 +520,9 @@ public class CustomSearch1 extends javax.swing.JFrame {
         jLabel18.setForeground(new java.awt.Color(0, 0, 0));
         jLabel18.setText("Total Approximate Charge");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        dummyValue.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                dummyValueActionPerformed(evt);
             }
         });
 
@@ -497,11 +559,11 @@ public class CustomSearch1 extends javax.swing.JFrame {
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addGroup(jPanel4Layout.createSequentialGroup()
-                                    .addComponent(jRadioButton2)
+                                    .addComponent(withDriverRadio)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jRadioButton1))
+                                    .addComponent(withOutDriverRadio))
                                 .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(dummyValue, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
                                     .addGap(2, 2, 2)
                                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -512,7 +574,7 @@ public class CustomSearch1 extends javax.swing.JFrame {
                                         .addComponent(jLabel21)
                                         .addGroup(jPanel4Layout.createSequentialGroup()
                                             .addGap(2, 2, 2)
-                                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(individucalComPickupDate, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addComponent(jLabel16))
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
                                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -520,7 +582,7 @@ public class CustomSearch1 extends javax.swing.JFrame {
                                             .addComponent(jLabel20, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                             .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                             .addComponent(jLabel22, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(individuvalComDropOffDate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -554,12 +616,12 @@ public class CustomSearch1 extends javax.swing.JFrame {
                     .addComponent(jLabel6))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel3))
+                    .addComponent(individucalComPickupDate)
+                    .addComponent(individuvalComDropOffDate))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton2))
+                    .addComponent(withOutDriverRadio)
+                    .addComponent(withDriverRadio))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
@@ -579,7 +641,7 @@ public class CustomSearch1 extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel19)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(dummyValue, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31))
@@ -623,9 +685,9 @@ public class CustomSearch1 extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void dummyValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dummyValueActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_dummyValueActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
@@ -658,7 +720,45 @@ public class CustomSearch1 extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        test();
+        jTabbedPane1.setSelectedIndex(1);
+        
+
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        
+        withDriverRadio.setActionCommand("yes");
+        withOutDriverRadio.setActionCommand("no");
+        
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con3 = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String querys="insert into reservation(ReservationID,ReservationStatus,pickedUpDate,dropOffDate,VehicalNumber,DummyName,DriverStatus) values(?,?,?,?,?,?,?)";
+            PreparedStatement ps3=con3.prepareStatement(querys);
+            
+            GenerateKeys g1=new GenerateKeys();
+            
+            ps3.setString(1,g1.getGeneratedNewID("reserve"));
+            ps3.setString(2, "pending");
+            ps3.setString(3, dateChanger(startDate.getText()));
+            ps3.setString(4, dateChanger(endDate.getText()));
+            ps3.setString(5, selectedCarNumer);
+            ps3.setString(6, dummyValue.getText());
+            ps3.setString(7, driverbtngroup.getSelection().getActionCommand());
+            
+            
+            ps3.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Request Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
+            
+            ps3.close();
+            con3.close();
+            jTabbedPane1.setSelectedIndex(0);
+        } catch (Exception e) {
+            System.out.println("DB Error : "+e);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -706,12 +806,15 @@ public class CustomSearch1 extends javax.swing.JFrame {
     private javax.swing.JLabel SearchBarImage;
     private javax.swing.JLabel SeatCount2;
     private javax.swing.JPanel cardContainer;
+    private javax.swing.ButtonGroup driverbtngroup;
+    private javax.swing.JTextField dummyValue;
     private javax.swing.JTextField endDate;
     private com.raven.datechooser.DateChooser endDateChooser;
+    private javax.swing.JLabel individucalComPickupDate;
+    private javax.swing.JLabel individuvalComDropOffDate;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel14;
@@ -724,11 +827,9 @@ public class CustomSearch1 extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -736,12 +837,13 @@ public class CustomSearch1 extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField startDate;
     private com.raven.datechooser.DateChooser startDateChooser;
+    private javax.swing.JComboBox<String> vehicalTypeSearchBox;
+    private javax.swing.JRadioButton withDriverRadio;
+    private javax.swing.JRadioButton withOutDriverRadio;
     // End of variables declaration//GEN-END:variables
 }

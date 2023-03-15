@@ -4,17 +4,38 @@
  */
 package car.rental.system;
 
+import successBtn.TableActionCellBtnEdit;
+import successBtn.TableActionbtnCellRender;
+import successBtn.TableBtnActionEvent;
+
 /**
  *
  * @author Akila
  */
 public class checkform extends javax.swing.JFrame {
 
-    /**
-     * Creates new form checkform
-     */
+
+
     public checkform() {
         initComponents();
+        TableBtnActionEvent event=new TableBtnActionEvent() {
+            @Override
+            public void onBtnEdit(int row) {
+                System.out.println("btn Edit Row "+row);
+            }
+
+            @Override
+            public void onBtnDelete(int row) {
+                if (abc.isEditing()) {
+                    abc.getCellEditor().stopCellEditing();
+                }
+            }
+        };
+        
+        abc.getColumnModel().getColumn(3).setCellRenderer(new TableActionbtnCellRender());
+        abc.getColumnModel().getColumn(3).setCellEditor(new TableActionCellBtnEdit(event));
+        
+        
     }
 
     /**
@@ -26,32 +47,54 @@ public class checkform extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        abc = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/AC.png"))); // NOI18N
+        abc.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        abc.setRowHeight(30);
+        jScrollPane1.setViewportView(abc);
+        if (abc.getColumnModel().getColumnCount() > 0) {
+            abc.getColumnModel().getColumn(2).setResizable(false);
+            abc.getColumnModel().getColumn(3).setResizable(false);
+            abc.getColumnModel().getColumn(3).setPreferredWidth(25);
+        }
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 688, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jLabel1)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(93, 93, 93)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 949, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(111, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 451, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jLabel1)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(98, 98, 98)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(107, Short.MAX_VALUE))
         );
 
         pack();
@@ -93,6 +136,7 @@ public class checkform extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JTable abc;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

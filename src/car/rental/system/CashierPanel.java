@@ -14,6 +14,9 @@ import javax.swing.table.DefaultTableModel;
 import raven.cell.TableActionCellEditor;
 import raven.cell.TableActionCellRender;
 import raven.cell.TableActionEvent;
+import successBtn.TableActionCellBtnEdit;
+import successBtn.TableActionbtnCellRender;
+import successBtn.TableBtnActionEvent;
 
 /**
  *
@@ -30,6 +33,7 @@ public class CashierPanel extends javax.swing.JFrame {
     public CashierPanel() {
         initComponents();
         loadOwnerData("All");
+        loadPendingData();
         TableActionEvent event = new TableActionEvent() {
             @Override
             public void onEdit(int row) {
@@ -60,9 +64,22 @@ public class CashierPanel extends javax.swing.JFrame {
             }
 
         };
+        TableBtnActionEvent event1=new TableBtnActionEvent() {
+            @Override
+            public void onBtnEdit(int row) {
+                System.out.println("Proceed CLidked");
+            }
+
+            @Override
+            public void onBtnDelete(int row) {
+                if (PendingReservationsTable.isEditing()) {
+                    PendingReservationsTable.getCellEditor().stopCellEditing();
+                }
+            }
+        };
         
-        PendingReservationsTable.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
-        PendingReservationsTable.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
+        PendingReservationsTable.getColumnModel().getColumn(6).setCellRenderer(new TableActionbtnCellRender());
+        PendingReservationsTable.getColumnModel().getColumn(6).setCellEditor(new TableActionCellBtnEdit(event1));
         
        ProceededReservationTable.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
        ProceededReservationTable.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
@@ -119,6 +136,44 @@ public class CashierPanel extends javax.swing.JFrame {
                 String[] ownerData={empID,Fname,Lname,role,NICno,email,city,numberArray[0],numberArray[1]};
                 
                 customerTableLoad.addRow(ownerData);
+
+            }
+            rs.close();
+            ps.close();
+            con.close();
+ 
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    
+    private void loadPendingData(){
+        try {
+            DefaultTableModel pendingTableLoad=(DefaultTableModel)PendingReservationsTable.getModel();
+            pendingTableLoad.getDataVector().removeAllElements();
+            pendingTableLoad.fireTableDataChanged();
+            
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String s="select * from reservation where ReservationStatus=\"pending\" ";
+           
+            
+            PreparedStatement ps = con.prepareStatement(s);
+            ResultSet rs=ps.executeQuery();
+            while (rs.next()) {                
+                String reserveID=rs.getString("ReservationID");
+                
+                String pickedUpdate=rs.getString("PickedUpDate");
+                String dropOffDate=rs.getString("DropOffDate");
+                String VehicalNumer=rs.getString("VehicalNumber");
+                String dummyCustName=rs.getString("DummyName");
+                String driverRequest=rs.getString("DriverStatus");
+                
+               
+                String[] ownerData={reserveID,dropOffDate,pickedUpdate,VehicalNumer,driverRequest,dummyCustName};
+                
+                pendingTableLoad.addRow(ownerData);
 
             }
             rs.close();
@@ -539,17 +594,17 @@ public class CashierPanel extends javax.swing.JFrame {
 
         PendingReservationsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ReservationID", "PickedUp Date", "Drop Off Date", "Vehical Number", "Driver Request", "Customer Name", "Settings"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, true
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -557,8 +612,12 @@ public class CashierPanel extends javax.swing.JFrame {
             }
         });
         PendingReservationsTable.setRowHeight(30);
-        PendingReservationsTable.setSelectionBackground(new java.awt.Color(153, 255, 153));
+        PendingReservationsTable.setSelectionBackground(new java.awt.Color(28, 78, 128));
         jScrollPane5.setViewportView(PendingReservationsTable);
+        if (PendingReservationsTable.getColumnModel().getColumnCount() > 0) {
+            PendingReservationsTable.getColumnModel().getColumn(6).setResizable(false);
+            PendingReservationsTable.getColumnModel().getColumn(6).setPreferredWidth(120);
+        }
 
         jLabel5.setForeground(new java.awt.Color(0, 204, 204));
         jLabel5.setText("PendingReservations");
@@ -610,7 +669,7 @@ public class CashierPanel extends javax.swing.JFrame {
             }
         });
         ProceededReservationTable.setRowHeight(30);
-        ProceededReservationTable.setSelectionBackground(new java.awt.Color(153, 255, 153));
+        ProceededReservationTable.setSelectionBackground(new java.awt.Color(28, 78, 128));
         jScrollPane3.setViewportView(ProceededReservationTable);
 
         jLabel3.setForeground(new java.awt.Color(0, 204, 204));
