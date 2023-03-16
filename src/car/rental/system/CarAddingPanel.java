@@ -120,7 +120,7 @@ public class CarAddingPanel extends javax.swing.JFrame {
             while (CarResult.next()) {        
                 previousCarNumber=CarResult.getString("CarNumber");
 //                carNumberPlate.setText(CarResult.getString("CarNumber"));
-                carNumberPlate.disable();
+                carNumberPlate.setEditable(false);
                 
                 CarTypeSelector.setText(CarResult.getString("CarType"));
                 CarModel.setText(CarResult.getString("CarModel"));

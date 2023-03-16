@@ -21,10 +21,12 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     String EmployeeUpadingIndex="";
     String customerLastIndex="";
 
+
     
     public CustomerRegistrationForm(String tableType) {
         initComponents();
         getLastIndexEmployeeTable(tableType);
+
         
         
     }
@@ -33,6 +35,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         initComponents();
         getLastIndexEmployeeTable(tableType);
         SetUpdateComponents(details, phoneDetails,tableType);
+  
     }
     
     
@@ -275,6 +278,8 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
             System.out.println("Error from 218 "+e);
         }
     }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -577,6 +582,12 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         }else if(addbtnRegister.getText().equalsIgnoreCase("Update Customer")){
             addDataToTheTables("customer",updateType);
         }
+        
+//        changeverificationStatus();
+          Bill.verificationStatus=true;
+          Bill abc=new Bill();
+          abc.changeverificationStatus();
+        
     }//GEN-LAST:event_addbtnRegisterActionPerformed
 
     private void CustomerAddingCancelationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CustomerAddingCancelationActionPerformed
