@@ -586,7 +586,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
 //        changeverificationStatus();
           Bill.verificationStatus=true;
           Bill abc=new Bill();
-          abc.changeverificationStatus();
+         
         
     }//GEN-LAST:event_addbtnRegisterActionPerformed
 

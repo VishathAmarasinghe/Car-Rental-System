@@ -27,6 +27,7 @@ public class btnContainer extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 chageTextColour();
+                System.out.println("abc abc ab cba c");
                 event.onBtnEdit(row);
             }
             

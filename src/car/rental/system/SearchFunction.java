@@ -18,6 +18,8 @@ public class SearchFunction {
     private Connection con;
     
    public String[] getSearchedCustomerName(String searchData){
+       
+       System.out.println("searched Name "+searchData);
         
         String[] result={null,null,null,null,"",""};
         
@@ -42,7 +44,7 @@ public class SearchFunction {
                     break;  
                                     }
                 }else{
-                    ResultSet result1=checkSearCustomer("customer", "CustomerID", searchData);
+                    ResultSet result1=checkSearCustomer("customer", searchfeilds[i], searchData);
                 
                 if (result1!=null) {
                     

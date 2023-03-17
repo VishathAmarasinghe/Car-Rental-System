@@ -67,7 +67,8 @@ public class CashierPanel extends javax.swing.JFrame {
         TableBtnActionEvent event1=new TableBtnActionEvent() {
             @Override
             public void onBtnEdit(int row) {
-                System.out.println("Proceed CLidked");
+                System.out.println("Proceed CLidked "+row);
+                editSelectedPendingTable(row);
             }
 
             @Override
@@ -90,6 +91,28 @@ public class CashierPanel extends javax.swing.JFrame {
         customerTable.getColumnModel().getColumn(7).setCellEditor(new TableActionCellEditor(event));
     }
     
+    
+    private void editSelectedPendingTable(int raw){
+        DefaultTableModel pendingTableClicked=(DefaultTableModel)PendingReservationsTable.getModel();
+        clickedIndexID=(String) pendingTableClicked.getValueAt(raw, 0);
+        try {
+            
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String singleData="select * from reservation where reservationID=\""+clickedIndexID+"\"";
+            PreparedStatement ps = con.prepareStatement(singleData);
+            ResultSet rs=ps.executeQuery();
+            
+           
+            Bill billrender=new Bill(rs);
+            billrender.setVisible(true);
+            
+            con.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
     
     
     
@@ -604,7 +627,7 @@ public class CashierPanel extends javax.swing.JFrame {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
