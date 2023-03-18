@@ -30,6 +30,8 @@ public class CashierPanel extends javax.swing.JFrame {
     
     private String clickedIndexID="";
     private String currentPageHolder="dashboardPage";
+    
+    
     public CashierPanel() {
         initComponents();
         loadOwnerData("All");

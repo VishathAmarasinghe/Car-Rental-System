@@ -27,6 +27,8 @@ public class GenerateKeys {
                 slectMax="Select max(EmpID) as maxID from employee";
             }else if (peopleType.equalsIgnoreCase("reserve")){
                 slectMax="Select max(ReservationID) as maxID from reservation";
+            }else if (peopleType.equalsIgnoreCase("bill")){
+                slectMax="Select max(BillNo) as maxID from bill";
             }
             
             PreparedStatement ps = con.prepareStatement(slectMax);
@@ -58,6 +60,8 @@ public class GenerateKeys {
             return "C"+newGenaratedID;
         }else if (empID.charAt(0)=='R'){
             return "R"+newGenaratedID;
+        }else if (empID.charAt(0)=='B'){
+            return "B"+newGenaratedID;
         }else{
            return "D"+newGenaratedID;
         }
