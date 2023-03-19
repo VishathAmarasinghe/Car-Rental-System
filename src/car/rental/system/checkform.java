@@ -32,8 +32,8 @@ public class checkform extends javax.swing.JFrame {
             }
         };
         
-        abc.getColumnModel().getColumn(3).setCellRenderer(new TableActionbtnCellRender());
-        abc.getColumnModel().getColumn(3).setCellEditor(new TableActionCellBtnEdit(event));
+//        abc.getColumnModel().getColumn(3).setCellRenderer(new TableActionbtnCellRender());
+//        abc.getColumnModel().getColumn(3).setCellEditor(new TableActionCellBtnEdit(event));
         
         
     }

@@ -17,9 +17,14 @@ public class btnContainer extends javax.swing.JPanel {
     /**
      * Creates new form btnContainer
      */
-    public btnContainer() {
+    public btnContainer(boolean visibility) {
         initComponents();
+        if (!visibility) {
+            discardBtn.setVisible(false);
+        }
     }
+    
+    
 
     
     public void initEvents(TableBtnActionEvent event, int row){

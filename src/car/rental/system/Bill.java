@@ -14,10 +14,8 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -26,8 +24,6 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -48,6 +44,8 @@ public class Bill extends javax.swing.JFrame {
     private boolean verification_customer=false;
     private boolean verification_DriverVehical=false;
      private boolean verification_finalPayment=false;
+     private String previousBillID="";
+     private String correspondingTable="";
 
     public Bill() {
         initComponents();
@@ -65,23 +63,24 @@ public class Bill extends javax.swing.JFrame {
     ;
     
    
-    public Bill(ResultSet reservationResult) {
+    public Bill(ResultSet reservationResult,String TableType) {
         initComponents();
+        correspondingTable=TableType;
         moreDetailsBtn.setVisible(false);
         verificationStatusShower.setVisible(false);
         verifyCustomerBtn.setVisible(false);
         driverDetailsBill.setVisible(false);
         driverSelectorBill.setVisible(false);
-        loadreservationData(reservationResult);
+        loadreservationData(reservationResult,TableType);
         vehicalDriverDetailsGetter();
         verificationStatusShowerVehicalbtn.setVisible(false);
         verificationStatusShowerVehical.setVisible(false);
-        paymentCalculation();
+        paymentCalculation(TableType);
 //        verificationbtn.addAncestorListener(listener);
 
     }
 
-    private void loadreservationData(ResultSet reservationResult) {
+    private void loadreservationData(ResultSet reservationResult,String TableType) {
         try {
             reservationResult.next();
             reservationNo=reservationResult.getString("ReservationID");
@@ -93,7 +92,13 @@ public class Bill extends javax.swing.JFrame {
                 driverDetailsBill.setVisible(true);
                 driverSelectorBill.setVisible(true);
             }
-            billCustomerSearchField.setText(reservationResult.getString("DummyName"));
+            if (TableType.equalsIgnoreCase("pending")) {
+                billCustomerSearchField.setText(reservationResult.getString("DummyName"));
+            }else if (TableType.equalsIgnoreCase("proceeding")) {
+                billCustomerSearchField.setText(reservationResult.getString("CustomerID"));
+                previousBillID=reservationResult.getString("BillNo");
+            }
+            
             searchReservationcustomer();
         } catch (Exception ex) {
             System.out.println("Load Reservation Error" + ex);
@@ -101,7 +106,7 @@ public class Bill extends javax.swing.JFrame {
 
     }
 
-    private void paymentCalculation() {
+    private void paymentCalculation(String TableType) {
 
         double finalTotalPayment = 0;
 
@@ -145,6 +150,38 @@ public class Bill extends javax.swing.JFrame {
         double pending_Payment = finalTotalPayment - advance_Payment;
 
         pendingPayments.setText(String.valueOf(pending_Payment));
+        
+        if (TableType.equalsIgnoreCase("proceeding")) {
+            
+            carchargeLabel.setVisible(false);
+            perDayCarCharge.setVisible(false);
+            nofoDaysLabel.setVisible(false);
+            numberOfDays.setVisible(false);
+            totalCarRentLabel.setVisible(false);
+            totalCarRent.setVisible(false);
+            prepaidLabel.setVisible(false);
+            advancePayment.setVisible(false);
+            
+            try{
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+                String singleData = "select * from Bill where BillNo=\"" + previousBillID + "\"";
+                PreparedStatement ps = con.prepareStatement(singleData);
+                ResultSet rs = ps.executeQuery();
+                rs.next();
+                double totalAmountProceeded=Double.parseDouble(rs.getString("TotalAmount"));
+                double PaidAmountProceeded=Double.parseDouble(rs.getString("AdvancePaiedAmount"));
+                
+                driverChargeLabel.setText("Total Charge");
+                driverChargePerDay.setText(String.valueOf(totalAmountProceeded));
+                AdvancePaidCharge.setText("Paid value");
+                TotalChargebill.setText(String.valueOf(PaidAmountProceeded));
+                pendingPayments.setText(String.valueOf(totalAmountProceeded-PaidAmountProceeded));
+                
+            }catch(Exception e){
+                System.out.println("Proceeded Table Handle error "+e);
+            }
+        }
 
     }
 
@@ -182,8 +219,8 @@ public class Bill extends javax.swing.JFrame {
                 driverSelectorBill.addItem(empID + " " + Fname + " " + Lname);
             }
 
-            CustomerRegistrationForm form1 = new CustomerRegistrationForm(rs, rs2, "customer");
-            form1.setVisible(true);
+//            CustomerRegistrationForm form1 = new CustomerRegistrationForm(rs, rs2, "customer");
+//            form1.setVisible(true);
 
             con.close();
 
@@ -264,7 +301,7 @@ public class Bill extends javax.swing.JFrame {
     
     
     
-    private void UpdateBillTable(){
+    private void UpdateBillTable(String tableType){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
@@ -278,10 +315,19 @@ public class Bill extends javax.swing.JFrame {
             ps.setString(1, billNoNew);
             ps.setString(2, DateAdder.getText());
             ps.setBlob(7,  BillImageCreation());
-            ps.setString(3, SubTotalBill1.getText());
-            ps.setString(4, advancePaymentBill.getText());
-            ps.setString(5, pendingPaymentBillPrint.getText());
-            ps.setString(6, dropOffDatebill.getText());
+            
+            if (tableType.equalsIgnoreCase("proceeding")) {
+                ps.setString(3, driverChargePerDay.getText());
+                ps.setString(4, driverChargePerDay.getText());
+                ps.setString(5, "0");
+                ps.setString(6, dropOffDatebill.getText());
+            }else{
+                ps.setString(3, SubTotalBill1.getText());
+                ps.setString(4, advancePaymentBill.getText());
+                ps.setString(5, pendingPaymentBillPrint.getText());
+                ps.setString(6, dropOffDatebill.getText());
+            }
+            
             ps.executeUpdate();
             
             String DriverID="";
@@ -292,7 +338,14 @@ public class Bill extends javax.swing.JFrame {
             }
             
             Statement st=con.createStatement();
-            String updateReservation="update reservation set reservationStatus=\""+"Proceeded"+"\", DriverID=\""+DriverID+"\", customerID=\""+CustomerIDshower.getText()+"\" where ReservationID=\""+reservationNo+"\"";
+            String updateReservation="";
+            if (tableType.equalsIgnoreCase("proceeding")){
+                updateReservation="update reservation set reservationStatus=\""+"Done"+"\", DriverID=\""+DriverID+"\",BillNo= \""+billNoNew+"\", customerID=\""+CustomerIDshower.getText()+"\" where ReservationID=\""+reservationNo+"\"";
+          
+            }else{
+                updateReservation="update reservation set reservationStatus=\""+"Proceeded"+"\", DriverID=\""+DriverID+"\",BillNo= \""+billNoNew+"\", customerID=\""+CustomerIDshower.getText()+"\" where ReservationID=\""+reservationNo+"\"";
+          
+            }
             st.executeUpdate(updateReservation);
             JOptionPane.showMessageDialog(null, "Bill Record Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
 
@@ -392,12 +445,12 @@ public class Bill extends javax.swing.JFrame {
         verificationStatusShowerVehicalbtn = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
+        carchargeLabel = new javax.swing.JLabel();
+        nofoDaysLabel = new javax.swing.JLabel();
+        totalCarRentLabel = new javax.swing.JLabel();
+        driverChargeLabel = new javax.swing.JLabel();
+        AdvancePaidCharge = new javax.swing.JLabel();
+        prepaidLabel = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         perDayCarCharge = new javax.swing.JLabel();
         numberOfDays = new javax.swing.JLabel();
@@ -412,7 +465,7 @@ public class Bill extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(28, 78, 128));
@@ -956,31 +1009,31 @@ public class Bill extends javax.swing.JFrame {
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel9.setText("Customer Details");
+        jLabel9.setText("Payment Details");
 
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel12.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel12.setText("Car Charge Per Day: ");
+        carchargeLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        carchargeLabel.setForeground(new java.awt.Color(0, 0, 0));
+        carchargeLabel.setText("Car Charge Per Day: ");
 
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel13.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel13.setText("No of Days:");
+        nofoDaysLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        nofoDaysLabel.setForeground(new java.awt.Color(0, 0, 0));
+        nofoDaysLabel.setText("No of Days:");
 
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel14.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel14.setText("Total Car Rent");
+        totalCarRentLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        totalCarRentLabel.setForeground(new java.awt.Color(0, 0, 0));
+        totalCarRentLabel.setText("Total Car Rent");
 
-        jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel15.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel15.setText("Driver Charge Per Day: ");
+        driverChargeLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        driverChargeLabel.setForeground(new java.awt.Color(0, 0, 0));
+        driverChargeLabel.setText("Driver Charge Per Day: ");
 
-        jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel16.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel16.setText("Total Charge");
+        AdvancePaidCharge.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        AdvancePaidCharge.setForeground(new java.awt.Color(0, 0, 0));
+        AdvancePaidCharge.setText("Total Charge");
 
-        jLabel17.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel17.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel17.setText("Advance Payment(40% of Total Charge): ");
+        prepaidLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        prepaidLabel.setForeground(new java.awt.Color(0, 0, 0));
+        prepaidLabel.setText("Advance Payment(40% of Total Charge): ");
 
         jLabel18.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel18.setForeground(new java.awt.Color(0, 0, 0));
@@ -1029,11 +1082,11 @@ public class Bill extends javax.swing.JFrame {
                             .addComponent(jLabel9)
                             .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel12)
-                                    .addComponent(jLabel13)
-                                    .addComponent(jLabel14)
-                                    .addComponent(jLabel15)
-                                    .addComponent(jLabel16))
+                                    .addComponent(carchargeLabel)
+                                    .addComponent(nofoDaysLabel)
+                                    .addComponent(totalCarRentLabel)
+                                    .addComponent(driverChargeLabel)
+                                    .addComponent(AdvancePaidCharge))
                                 .addGap(122, 122, 122)
                                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(driverChargePerDay, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1044,7 +1097,7 @@ public class Bill extends javax.swing.JFrame {
                         .addGap(27, 27, 27))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel17)
+                            .addComponent(prepaidLabel)
                             .addComponent(jLabel18))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1066,27 +1119,27 @@ public class Bill extends javax.swing.JFrame {
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12)
+                    .addComponent(carchargeLabel)
                     .addComponent(perDayCarCharge))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
+                    .addComponent(nofoDaysLabel)
                     .addComponent(numberOfDays))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel14)
+                    .addComponent(totalCarRentLabel)
                     .addComponent(totalCarRent))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15)
+                    .addComponent(driverChargeLabel)
                     .addComponent(driverChargePerDay))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel16)
+                    .addComponent(AdvancePaidCharge)
                     .addComponent(TotalChargebill))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17)
+                    .addComponent(prepaidLabel)
                     .addComponent(verifyDriverVehicalBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(advancePayment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(6, 6, 6)
@@ -1319,7 +1372,8 @@ public class Bill extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
         if (verification_customer && verification_DriverVehical && verification_finalPayment) {
-            UpdateBillTable();
+            UpdateBillTable(correspondingTable);
+           
         }else{
             JOptionPane.showMessageDialog(null, "please Verify all details","Bill Error",JOptionPane.ERROR_MESSAGE);
         }
@@ -1363,6 +1417,7 @@ public class Bill extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel AdvancePaidCharge;
     private javax.swing.JButton BillCustomerSearchBtn;
     private javax.swing.JLabel BillNo;
     private javax.swing.JLabel CustomerIDshower;
@@ -1378,7 +1433,9 @@ public class Bill extends javax.swing.JFrame {
     private javax.swing.JTextField billCustomerSearchField;
     private javax.swing.JTable billTable;
     private javax.swing.JLabel carNoPrintBill;
+    private javax.swing.JLabel carchargeLabel;
     private javax.swing.JLabel customerNoPrintBill;
+    private javax.swing.JLabel driverChargeLabel;
     private javax.swing.JLabel driverChargePerDay;
     private javax.swing.JLabel driverDetailsBill;
     private javax.swing.JComboBox<String> driverSelectorBill;
@@ -1391,12 +1448,6 @@ public class Bill extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
@@ -1439,13 +1490,16 @@ public class Bill extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel mobileNoShower;
     private javax.swing.JButton moreDetailsBtn;
+    private javax.swing.JLabel nofoDaysLabel;
     private javax.swing.JLabel numberOfDays;
     private javax.swing.JLabel pendingPaymentBillPrint;
     private javax.swing.JLabel pendingPayments;
     private javax.swing.JLabel perDayCarCharge;
     private javax.swing.JLabel pickUpDateBill;
+    private javax.swing.JLabel prepaidLabel;
     private javax.swing.JPanel printBill;
     private javax.swing.JLabel totalCarRent;
+    private javax.swing.JLabel totalCarRentLabel;
     private javax.swing.JLabel vehicalNameBill;
     private javax.swing.JLabel vehicalNoBill;
     private javax.swing.JLabel verificationStatusShower;

@@ -5,27 +5,18 @@
 package car.rental.system;
 
 import car.rental.system.EventHandleID.EventHandle;
-import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import com.raven.datechooser.EventDateChooser;
 import com.raven.datechooser.SelectedAction;
 import com.raven.datechooser.SelectedDate;
-import java.awt.Color;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import javax.swing.JOptionPane;
 /**
  *

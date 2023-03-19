@@ -35,7 +35,9 @@ public class CashierPanel extends javax.swing.JFrame {
     public CashierPanel() {
         initComponents();
         loadOwnerData("All");
-        loadPendingData();
+        loadPendingData("pending");
+        loadPendingData("proceeded");
+        loadBillData();
         TableActionEvent event = new TableActionEvent() {
             @Override
             public void onEdit(int row) {
@@ -43,11 +45,10 @@ public class CashierPanel extends javax.swing.JFrame {
                 if (customerTable.isEditing()) {
                     editSelectedCustomerData(row);
                 }else if(PendingReservationsTable.isEditing()){
-//                    System.out.println("Car table edit check   "+CarTable.isEditing());
-//                    editSelectedCustomerData(row);
+
                 }else if(ProceededReservationTable.isEditing()){
                     System.out.println("edit dis available");
-//                    editSelectedDiscountData(row);
+
                 }
             }
 
@@ -70,7 +71,13 @@ public class CashierPanel extends javax.swing.JFrame {
             @Override
             public void onBtnEdit(int row) {
                 System.out.println("Proceed CLidked "+row);
-                editSelectedPendingTable(row);
+                
+                if (PendingReservationsTable.isEditing()) {
+                    editSelectedPendingTable(row,"pending");
+                    
+                }else if(ProceededReservationTable.isEditing()){
+                    editSelectedPendingTable(row,"proceeding");
+                }
             }
 
             @Override
@@ -78,26 +85,39 @@ public class CashierPanel extends javax.swing.JFrame {
                 if (PendingReservationsTable.isEditing()) {
                     PendingReservationsTable.getCellEditor().stopCellEditing();
                 }
+                if (ProceededReservationTable.isEditing()) {
+                    ProceededReservationTable.getCellEditor().stopCellEditing();
+                }
+                int resultofDelete= JOptionPane.showConfirmDialog(null,"Are you sure that you want to delete record","Deleting Confirmation",
+                       JOptionPane.YES_NO_OPTION);
+                if (resultofDelete==0) {
+                    deleteSelectedRaw(row);
+                }
             }
         };
         
-        PendingReservationsTable.getColumnModel().getColumn(6).setCellRenderer(new TableActionbtnCellRender());
-        PendingReservationsTable.getColumnModel().getColumn(6).setCellEditor(new TableActionCellBtnEdit(event1));
+        PendingReservationsTable.getColumnModel().getColumn(6).setCellRenderer(new TableActionbtnCellRender(true));
+        PendingReservationsTable.getColumnModel().getColumn(6).setCellEditor(new TableActionCellBtnEdit(event1,true));
         
-       ProceededReservationTable.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
-       ProceededReservationTable.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
-        
-      
+       ProceededReservationTable.getColumnModel().getColumn(6).setCellRenderer(new TableActionbtnCellRender(false));
+       ProceededReservationTable.getColumnModel().getColumn(6).setCellEditor(new TableActionCellBtnEdit(event1,false));
         
         customerTable.getColumnModel().getColumn(7).setCellRenderer(new TableActionCellRender());
         customerTable.getColumnModel().getColumn(7).setCellEditor(new TableActionCellEditor(event));
     }
     
     
-    private void editSelectedPendingTable(int raw){
-        DefaultTableModel pendingTableClicked=(DefaultTableModel)PendingReservationsTable.getModel();
-        clickedIndexID=(String) pendingTableClicked.getValueAt(raw, 0);
+    private void editSelectedPendingTable(int raw,String tableType){
+        
         try {
+            if (tableType.equalsIgnoreCase("pending")) {
+                DefaultTableModel pendingTableClicked=(DefaultTableModel)PendingReservationsTable.getModel();
+                clickedIndexID=(String) pendingTableClicked.getValueAt(raw, 0);
+            }else{
+                DefaultTableModel proceedTableGetClicked=(DefaultTableModel)ProceededReservationTable.getModel();
+                clickedIndexID=(String) proceedTableGetClicked.getValueAt(raw, 0);
+            }
+            
             
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
@@ -106,13 +126,13 @@ public class CashierPanel extends javax.swing.JFrame {
             ResultSet rs=ps.executeQuery();
             
            
-            Bill billrender=new Bill(rs);
+            Bill billrender=new Bill(rs,tableType);
             billrender.setVisible(true);
             
             con.close();
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("edit selected Pnael "+e);
         }
     }
     
@@ -173,15 +193,33 @@ public class CashierPanel extends javax.swing.JFrame {
     }
     
     
-    private void loadPendingData(){
+    private void loadPendingData(String tableType){
         try {
-            DefaultTableModel pendingTableLoad=(DefaultTableModel)PendingReservationsTable.getModel();
-            pendingTableLoad.getDataVector().removeAllElements();
-            pendingTableLoad.fireTableDataChanged();
+            
+            DefaultTableModel proceedTableLoad=null;
+            DefaultTableModel pendingTableLoad=null;
+            DefaultTableModel doneProceedTableLoad=null;
             
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            String s="select * from reservation where ReservationStatus=\"pending\" ";
+            String s="";
+            if (tableType.equalsIgnoreCase("proceeded")) {
+                s="select * from reservation where ReservationStatus=\"proceeded\" order by DropOffDate ";
+                proceedTableLoad=(DefaultTableModel)ProceededReservationTable.getModel();
+                proceedTableLoad.getDataVector().removeAllElements();
+                proceedTableLoad.fireTableDataChanged();
+            }else if (tableType.equalsIgnoreCase("pending")){
+                s="select * from reservation where ReservationStatus=\"pending\" ";
+                pendingTableLoad=(DefaultTableModel)PendingReservationsTable.getModel();
+                pendingTableLoad.getDataVector().removeAllElements();
+                pendingTableLoad.fireTableDataChanged();
+            }else {
+                s="select * from reservation where ReservationStatus=\"Done\" ";
+                doneProceedTableLoad=(DefaultTableModel)finishedReservationTable.getModel();
+                doneProceedTableLoad.getDataVector().removeAllElements();
+                doneProceedTableLoad.fireTableDataChanged();
+            }
+            
            
             
             PreparedStatement ps = con.prepareStatement(s);
@@ -194,12 +232,20 @@ public class CashierPanel extends javax.swing.JFrame {
                 String VehicalNumer=rs.getString("VehicalNumber");
                 String dummyCustName=rs.getString("DummyName");
                 String driverRequest=rs.getString("DriverStatus");
+                String billNo=rs.getString("BillNo");
+                String cashierID=rs.getString("CustomerID");
                 
                
-                String[] ownerData={reserveID,dropOffDate,pickedUpdate,VehicalNumer,driverRequest,dummyCustName};
-                
-                pendingTableLoad.addRow(ownerData);
-
+                if (tableType.equalsIgnoreCase("proceeded")) {
+                   String[] proceededData={reserveID,pickedUpdate,dropOffDate,VehicalNumer,cashierID,billNo};
+                   proceedTableLoad.addRow(proceededData);
+                }else if (tableType.equalsIgnoreCase("pending")){
+                     String[] ownerData={reserveID,dropOffDate,pickedUpdate,VehicalNumer,driverRequest,dummyCustName};
+                     pendingTableLoad.addRow(ownerData);
+                }else{
+                    String[] finisedData={reserveID,dropOffDate,pickedUpdate,VehicalNumer,cashierID,billNo};
+                     doneProceedTableLoad.addRow(finisedData);
+                }
             }
             rs.close();
             ps.close();
@@ -209,6 +255,47 @@ public class CashierPanel extends javax.swing.JFrame {
             System.out.println(e);
         }
     }
+    
+    
+    private void loadBillData(){
+        try {
+            
+           
+            DefaultTableModel billdataTable=null;
+            billdataTable=(DefaultTableModel)billTable.getModel();
+            billdataTable.getDataVector().removeAllElements();
+            billdataTable.fireTableDataChanged();
+            
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String s="select * from Bill";
+
+            PreparedStatement ps = con.prepareStatement(s);
+            ResultSet rs=ps.executeQuery();
+            while (rs.next()) {                
+                String billID=rs.getString("BillNo");
+                
+                String BillDate=rs.getString("BillDate");
+                String totalAmount=rs.getString("TotalAmount");
+                String pendingPayment=rs.getString("pendingPayment");
+                
+   
+                String[] finisedData={billID,BillDate,totalAmount,pendingPayment};
+                billdataTable.addRow(finisedData);
+                
+            }
+            rs.close();
+            ps.close();
+            con.close();
+ 
+        } catch (Exception e) {
+            System.out.println("Bill load details table "+e);
+        }
+    }
+    
+    
+    
+    
     
     private void editSelectedCustomerData(int raw){
         DefaultTableModel ownerTableclicked=(DefaultTableModel)customerTable.getModel();
@@ -262,14 +349,15 @@ public class CashierPanel extends javax.swing.JFrame {
             
         }else if(currentPageHolder.equalsIgnoreCase("ProceedReservationPage")){
                     clickedIndexID=(String) proceedReservationTableClicked.getValueAt(rawNo, 0);
-                    
+                    deletePhoneNoRaw="delete from reservation where ReservationID=\""+clickedIndexID+"\"";
+                    st.executeUpdate(deletePhoneNoRaw);
                     proceedReservationTableClicked.removeRow(rawNo);
         }
         else if(currentPageHolder.equalsIgnoreCase("PendingReservationPage")){
                     clickedIndexID=(String) PendingReservationTableClicked.getValueAt(rawNo, 0);
-//                    deletePhoneNoRaw="delete from discount where discountID=\""+clickedIndexID+"\"";
-//                    st.executeUpdate(deletePhoneNoRaw);
-//                    PendingReservationTableClicked.removeRow(rawNo);
+                    deletePhoneNoRaw="delete from reservation where ReservationID=\""+clickedIndexID+"\"";
+                    st.executeUpdate(deletePhoneNoRaw);
+                    PendingReservationTableClicked.removeRow(rawNo);
         }
          
         con.close();
@@ -321,12 +409,22 @@ public class CashierPanel extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         ProceededReservationTable = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
+        finishedReservationPanel = new javax.swing.JPanel();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        finishedReservationTable = new javax.swing.JTable();
+        jLabel14 = new javax.swing.JLabel();
+        billPanel = new javax.swing.JPanel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        billTable = new javax.swing.JTable();
+        jLabel13 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         CashierDashboard = new javax.swing.JButton();
         addCustomerBtn = new javax.swing.JButton();
         proceedReservationBtn = new javax.swing.JButton();
         pendingreservationsBtn = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+        succeededReservations = new javax.swing.JButton();
+        billdetailsbtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -676,17 +774,14 @@ public class CashierPanel extends javax.swing.JFrame {
 
         ProceededReservationTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ReservationID", "PickedUp Date", "DropOff Date", "VehicalID", "CustomerNo", "BillNo", "Settings"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, true
+                false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -696,6 +791,11 @@ public class CashierPanel extends javax.swing.JFrame {
         ProceededReservationTable.setRowHeight(30);
         ProceededReservationTable.setSelectionBackground(new java.awt.Color(28, 78, 128));
         jScrollPane3.setViewportView(ProceededReservationTable);
+        if (ProceededReservationTable.getColumnModel().getColumnCount() > 0) {
+            ProceededReservationTable.getColumnModel().getColumn(4).setHeaderValue("CustomerNo");
+            ProceededReservationTable.getColumnModel().getColumn(5).setHeaderValue("BillNo");
+            ProceededReservationTable.getColumnModel().getColumn(6).setHeaderValue("Settings");
+        }
 
         jLabel3.setForeground(new java.awt.Color(0, 204, 204));
         jLabel3.setText("Proceeded Reservations");
@@ -724,6 +824,115 @@ public class CashierPanel extends javax.swing.JFrame {
         );
 
         jTabbedPane1.addTab("cashier", ProceedReservationPanel);
+
+        finishedReservationPanel.setBackground(new java.awt.Color(241, 241, 241));
+
+        finishedReservationTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ReservationID", "PickedUp Date", "DropOff Date", "VehicalID", "CustomerNo", "BillNo"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        finishedReservationTable.setRowHeight(30);
+        finishedReservationTable.setSelectionBackground(new java.awt.Color(28, 78, 128));
+        jScrollPane7.setViewportView(finishedReservationTable);
+        if (finishedReservationTable.getColumnModel().getColumnCount() > 0) {
+            finishedReservationTable.getColumnModel().getColumn(4).setHeaderValue("CustomerNo");
+            finishedReservationTable.getColumnModel().getColumn(5).setHeaderValue("BillNo");
+        }
+
+        jLabel14.setForeground(new java.awt.Color(0, 204, 204));
+        jLabel14.setText("FinishedReservations");
+
+        javax.swing.GroupLayout finishedReservationPanelLayout = new javax.swing.GroupLayout(finishedReservationPanel);
+        finishedReservationPanel.setLayout(finishedReservationPanelLayout);
+        finishedReservationPanelLayout.setHorizontalGroup(
+            finishedReservationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, finishedReservationPanelLayout.createSequentialGroup()
+                .addContainerGap(55, Short.MAX_VALUE)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(55, Short.MAX_VALUE))
+            .addGroup(finishedReservationPanelLayout.createSequentialGroup()
+                .addGap(253, 253, 253)
+                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        finishedReservationPanelLayout.setVerticalGroup(
+            finishedReservationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(finishedReservationPanelLayout.createSequentialGroup()
+                .addContainerGap(69, Short.MAX_VALUE)
+                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37))
+        );
+
+        jTabbedPane1.addTab("cashier", finishedReservationPanel);
+
+        billPanel.setBackground(new java.awt.Color(241, 241, 241));
+
+        billTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Bill ID", "Bill Date", "Total Amount", "Pending Payment"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        billTable.setRowHeight(30);
+        billTable.setSelectionBackground(new java.awt.Color(28, 78, 128));
+        billTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                billTableMouseClicked(evt);
+            }
+        });
+        jScrollPane6.setViewportView(billTable);
+
+        jLabel13.setForeground(new java.awt.Color(0, 204, 204));
+        jLabel13.setText("All Bills");
+
+        javax.swing.GroupLayout billPanelLayout = new javax.swing.GroupLayout(billPanel);
+        billPanel.setLayout(billPanelLayout);
+        billPanelLayout.setHorizontalGroup(
+            billPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, billPanelLayout.createSequentialGroup()
+                .addContainerGap(55, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(55, Short.MAX_VALUE))
+            .addGroup(billPanelLayout.createSequentialGroup()
+                .addGap(253, 253, 253)
+                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        billPanelLayout.setVerticalGroup(
+            billPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(billPanelLayout.createSequentialGroup()
+                .addContainerGap(69, Short.MAX_VALUE)
+                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37))
+        );
+
+        jTabbedPane1.addTab("cashier", billPanel);
 
         getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 0, 1210, 710));
 
@@ -784,6 +993,28 @@ public class CashierPanel extends javax.swing.JFrame {
             }
         });
 
+        succeededReservations.setBackground(new java.awt.Color(28, 78, 128));
+        succeededReservations.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        succeededReservations.setForeground(new java.awt.Color(255, 255, 255));
+        succeededReservations.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
+        succeededReservations.setText("Succeeded Reservations");
+        succeededReservations.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                succeededReservationsActionPerformed(evt);
+            }
+        });
+
+        billdetailsbtn.setBackground(new java.awt.Color(28, 78, 128));
+        billdetailsbtn.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        billdetailsbtn.setForeground(new java.awt.Color(255, 255, 255));
+        billdetailsbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
+        billdetailsbtn.setText("Bills");
+        billdetailsbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                billdetailsbtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -795,8 +1026,10 @@ public class CashierPanel extends javax.swing.JFrame {
                     .addComponent(proceedReservationBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(CashierDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pendingreservationsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(26, Short.MAX_VALUE))
+                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(succeededReservations, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(billdetailsbtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -807,9 +1040,13 @@ public class CashierPanel extends javax.swing.JFrame {
                 .addComponent(addCustomerBtn)
                 .addGap(36, 36, 36)
                 .addComponent(pendingreservationsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
+                .addGap(37, 37, 37)
                 .addComponent(proceedReservationBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 340, Short.MAX_VALUE)
+                .addGap(42, 42, 42)
+                .addComponent(succeededReservations)
+                .addGap(29, 29, 29)
+                .addComponent(billdetailsbtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 194, Short.MAX_VALUE)
                 .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27))
         );
@@ -836,13 +1073,24 @@ public class CashierPanel extends javax.swing.JFrame {
 
     private void proceedReservationBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proceedReservationBtnActionPerformed
         // TODO add your handling code here:
+        if (PendingReservationsTable.isEditing()) {
+            PendingReservationsTable.getCellEditor().stopCellEditing();
+        }
         currentPageHolder="ProceedReservationPage";
         jTabbedPane1.setSelectedIndex(3);
+        loadPendingData("proceeded");
+        
     }//GEN-LAST:event_proceedReservationBtnActionPerformed
 
     private void pendingreservationsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pendingreservationsBtnActionPerformed
+        if (ProceededReservationTable.isEditing()) {
+            ProceededReservationTable.getCellEditor().stopCellEditing();
+        }
         jTabbedPane1.setSelectedIndex(2);
         currentPageHolder="PendingReservationPage";
+        loadPendingData("pending");
+        loadPendingData("proceeded");
+        
         // TODO add your handling code here:
     }//GEN-LAST:event_pendingreservationsBtnActionPerformed
 
@@ -855,6 +1103,32 @@ public class CashierPanel extends javax.swing.JFrame {
         CustomerRegistrationForm customer1=new CustomerRegistrationForm("customer");
         customer1.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void succeededReservationsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_succeededReservationsActionPerformed
+        // TODO add your handling code here:
+        currentPageHolder="finishedReservationPage";
+        jTabbedPane1.setSelectedIndex(4);
+        loadPendingData("Done");
+    }//GEN-LAST:event_succeededReservationsActionPerformed
+
+    private void billdetailsbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_billdetailsbtnActionPerformed
+        // TODO add your handling code here:
+        currentPageHolder="BillTablePage";
+        jTabbedPane1.setSelectedIndex(5);
+        loadBillData();
+//        loadPendingData("Done");
+    }//GEN-LAST:event_billdetailsbtnActionPerformed
+
+    private void billTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_billTableMouseClicked
+        // TODO add your handling code here:
+        int selectedBillRaw=billTable.getSelectedRow();
+        DefaultTableModel billmodelTable=(DefaultTableModel)billTable.getModel();
+        clickedIndexID=(String) billmodelTable.getValueAt(selectedBillRaw, 0);
+        BillShower show1=new BillShower(clickedIndexID);
+        show1.setVisible(true);
+        
+        
+    }//GEN-LAST:event_billTableMouseClicked
 
     /**
      * @param args the command line arguments
@@ -903,14 +1177,21 @@ public class CashierPanel extends javax.swing.JFrame {
     private javax.swing.JTable ProceededReservationTable;
     private javax.swing.JPanel SidepanelAdminboard;
     private javax.swing.JButton addCustomerBtn;
+    private javax.swing.JPanel billPanel;
+    private javax.swing.JTable billTable;
+    private javax.swing.JButton billdetailsbtn;
     private javax.swing.JPanel customerAddingPanel;
     private javax.swing.JTable customerTable;
+    private javax.swing.JPanel finishedReservationPanel;
+    private javax.swing.JTable finishedReservationTable;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -928,9 +1209,12 @@ public class CashierPanel extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JButton pendingreservationsBtn;
     private javax.swing.JButton proceedReservationBtn;
+    private javax.swing.JButton succeededReservations;
     // End of variables declaration//GEN-END:variables
 }

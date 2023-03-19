@@ -19,10 +19,12 @@ import raven.cell.TableActionEvent;
 public class TableActionCellBtnEdit extends DefaultCellEditor{
     
     private TableBtnActionEvent event;
+    private boolean visibalValue;
 
-    public TableActionCellBtnEdit(TableBtnActionEvent event) {
+    public TableActionCellBtnEdit(TableBtnActionEvent event,boolean visibility) {
         super(new JCheckBox());
         this.event=event;
+        visibalValue=visibility;
     }
     
     
@@ -30,7 +32,7 @@ public class TableActionCellBtnEdit extends DefaultCellEditor{
 
     @Override
     public Component getTableCellEditorComponent(JTable jtable, Object o, boolean bln, int row, int column) {
-        btnContainer btncont=new btnContainer();
+        btnContainer btncont=new btnContainer(visibalValue);
         btncont.initEvents(event, row);
         btncont.setBackground(jtable.getSelectionBackground());
         return btncont;
