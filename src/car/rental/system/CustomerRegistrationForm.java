@@ -20,21 +20,51 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     String employeeLastIndex="";
     String EmployeeUpadingIndex="";
     String customerLastIndex="";
+    private CustomerData customer2=null;
+    private EmployeeData employee2=null;
+    private People people1=null;
 
 
     
     public CustomerRegistrationForm(String tableType) {
         initComponents();
-        getLastIndexEmployeeTable(tableType);
+        
 
         
         
     }
     
+    
+
+    
     public CustomerRegistrationForm(ResultSet details,ResultSet phoneDetails,String tableType){
         initComponents();
         getLastIndexEmployeeTable(tableType);
         SetUpdateComponents(details, phoneDetails,tableType);
+        if (tableType.equalsIgnoreCase("customer")) {
+            customer2=new CustomerData();
+        }else{
+            employee2=new EmployeeData();
+        }
+  
+    }
+    
+    public CustomerRegistrationForm(String clickedIDno,String tableType,String employeeType){
+        initComponents();
+//        getLastIndexEmployeeTable(tableType);
+        
+         if (tableType.equalsIgnoreCase("customer")) {
+           customer2=new CustomerData();
+        }else{
+           employee2=new EmployeeData();
+        }
+        if (clickedIDno!=null) {
+            SetUpdateComponents(clickedIDno,tableType);
+        }else{
+            
+        }
+        
+        System.out.println("checking loading");
   
     }
     
@@ -105,6 +135,81 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         }
     }
     
+    
+    
+    
+    private void SetUpdateComponents(String clickedIndex,String tableType){
+
+       String role=null;
+        if (tableType.equalsIgnoreCase("customer")) {
+            customer2.searchCustomer(clickedIndex);
+            RegFirstName.setText(customer2.getFirstName());
+            RegLastName.setText(customer2.getLastName());
+            role=customer2.getRole();
+            EmployeeUpadingIndex=customer2.getID();
+            
+            
+            RegNIC.setText(customer2.getNIC());
+            RegTitle.setText("Update Customer");
+            addbtnRegister.setText("Update Customer");
+            
+            
+            RegEmail.setText(customer2.getEmail());
+            regCity.setText(customer2.getCity());
+            RegAddress1.setText(customer2.getAddress1());
+            RegAddress2.setText(customer2.getAddress2());
+            RegPhoneNo1.setText(customer2.getPhoneNo1());
+            regPhoneNo2.setText(customer2.getPhoneNo2());
+
+        }else{
+            employee2.searchEmployee(clickedIndex,null);
+            RegFirstName.setText(employee2.getFirstName());
+            RegLastName.setText(employee2.getLastName());
+            role=employee2.getRole();
+            EmployeeUpadingIndex=employee2.getID();
+            
+            
+            
+            
+            if (role.equalsIgnoreCase("Driver")) {
+                    NIC_licence.setText("Licence");
+                    RegNIC.setText(employee2.getLicenceNo());
+                    RegTitle.setText("Update Driver");
+                    addbtnRegister.setText("Update Driver");
+                    
+            }else if (role.equalsIgnoreCase("Admin")) {
+                    RegNIC.setText(employee2.getNIC());
+                    RegTitle.setText("Update Admin");
+                    addbtnRegister.setText("Update Admin");
+                    
+            }if (role.equalsIgnoreCase("Cashier")) {
+                    RegNIC.setText(employee2.getNIC());
+                    RegTitle.setText("Update Cashier");
+                    addbtnRegister.setText("Update Cashier");
+                    
+            }if (role.equalsIgnoreCase("VOwner")) {
+                    RegNIC.setText(employee2.getNIC());
+                    RegTitle.setText("Update car Owner");
+                    addbtnRegister.setText("Update Owner");
+                    
+            }
+            RegEmail.setText(employee2.getEmail());
+            regCity.setText(employee2.getCity());
+            RegAddress1.setText(employee2.getAddress1());
+            RegAddress2.setText(employee2.getAddress2());
+            RegPhoneNo1.setText(employee2.getPhoneNo1());
+            regPhoneNo2.setText(employee2.getPhoneNo2());
+        }
+         
+        System.out.println("EMPID UPdating "+EmployeeUpadingIndex );
+  
+    }
+    
+
+    
+    
+    
+    
     public void SetRegistrationFrameTitle(String RegisterTitle,String AddbtnTitle){
         RegTitle.setText(RegisterTitle);
         addbtnRegister.setText(AddbtnTitle);
@@ -166,6 +271,97 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
        String randomPassword=initailName.substring(0, 2)+"Rent@"+String.valueOf(value);
        return randomPassword;
     }
+    
+    private void addData(String dataType,String peopleType){
+        
+        if (dataType.equalsIgnoreCase("customer")) {
+            customer2.SetAllData(new String[]{"","Customer",
+                RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),RegNIC.getText(),RegPhoneNo1.getText(),
+                regPhoneNo2.getText()
+            });
+            
+            if ( customer2.InsertCustomerData()) {
+                JOptionPane.showMessageDialog(null, "Data Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
+                
+            }
+            CarRentalSystem.closeWindows(this);
+            
+           
+        }else{
+            if (peopleType.equalsIgnoreCase("Driver")) {
+                employee2.SetAllData(new String[]{"","Driver",
+                RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),null,RegNIC.getText(),RegPhoneNo1.getText(),
+                regPhoneNo2.getText()});
+                
+                boolean actionResult[]=employee2.InsertEmployeeData(peopleType);
+                if (actionResult[0]) {
+                JOptionPane.showMessageDialog(null, "Data Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
+                    if (actionResult[1]) {
+                        JOptionPane.showMessageDialog(null, "Email Send To the New Employee","Registration",JOptionPane.INFORMATION_MESSAGE);
+                    }
+            }
+                
+            }else{
+               employee2.SetAllData(new String[]{"",peopleType,
+                RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),RegNIC.getText(),null,RegPhoneNo1.getText(),
+                regPhoneNo2.getText()});
+                
+                boolean actionResult[]=employee2.InsertEmployeeData(peopleType);
+                if (actionResult[0]) {
+                JOptionPane.showMessageDialog(null, "Data Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
+                    if (actionResult[1]) {
+                        JOptionPane.showMessageDialog(null, "Email Send To the New Employee","Registration",JOptionPane.INFORMATION_MESSAGE);
+                    }
+            }
+            CarRentalSystem.closeWindows(this);
+        }
+ 
+    }
+    }
+    
+    
+    
+    private void UpdateData(String dataType,String peopleType){
+        
+        if (dataType.equalsIgnoreCase("customer")) {
+            customer2.SetAllData(new String[]{"","Customer",
+                RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),RegNIC.getText(),RegPhoneNo1.getText(),
+                regPhoneNo2.getText()
+            });
+            
+            if ( customer2.updateCustomer(EmployeeUpadingIndex)) {
+                JOptionPane.showMessageDialog(null, "Data Updated Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
+                
+            }
+            CarRentalSystem.closeWindows(this);
+            
+           
+        }else{
+            if (peopleType.equalsIgnoreCase("Driver")) {
+                employee2.SetAllData(new String[]{"","Driver",
+                RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),null,RegNIC.getText(),RegPhoneNo1.getText(),
+                regPhoneNo2.getText()});
+                
+                if ( employee2.updateEmployeeData(EmployeeUpadingIndex)) {
+                JOptionPane.showMessageDialog(null, "Data Updated Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
+                
+            }
+                
+            }else{
+               employee2.SetAllData(new String[]{"",peopleType,
+                RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),RegNIC.getText(),null,RegPhoneNo1.getText(),
+                regPhoneNo2.getText()});
+                
+                if ( employee2.updateEmployeeData(EmployeeUpadingIndex)) {
+                JOptionPane.showMessageDialog(null, "Data Updated Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
+            }
+            }
+            CarRentalSystem.closeWindows(this);
+        }
+ 
+    }
+    
+    
     
     
     
@@ -557,35 +753,45 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         String[]  updateType={"Added",EmployeeUpadingIndex};
         System.out.println("Employee Updating index "+EmployeeUpadingIndex);
         if (addbtnRegister.getText().equalsIgnoreCase("Add Owner")) {
-            addDataToTheTables("Owner",updateType);
+//            addDataToTheTables("Owner",updateType);
+              addData("employee", "VOwner");
         }else if(addbtnRegister.getText().equalsIgnoreCase("Add Driver")){
-            addDataToTheTables("Driver",updateType);
+//            addDataToTheTables("Driver",updateType);
+              addData("employee", "Driver");
         }else if(addbtnRegister.getText().equalsIgnoreCase("Add Cashier")){
-            addDataToTheTables("Cashier",updateType);
+//            addDataToTheTables("Cashier",updateType);
+              addData("employee", "Cashier");
         }else if(addbtnRegister.getText().equalsIgnoreCase("Add Admin")){
-            addDataToTheTables("Admin",updateType);
+//            addDataToTheTables("Admin",updateType);
+              addData("employee", "Admin");
         }else if(addbtnRegister.getText().equalsIgnoreCase("Add Customer")){
-            addDataToTheTables("customer",updateType);
+//            addDataToTheTables("customer",updateType);
+              addData("customer", null);
         }
         
         
-        
+        System.out.println("update panel came");
         updateType[0]="Updated";
         if (addbtnRegister.getText().equalsIgnoreCase("Update Driver")) {
-            addDataToTheTables("Driver",updateType);
+//            addDataToTheTables("Driver",updateType);
+              UpdateData("employee", "Driver");
         }else if(addbtnRegister.getText().equalsIgnoreCase("Update Admin")){
-            addDataToTheTables("Admin",updateType);
+//            addDataToTheTables("Admin",updateType);
+              UpdateData("employee", "Admin");
         }else if(addbtnRegister.getText().equalsIgnoreCase("Update Cashier")){
-            addDataToTheTables("Cashier",updateType);
+//            addDataToTheTables("Cashier",updateType);
+            UpdateData("employee", "Cashier");
         }else if(addbtnRegister.getText().equalsIgnoreCase("Update Owner")){
-            addDataToTheTables("Owner",updateType);
+//            addDataToTheTables("Owner",updateType);
+            UpdateData("employee", "VOwner");
         }else if(addbtnRegister.getText().equalsIgnoreCase("Update Customer")){
-            addDataToTheTables("customer",updateType);
+//            addDataToTheTables("customer",updateType);
+              UpdateData("customer", "customer");
         }
         
 //        changeverificationStatus();
           Bill.verificationStatus=true;
-          Bill abc=new Bill();
+//          Bill abc=new Bill();
          
         
     }//GEN-LAST:event_addbtnRegisterActionPerformed

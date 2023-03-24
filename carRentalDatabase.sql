@@ -86,3 +86,8 @@ select count(cars.carNumber) from cars where carNumber not in
  
  select VehicalNumber from reservation 
  where pickedUpdate between "2023-03-15" and "2023-03-18" and dropOffdate between "2023-13-15" and "2023-03-18" ;
+ 
+ 
+ update cars set price=15000;
+ 
+ alter table bill add primary key(BillNo);

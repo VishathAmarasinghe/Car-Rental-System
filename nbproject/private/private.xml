@@ -3,15 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/LoginForm.java</file>
-            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/CarRentalSystem.java</file>
+            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/EmployeeData.java</file>
+            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/Validations.java</file>
             <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/AdminPage.java</file>
             <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/CustomerRegistrationForm.java</file>
-            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/SplashScreen.java</file>
-            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/WrapLayout.java</file>
-            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/dbtesting.java</file>
-            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/CashierPanel.java</file>
-            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/CustomSearch1.java</file>
+            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/MailGenerator.java</file>
         </group>
     </open-files>
 </project-private>

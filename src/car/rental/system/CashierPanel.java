@@ -30,11 +30,14 @@ public class CashierPanel extends javax.swing.JFrame {
     
     private String clickedIndexID="";
     private String currentPageHolder="dashboardPage";
+    private CustomerData customer1=null;
     
     
     public CashierPanel() {
         initComponents();
-        loadOwnerData("All");
+        customer1=new CustomerData();
+        customer1.loadCustomerData("all", null, customerTable);
+//        loadOwnerData("All");
         loadPendingData("pending");
         loadPendingData("proceeded");
         loadBillData();
@@ -140,58 +143,58 @@ public class CashierPanel extends javax.swing.JFrame {
     
     
     
-    private void loadOwnerData(String searchType){
-        try {
-            DefaultTableModel customerTableLoad=(DefaultTableModel)customerTable.getModel();
-            customerTableLoad.getDataVector().removeAllElements();
-            customerTableLoad.fireTableDataChanged();
-            
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            String s="";
-            if (searchType.equalsIgnoreCase("all")) {
-                s="select CustomerID, role, firstname,lastname,NIC,email,city from customer";
-            }else{
-                s="select customerID,role, firstname,lastname,NIC,email,city from customer where role=\""+searchType+"\"";
-            }
-            
-            PreparedStatement ps = con.prepareStatement(s);
-            ResultSet rs=ps.executeQuery();
-            while (rs.next()) {                
-                String empID=rs.getString("customerID");
-                System.out.println("Substring check "+empID.substring(0,4));
-                String sd="select phoneNo from customerphone where customerID=\""+empID+"\"";
-                PreparedStatement psd = con.prepareStatement(sd);
-                ResultSet numberResult=psd.executeQuery();
-                String[] numberArray=new String[2];
-                int count=0;
-                while (numberResult.next()) {                    
-                    numberArray[count]=numberResult.getString("phoneNo");
-                    count++;
-                }
-                psd.close();
-                numberResult.close();
-                String role=rs.getString("role");
-                String Fname=rs.getString("FirstName");
-                String Lname=rs.getString("lastName");
-                String NICno=rs.getString("NIC");
-                String email=rs.getString("Email");
-                String city=rs.getString("city");
-               
-                String[] ownerData={empID,Fname,Lname,role,NICno,email,city,numberArray[0],numberArray[1]};
-                
-                customerTableLoad.addRow(ownerData);
-
-            }
-            rs.close();
-            ps.close();
-            con.close();
- 
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-    
+//    private void loadOwnerData(String searchType){
+//        try {
+//            DefaultTableModel customerTableLoad=(DefaultTableModel)customerTable.getModel();
+//            customerTableLoad.getDataVector().removeAllElements();
+//            customerTableLoad.fireTableDataChanged();
+//            
+//            Class.forName("com.mysql.cj.jdbc.Driver");
+//            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+//            String s="";
+//            if (searchType.equalsIgnoreCase("all")) {
+//                s="select CustomerID, role, firstname,lastname,NIC,email,city from customer";
+//            }else{
+//                s="select customerID,role, firstname,lastname,NIC,email,city from customer where role=\""+searchType+"\"";
+//            }
+//            
+//            PreparedStatement ps = con.prepareStatement(s);
+//            ResultSet rs=ps.executeQuery();
+//            while (rs.next()) {                
+//                String empID=rs.getString("customerID");
+//                System.out.println("Substring check "+empID.substring(0,4));
+//                String sd="select phoneNo from customerphone where customerID=\""+empID+"\"";
+//                PreparedStatement psd = con.prepareStatement(sd);
+//                ResultSet numberResult=psd.executeQuery();
+//                String[] numberArray=new String[2];
+//                int count=0;
+//                while (numberResult.next()) {                    
+//                    numberArray[count]=numberResult.getString("phoneNo");
+//                    count++;
+//                }
+//                psd.close();
+//                numberResult.close();
+//                String role=rs.getString("role");
+//                String Fname=rs.getString("FirstName");
+//                String Lname=rs.getString("lastName");
+//                String NICno=rs.getString("NIC");
+//                String email=rs.getString("Email");
+//                String city=rs.getString("city");
+//               
+//                String[] ownerData={empID,Fname,Lname,role,NICno,email,city,numberArray[0],numberArray[1]};
+//                
+//                customerTableLoad.addRow(ownerData);
+//
+//            }
+//            rs.close();
+//            ps.close();
+//            con.close();
+// 
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
+//    }
+//    
     
     private void loadPendingData(String tableType){
         try {
@@ -302,20 +305,11 @@ public class CashierPanel extends javax.swing.JFrame {
         clickedIndexID=(String) ownerTableclicked.getValueAt(raw, 0);
         try {
             
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            String singleData="select * from customer where customerID=\""+clickedIndexID+"\"";
-            PreparedStatement ps = con.prepareStatement(singleData);
-            ResultSet rs=ps.executeQuery();
-            
-            String singleDataPhoneNumbers="select * from customerphone where customerID=\""+clickedIndexID+"\"";
-            PreparedStatement psnumbers = con.prepareStatement(singleDataPhoneNumbers);
-            ResultSet rs2=psnumbers.executeQuery();
-            
-            CustomerRegistrationForm form1=new CustomerRegistrationForm(rs, rs2,"customer");
+            System.out.println("editbtnComes");
+            CustomerRegistrationForm form1=new CustomerRegistrationForm(clickedIndexID,"customer",null);
             form1.setVisible(true);
             
-            con.close();
+
 
         } catch (Exception e) {
             System.out.println(e);
@@ -1067,7 +1061,7 @@ public class CashierPanel extends javax.swing.JFrame {
     private void addCustomerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCustomerBtnActionPerformed
         // TODO add your handling code here:
         currentPageHolder="customerPage";
-        loadOwnerData("All");
+        customer1.loadCustomerData("All", null, customerTable);
         jTabbedPane1.setSelectedIndex(1);
     }//GEN-LAST:event_addCustomerBtnActionPerformed
 
@@ -1100,7 +1094,7 @@ public class CashierPanel extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        CustomerRegistrationForm customer1=new CustomerRegistrationForm("customer");
+        CustomerRegistrationForm customer1=new CustomerRegistrationForm(null,"customer","");
         customer1.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 

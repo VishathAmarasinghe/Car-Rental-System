@@ -4,7 +4,6 @@
  */
 package car.rental.system;
 
-import com.mysql.cj.protocol.Resultset;
 import java.awt.Image;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -36,9 +35,12 @@ public class AdminPage extends javax.swing.JFrame {
     private int tableSelectedIndex=0;
     private String clickedIndexID="";
     private String currentPageHolder="dashboardPage";
+    private EmployeeData employee1=null;
     public AdminPage() {
         initComponents();
-        loadOwnerData("ALL");
+//        loadOwnerData("ALL");
+        employee1=new EmployeeData();
+        employee1.loadEmployeeData("all", null, vehicalOwnerTable, null);
         renderCarTable();
         TableActionEvent event = new TableActionEvent() {
             @Override
@@ -102,57 +104,57 @@ public class AdminPage extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     
-    private void loadOwnerData(String searchType){
-        try {
-            DefaultTableModel ownerTableLoad=(DefaultTableModel)vehicalOwnerTable.getModel();
-            ownerTableLoad.getDataVector().removeAllElements();
-            ownerTableLoad.fireTableDataChanged();
-            
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            String s="";
-            if (searchType.equalsIgnoreCase("all")) {
-                s="select empID, role, firstname,lastname,NIC,email,city from employee";
-            }else{
-                s="select empID,role, firstname,lastname,NIC,email,city from employee where role=\""+searchType+"\"";
-            }
-            
-            PreparedStatement ps = con.prepareStatement(s);
-            ResultSet rs=ps.executeQuery();
-            while (rs.next()) {                
-                String empID=rs.getString("empID");
-                System.out.println("Substring check "+empID.substring(0,4));
-                String sd="select phoneNo from employeephone where empID=\""+empID+"\"";
-                PreparedStatement psd = con.prepareStatement(sd);
-                ResultSet numberResult=psd.executeQuery();
-                String[] numberArray=new String[2];
-                int count=0;
-                while (numberResult.next()) {                    
-                    numberArray[count]=numberResult.getString("phoneNo");
-                    count++;
-                }
-                psd.close();
-                numberResult.close();
-                String role=rs.getString("role");
-                String Fname=rs.getString("FirstName");
-                String Lname=rs.getString("lastName");
-                String NICno=rs.getString("NIC");
-                String email=rs.getString("Email");
-                String city=rs.getString("city");
-               
-                String[] ownerData={empID,Fname,Lname,role,email,NICno,city,numberArray[0],numberArray[1]};
-                
-                ownerTableLoad.addRow(ownerData);
-
-            }
-            rs.close();
-            ps.close();
-            con.close();
- 
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
+//    private void loadOwnerData(String searchType){
+//        try {
+//            DefaultTableModel ownerTableLoad=(DefaultTableModel)vehicalOwnerTable.getModel();
+//            ownerTableLoad.getDataVector().removeAllElements();
+//            ownerTableLoad.fireTableDataChanged();
+//            
+//            Class.forName("com.mysql.cj.jdbc.Driver");
+//            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+//            String s="";
+//            if (searchType.equalsIgnoreCase("all")) {
+//                s="select empID, role, firstname,lastname,NIC,email,city from employee";
+//            }else{
+//                s="select empID,role, firstname,lastname,NIC,email,city from employee where role=\""+searchType+"\"";
+//            }
+//            
+//            PreparedStatement ps = con.prepareStatement(s);
+//            ResultSet rs=ps.executeQuery();
+//            while (rs.next()) {                
+//                String empID=rs.getString("empID");
+//                System.out.println("Substring check "+empID.substring(0,4));
+//                String sd="select phoneNo from employeephone where empID=\""+empID+"\"";
+//                PreparedStatement psd = con.prepareStatement(sd);
+//                ResultSet numberResult=psd.executeQuery();
+//                String[] numberArray=new String[2];
+//                int count=0;
+//                while (numberResult.next()) {                    
+//                    numberArray[count]=numberResult.getString("phoneNo");
+//                    count++;
+//                }
+//                psd.close();
+//                numberResult.close();
+//                String role=rs.getString("role");
+//                String Fname=rs.getString("FirstName");
+//                String Lname=rs.getString("lastName");
+//                String NICno=rs.getString("NIC");
+//                String email=rs.getString("Email");
+//                String city=rs.getString("city");
+//               
+//                String[] ownerData={empID,Fname,Lname,role,email,NICno,city,numberArray[0],numberArray[1]};
+//                
+//                ownerTableLoad.addRow(ownerData);
+//
+//            }
+//            rs.close();
+//            ps.close();
+//            con.close();
+// 
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
+//    }
     
     
     private void deleteSelectedRaw(int rawNo){
@@ -201,20 +203,20 @@ public class AdminPage extends javax.swing.JFrame {
         clickedIndexID=(String) ownerTableclicked.getValueAt(raw, 0);
         try {
             
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            String singleData="select * from employee where empID=\""+clickedIndexID+"\"";
-            PreparedStatement ps = con.prepareStatement(singleData);
-            ResultSet rs=ps.executeQuery();
-            
-            String singleDataPhoneNumbers="select * from employeephone where empID=\""+clickedIndexID+"\"";
-            PreparedStatement psnumbers = con.prepareStatement(singleDataPhoneNumbers);
-            ResultSet rs2=psnumbers.executeQuery();
-            
-            CustomerRegistrationForm form1=new CustomerRegistrationForm(rs, rs2,"All");
+//            Class.forName("com.mysql.cj.jdbc.Driver");
+//            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+//            String singleData="select * from employee where empID=\""+clickedIndexID+"\"";
+//            PreparedStatement ps = con.prepareStatement(singleData);
+//            ResultSet rs=ps.executeQuery();
+//            
+//            String singleDataPhoneNumbers="select * from employeephone where empID=\""+clickedIndexID+"\"";
+//            PreparedStatement psnumbers = con.prepareStatement(singleDataPhoneNumbers);
+//            ResultSet rs2=psnumbers.executeQuery();
+//            
+            CustomerRegistrationForm form1=new CustomerRegistrationForm(clickedIndexID,"employee",null);
             form1.setVisible(true);
             
-            con.close();
+//            con.close();
 
         } catch (Exception e) {
             System.out.println(e);
@@ -385,8 +387,8 @@ public class AdminPage extends javax.swing.JFrame {
         vehicalOwnerpanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         vehicalOwnerTable = new javax.swing.JTable();
-        OwnerSearch = new javax.swing.JTextField();
-        jButton5 = new javax.swing.JButton();
+        employeeSearchTextGetter = new javax.swing.JTextField();
+        employeeSearchBtn = new javax.swing.JButton();
         employeeTypeSelector = new javax.swing.JComboBox<>();
         selectQueryEmp = new javax.swing.JComboBox<>();
         jPanel1 = new javax.swing.JPanel();
@@ -786,8 +788,24 @@ public class AdminPage extends javax.swing.JFrame {
             vehicalOwnerTable.getColumnModel().getColumn(8).setPreferredWidth(50);
         }
 
-        jButton5.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        jButton5.setText("Search");
+        employeeSearchTextGetter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                employeeSearchTextGetterActionPerformed(evt);
+            }
+        });
+        employeeSearchTextGetter.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                employeeSearchTextGetterKeyTyped(evt);
+            }
+        });
+
+        employeeSearchBtn.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        employeeSearchBtn.setText("Search");
+        employeeSearchBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                employeeSearchBtnActionPerformed(evt);
+            }
+        });
 
         employeeTypeSelector.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         employeeTypeSelector.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Add Admin", "Add Cashier", "Add Driver", "Add Vehical Owner" }));
@@ -815,9 +833,9 @@ public class AdminPage extends javax.swing.JFrame {
                     .addGroup(vehicalOwnerpanelLayout.createSequentialGroup()
                         .addComponent(employeeTypeSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(OwnerSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(employeeSearchTextGetter, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(employeeSearchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(selectQueryEmp, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -828,8 +846,8 @@ public class AdminPage extends javax.swing.JFrame {
             .addGroup(vehicalOwnerpanelLayout.createSequentialGroup()
                 .addContainerGap(51, Short.MAX_VALUE)
                 .addGroup(vehicalOwnerpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(OwnerSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(employeeSearchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(employeeSearchTextGetter, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(employeeTypeSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(selectQueryEmp, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
@@ -923,7 +941,8 @@ public class AdminPage extends javax.swing.JFrame {
     private void vehicalownerbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vehicalownerbtnActionPerformed
         // TODO add your handling code here:
         currentPageHolder="employeePage";
-        loadOwnerData("all");
+//        loadOwnerData("all");
+          employee1.loadEmployeeData("all", null, vehicalOwnerTable, null);
         jTabbedPane1.setSelectedIndex(3);
         if (CarTable.isEditing()) {
             CarTable.getCellEditor().stopCellEditing();
@@ -964,19 +983,20 @@ public class AdminPage extends javax.swing.JFrame {
         // TODO add your handling code here:
         System.out.println(employeeTypeSelector.getSelectedIndex());
         if (employeeTypeSelector.getSelectedIndex()==3) {
-            CustomerRegistrationForm c1=new CustomerRegistrationForm("All");
+            System.out.println("Vowner Selected");
+            CustomerRegistrationForm c1=new CustomerRegistrationForm(null,"employee","VOwner");
             c1.SetRegistrationFrameTitle("Car Owner Registration", "Add Owner");
             c1.setVisible(true);
         }else if (employeeTypeSelector.getSelectedIndex()==2) {
-            CustomerRegistrationForm c1=new CustomerRegistrationForm("All");
+            CustomerRegistrationForm c1=new CustomerRegistrationForm(null,"employee","Driver");
             c1.SetRegistrationFrameTitle("Driver Registration", "Add Driver");
             c1.setVisible(true);
         }else if (employeeTypeSelector.getSelectedIndex()==1) {
-            CustomerRegistrationForm c1=new CustomerRegistrationForm("All");
+            CustomerRegistrationForm c1=new CustomerRegistrationForm(null,"employee","Cashier");
             c1.SetRegistrationFrameTitle("Cashier Registration", "Add Cashier");
             c1.setVisible(true);
         }else if (employeeTypeSelector.getSelectedIndex()==0) {
-            CustomerRegistrationForm c1=new CustomerRegistrationForm("All");
+            CustomerRegistrationForm c1=new CustomerRegistrationForm(null,"employee","Admin");
             c1.SetRegistrationFrameTitle("Admin Registration", "Add Admin");
             c1.setVisible(true);
         }
@@ -985,15 +1005,20 @@ public class AdminPage extends javax.swing.JFrame {
     private void selectQueryEmpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectQueryEmpActionPerformed
         // TODO add your handling code here:
         if (selectQueryEmp.getSelectedIndex()==0) {
-            loadOwnerData("All");
+//            loadOwnerData("All");
+              employee1.loadEmployeeData("all", null, vehicalOwnerTable, null);
         }else if(selectQueryEmp.getSelectedIndex()==1){
-            loadOwnerData("Admin");
+//            loadOwnerData("Admin");
+            employee1.loadEmployeeData("all", null, vehicalOwnerTable, "Admin");
         }else if(selectQueryEmp.getSelectedIndex()==2){
-            loadOwnerData("Cashier");
+//            loadOwnerData("Cashier");
+            employee1.loadEmployeeData("all", null, vehicalOwnerTable, "Cashier");
         }else if(selectQueryEmp.getSelectedIndex()==3){
-            loadOwnerData("Driver");
+//            loadOwnerData("Driver");
+            employee1.loadEmployeeData("all", null, vehicalOwnerTable, "Driver");
         }else if(selectQueryEmp.getSelectedIndex()==4){
-            loadOwnerData("VOwner");
+//            loadOwnerData("VOwner");
+            employee1.loadEmployeeData("all", null, vehicalOwnerTable, "VOwner");
         }
     }//GEN-LAST:event_selectQueryEmpActionPerformed
 
@@ -1008,6 +1033,20 @@ public class AdminPage extends javax.swing.JFrame {
         DiscountAdder di=new DiscountAdder();
         di.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void employeeSearchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_employeeSearchBtnActionPerformed
+        // TODO add your handling code here:
+        employee1.searchEmployee(employeeSearchTextGetter.getText(),vehicalOwnerTable);
+    }//GEN-LAST:event_employeeSearchBtnActionPerformed
+
+    private void employeeSearchTextGetterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_employeeSearchTextGetterActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_employeeSearchTextGetterActionPerformed
+
+    private void employeeSearchTextGetterKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_employeeSearchTextGetterKeyTyped
+        // TODO add your handling code here:
+        employee1.searchEmployee(employeeSearchTextGetter.getText(),vehicalOwnerTable);
+    }//GEN-LAST:event_employeeSearchTextGetterKeyTyped
 
     /**
      * @param args the command line arguments
@@ -1051,15 +1090,15 @@ public class AdminPage extends javax.swing.JFrame {
     private javax.swing.JTextField CarSearchBar;
     private javax.swing.JTable CarTable;
     private javax.swing.JPanel DashboardPanel;
-    private javax.swing.JTextField OwnerSearch;
     private javax.swing.JPanel SidepanelAdminboard;
     private javax.swing.JPanel discountPanel;
     private javax.swing.JTable discountTable;
     private javax.swing.JButton discountbtn;
+    private javax.swing.JButton employeeSearchBtn;
+    private javax.swing.JTextField employeeSearchTextGetter;
     private javax.swing.JComboBox<String> employeeTypeSelector;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel10;

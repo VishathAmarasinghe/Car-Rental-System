@@ -18,9 +18,12 @@ public class check extends javax.swing.JFrame {
      */
     public check() {
         initComponents();
-        JLabel lableee=new JLabel("next");
+//        JLabel lableee=new JLabel("next");
 //       jPanel1.setLayout(new AbsoluteLayout());
-        jPanel1.add(lableee);
+//        jPanel1.add(lableee);
+        
+        EmployeeData c1=new EmployeeData();
+        c1.loadEmployeeData("as", "A005", vehicalOwnerTable, "cashier");
 //        jPanel1.setVisible(true);
 //        lableee.setVisible(true);
       
@@ -36,6 +39,8 @@ public class check extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        vehicalOwnerTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -43,8 +48,41 @@ public class check extends javax.swing.JFrame {
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
+        vehicalOwnerTable.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        vehicalOwnerTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "First Name", "Last Name", "Role", "Email", "NIC", "City", "Phone No 1", "Phone No 2", "Settings"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        vehicalOwnerTable.setRowHeight(30);
+        vehicalOwnerTable.setSelectionBackground(new java.awt.Color(28, 78, 128));
+        vehicalOwnerTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                vehicalOwnerTableMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(vehicalOwnerTable);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 90, 880, -1));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void vehicalOwnerTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vehicalOwnerTableMouseClicked
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_vehicalOwnerTableMouseClicked
 
     /**
      * @param args the command line arguments
@@ -83,5 +121,7 @@ public class check extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable vehicalOwnerTable;
     // End of variables declaration//GEN-END:variables
 }

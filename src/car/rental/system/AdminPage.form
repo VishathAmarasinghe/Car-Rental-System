@@ -703,9 +703,9 @@
                           <Group type="102" attributes="0">
                               <Component id="employeeTypeSelector" min="-2" pref="213" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="OwnerSearch" min="-2" pref="274" max="-2" attributes="0"/>
+                              <Component id="employeeSearchTextGetter" min="-2" pref="274" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="jButton5" min="-2" pref="113" max="-2" attributes="0"/>
+                              <Component id="employeeSearchBtn" min="-2" pref="113" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="selectQueryEmp" min="-2" pref="199" max="-2" attributes="0"/>
                           </Group>
@@ -720,8 +720,8 @@
                   <Group type="102" attributes="0">
                       <EmptySpace pref="51" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jButton5" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
-                          <Component id="OwnerSearch" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
+                          <Component id="employeeSearchBtn" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
+                          <Component id="employeeSearchTextGetter" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                           <Component id="employeeTypeSelector" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
                           <Component id="selectQueryEmp" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
                       </Group>
@@ -827,15 +827,22 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JTextField" name="OwnerSearch">
+            <Component class="javax.swing.JTextField" name="employeeSearchTextGetter">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="employeeSearchTextGetterActionPerformed"/>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="employeeSearchTextGetterKeyTyped"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton5">
+            <Component class="javax.swing.JButton" name="employeeSearchBtn">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="1"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Search"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="employeeSearchBtnActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JComboBox" name="employeeTypeSelector">
               <Properties>

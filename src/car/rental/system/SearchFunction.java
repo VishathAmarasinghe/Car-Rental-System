@@ -94,6 +94,9 @@ public class SearchFunction {
         }
     }
     
+//    public String[] searchRelatedCustomer(){
+//        
+//    }
     
     
     public static void main(String[] args) {
