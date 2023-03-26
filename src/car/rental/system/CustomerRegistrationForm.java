@@ -28,6 +28,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     
     public CustomerRegistrationForm(String tableType) {
         initComponents();
+        removeTextfromError();
         
 
         
@@ -39,6 +40,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     
     public CustomerRegistrationForm(ResultSet details,ResultSet phoneDetails,String tableType){
         initComponents();
+        removeTextfromError();
         getLastIndexEmployeeTable(tableType);
         SetUpdateComponents(details, phoneDetails,tableType);
         if (tableType.equalsIgnoreCase("customer")) {
@@ -51,6 +53,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     
     public CustomerRegistrationForm(String clickedIDno,String tableType,String employeeType){
         initComponents();
+        removeTextfromError();
 //        getLastIndexEmployeeTable(tableType);
         
          if (tableType.equalsIgnoreCase("customer")) {
@@ -274,17 +277,43 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     
     private void addData(String dataType,String peopleType){
         
-        if (dataType.equalsIgnoreCase("customer")) {
-            customer2.SetAllData(new String[]{"","Customer",
-                RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),RegNIC.getText(),RegPhoneNo1.getText(),
-                regPhoneNo2.getText()
-            });
+        
+        removeTextfromError();
+        Validations v1=new Validations();
+        String fnameError=v1.nameChecker(RegFirstName.getText());
+        String lnameError=v1.nameChecker(RegLastName.getText());
+        String emilError=v1.emailChecker(RegEmail.getText());
+        String addres1Error=v1.addressChecker(RegAddress1.getText());
+        String address2Error=v1.addressChecker(RegAddress2.getText());
+        String cityError=v1.addressChecker(regCity.getText());
+        String phoneNoError1=v1.phoneNumberValidate(RegPhoneNo1.getText());
+        String phoneNoError2=v1.phoneNumberValidate(regPhoneNo2.getText());
+        String nicError=v1.NICvalidate(RegNIC.getText());
+        
+        
+        if (RegPhoneNo1.getText().equalsIgnoreCase(regPhoneNo2.getText())) {
+            phoneNoError1="Same number";
+        }
+        
+        
+        if (fnameError.equalsIgnoreCase("") && lnameError.equalsIgnoreCase("") &&
+                emilError.equalsIgnoreCase("") && addres1Error.equalsIgnoreCase("") && address2Error.equalsIgnoreCase("") &&
+                cityError.equalsIgnoreCase("") && phoneNoError1.equalsIgnoreCase("") && phoneNoError2.equalsIgnoreCase("") &&
+                nicError.equalsIgnoreCase("") && !RegPhoneNo1.getText().equalsIgnoreCase(regPhoneNo2.getText())) {
             
-            if ( customer2.InsertCustomerData()) {
-                JOptionPane.showMessageDialog(null, "Data Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
+            
+            
+                    if (dataType.equalsIgnoreCase("customer")) {
+                        customer2.SetAllData(new String[]{"","Customer",
+                            RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),RegNIC.getText(),RegPhoneNo1.getText(),
+                            regPhoneNo2.getText()
+                        });
+            
+                    if ( customer2.InsertCustomerData()) {
+                            JOptionPane.showMessageDialog(null, "Data Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
                 
-            }
-            CarRentalSystem.closeWindows(this);
+                        }
+                        CarRentalSystem.closeWindows(this);
             
            
         }else{
@@ -317,11 +346,57 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         }
  
     }
+  
+        }else{
+            
+            fNameValidator.setText(fnameError);
+            lnameValidator.setText(lnameError);
+            mailValidator.setText(emilError);
+            addressValidator.setText(addres1Error);
+            address2Validator.setText(address2Error);
+            cityValidator.setText(cityError);
+            phoneNo1Validator.setText(phoneNoError1);
+            phoneNo2Validator.setText(phoneNoError2);
+            NICvalidator.setText(nicError);
+            
+        }
+ 
+        
     }
     
     
     
     private void UpdateData(String dataType,String peopleType){
+        
+        
+        
+        removeTextfromError();
+        Validations v1=new Validations();
+        String fnameError=v1.nameChecker(RegFirstName.getText());
+        String lnameError=v1.nameChecker(RegLastName.getText());
+        String emilError=v1.emailChecker(RegEmail.getText());
+        String addres1Error=v1.addressChecker(RegAddress1.getText());
+        String address2Error=v1.addressChecker(RegAddress2.getText());
+        String cityError=v1.addressChecker(regCity.getText());
+        String phoneNoError1=v1.phoneNumberValidate(RegPhoneNo1.getText());
+        String phoneNoError2=v1.phoneNumberValidate(regPhoneNo2.getText());
+        String nicError=v1.NICvalidate(RegNIC.getText());
+        
+        
+        if (RegPhoneNo1.getText().equalsIgnoreCase(regPhoneNo2.getText())) {
+            phoneNoError1="Same number";
+        }
+        
+        
+        if (fnameError.equalsIgnoreCase("") && lnameError.equalsIgnoreCase("") &&
+                emilError.equalsIgnoreCase("") && addres1Error.equalsIgnoreCase("") && address2Error.equalsIgnoreCase("") &&
+                cityError.equalsIgnoreCase("") && phoneNoError1.equalsIgnoreCase("") && phoneNoError2.equalsIgnoreCase("") &&
+                nicError.equalsIgnoreCase("") && !RegPhoneNo1.getText().equalsIgnoreCase(regPhoneNo2.getText())) {
+        
+        
+        
+        
+        
         
         if (dataType.equalsIgnoreCase("customer")) {
             customer2.SetAllData(new String[]{"","Customer",
@@ -357,6 +432,18 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
             }
             }
             CarRentalSystem.closeWindows(this);
+        }
+        
+        }else{
+            fNameValidator.setText(fnameError);
+            lnameValidator.setText(lnameError);
+            mailValidator.setText(emilError);
+            addressValidator.setText(addres1Error);
+            address2Validator.setText(address2Error);
+            cityValidator.setText(cityError);
+            phoneNo1Validator.setText(phoneNoError1);
+            phoneNo2Validator.setText(phoneNoError2);
+            NICvalidator.setText(nicError);
         }
  
     }
@@ -475,6 +562,18 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         }
     }
     
+    private void removeTextfromError(){
+        fNameValidator.setText("");
+        lnameValidator.setText("");
+        mailValidator.setText("");
+        addressValidator.setText("");
+        address2Validator.setText("");
+        cityValidator.setText("");
+        phoneNo1Validator.setText("");
+        phoneNo2Validator.setText("");
+        NICvalidator.setText("");
+    }
+    
     
 
     /**
@@ -509,6 +608,15 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         NIC_licence = new javax.swing.JLabel();
         addbtnRegister = new javax.swing.JButton();
         CustomerAddingCancelation = new javax.swing.JButton();
+        NICvalidator = new javax.swing.JLabel();
+        phoneNo2Validator = new javax.swing.JLabel();
+        phoneNo1Validator = new javax.swing.JLabel();
+        cityValidator = new javax.swing.JLabel();
+        address2Validator = new javax.swing.JLabel();
+        addressValidator = new javax.swing.JLabel();
+        mailValidator = new javax.swing.JLabel();
+        fNameValidator = new javax.swing.JLabel();
+        lnameValidator = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -524,10 +632,10 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 590, Short.MAX_VALUE)
+            .addGap(0, 670, Short.MAX_VALUE)
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 590));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 670));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -540,6 +648,12 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         RegTitle.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         RegTitle.setForeground(new java.awt.Color(0, 0, 0));
         RegTitle.setText("Customer Registration");
+
+        RegEmail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RegEmailActionPerformed(evt);
+            }
+        });
 
         RegFirstName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -621,6 +735,42 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
             }
         });
 
+        NICvalidator.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        NICvalidator.setForeground(new java.awt.Color(255, 0, 0));
+        NICvalidator.setText("abc");
+
+        phoneNo2Validator.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        phoneNo2Validator.setForeground(new java.awt.Color(255, 0, 0));
+        phoneNo2Validator.setText("abc");
+
+        phoneNo1Validator.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        phoneNo1Validator.setForeground(new java.awt.Color(255, 0, 0));
+        phoneNo1Validator.setText("abc");
+
+        cityValidator.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        cityValidator.setForeground(new java.awt.Color(255, 0, 0));
+        cityValidator.setText("abc");
+
+        address2Validator.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        address2Validator.setForeground(new java.awt.Color(255, 0, 0));
+        address2Validator.setText("abc");
+
+        addressValidator.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        addressValidator.setForeground(new java.awt.Color(255, 0, 0));
+        addressValidator.setText("abc");
+
+        mailValidator.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        mailValidator.setForeground(new java.awt.Color(255, 0, 0));
+        mailValidator.setText("abc");
+
+        fNameValidator.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        fNameValidator.setForeground(new java.awt.Color(255, 0, 0));
+        fNameValidator.setText("abc");
+
+        lnameValidator.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        lnameValidator.setForeground(new java.awt.Color(255, 0, 0));
+        lnameValidator.setText("abc");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -632,50 +782,66 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(regCity, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(RegEmail)
-                        .addComponent(RegAddress1)
-                        .addComponent(RegAddress2)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(RegFirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel3))
-                            .addGap(63, 63, 63)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2)
-                                .addComponent(RegLastName, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(RegPhoneNo1, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel9))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel8)
-                                .addComponent(regPhoneNo2, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(RegNIC, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(0, 0, Short.MAX_VALUE))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                    .addGap(0, 0, Short.MAX_VALUE)
-                                    .addComponent(addbtnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGap(18, 18, 18)
-                            .addComponent(CustomerAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel7)
-                    .addComponent(NIC_licence))
-                .addContainerGap(66, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel7)
+                            .addComponent(regCity, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(RegAddress2, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(RegPhoneNo1, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel9)
+                                    .addComponent(phoneNo1Validator, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(regPhoneNo2, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel8)
+                                    .addComponent(phoneNo2Validator, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(RegAddress1)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(NICvalidator, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(RegNIC, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(NIC_licence, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(addressValidator, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(RegFirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(jLabel3))
+                                            .addGap(63, 63, 63)
+                                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(jLabel2)
+                                                .addComponent(RegLastName, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(lnameValidator, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                            .addGap(0, 0, Short.MAX_VALUE)
+                                            .addComponent(addbtnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(CustomerAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(RegEmail)
+                                        .addComponent(jLabel4))
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(66, 66, 66))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fNameValidator, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(mailValidator, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(address2Validator, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cityValidator, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(RegTitle)
-                .addGap(11, 11, 11)
+                .addGap(5, 5, 5)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3))
@@ -683,42 +849,63 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(RegFirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(RegLastName, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(4, 4, 4)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(fNameValidator)
+                    .addComponent(lnameValidator))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addGap(2, 2, 2)
                 .addComponent(RegEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(mailValidator)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(RegAddress1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(addressValidator)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6)
                 .addGap(2, 2, 2)
                 .addComponent(RegAddress2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(4, 4, 4)
+                .addComponent(address2Validator)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel7)
                 .addGap(2, 2, 2)
                 .addComponent(regCity, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cityValidator)
+                .addGap(4, 4, 4)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(jLabel9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(regPhoneNo2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(RegPhoneNo1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(1, 1, 1)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(RegPhoneNo1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(regPhoneNo2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(phoneNo2Validator)
+                    .addComponent(phoneNo1Validator))
+                .addGap(3, 3, 3)
                 .addComponent(NIC_licence)
                 .addGap(2, 2, 2)
                 .addComponent(RegNIC, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addbtnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(CustomerAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(NICvalidator))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(addbtnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(CustomerAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(45, 45, 45))
         );
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 0, 660, 590));
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 0, 660, 670));
 
         pack();
         setLocationRelativeTo(null);
@@ -800,6 +987,10 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         CarRentalSystem.closeWindows(this);
     }//GEN-LAST:event_CustomerAddingCancelationActionPerformed
 
+    private void RegEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegEmailActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_RegEmailActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -841,6 +1032,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CustomerAddingCancelation;
     private javax.swing.JLabel NIC_licence;
+    private javax.swing.JLabel NICvalidator;
     private javax.swing.JTextField RegAddress1;
     private javax.swing.JTextField RegAddress2;
     private javax.swing.JTextField RegEmail;
@@ -850,6 +1042,10 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     private javax.swing.JTextField RegPhoneNo1;
     private javax.swing.JLabel RegTitle;
     private javax.swing.JButton addbtnRegister;
+    private javax.swing.JLabel address2Validator;
+    private javax.swing.JLabel addressValidator;
+    private javax.swing.JLabel cityValidator;
+    private javax.swing.JLabel fNameValidator;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -860,6 +1056,10 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel lnameValidator;
+    private javax.swing.JLabel mailValidator;
+    private javax.swing.JLabel phoneNo1Validator;
+    private javax.swing.JLabel phoneNo2Validator;
     private javax.swing.JTextField regCity;
     private javax.swing.JTextField regPhoneNo2;
     // End of variables declaration//GEN-END:variables

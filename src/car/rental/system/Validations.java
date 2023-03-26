@@ -18,6 +18,102 @@ public class Validations {
     private int addressSize=40;
     
     
+    
+    
+   private String fnameError;
+   private String lnameError;
+   private String emilError;
+   private String addres1Error;
+   private String address2Error;
+   private String cityError;
+   private String phoneNoError1;
+   private String phoneNoError2;
+   private String nicError;
+
+    public String getFnameError() {
+        return fnameError;
+    }
+
+    public void setFnameError(String fnameError) {
+        this.fnameError = fnameError;
+    }
+
+    public String getLnameError() {
+        return lnameError;
+    }
+
+    public void setLnameError(String lnameError) {
+        this.lnameError = lnameError;
+    }
+
+    public String getEmilError() {
+        return emilError;
+    }
+
+    public void setEmilError(String emilError) {
+        this.emilError = emilError;
+    }
+
+    public String getAddres1Error() {
+        return addres1Error;
+    }
+
+    public void setAddres1Error(String addres1Error) {
+        this.addres1Error = addres1Error;
+    }
+
+    public String getAddress2Error() {
+        return address2Error;
+    }
+
+    public void setAddress2Error(String address2Error) {
+        this.address2Error = address2Error;
+    }
+
+    public String getCityError() {
+        return cityError;
+    }
+
+    public void setCityError(String cityError) {
+        this.cityError = cityError;
+    }
+
+    public String getPhoneNoError1() {
+        return phoneNoError1;
+    }
+
+    public void setPhoneNoError1(String phoneNoError1) {
+        this.phoneNoError1 = phoneNoError1;
+    }
+
+    public String getPhoneNoError2() {
+        return phoneNoError2;
+    }
+
+    public void setPhoneNoError2(String phoneNoError2) {
+        this.phoneNoError2 = phoneNoError2;
+    }
+
+    public String getNicError() {
+        return nicError;
+    }
+
+    public void setNicError(String nicError) {
+        this.nicError = nicError;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public String nameChecker(String name){
         String validateError="";
         if (name.length()>fNameLastNameSize) {
@@ -38,9 +134,10 @@ public class Validations {
         if (mail.length()>emailSize) {
             validateError="email is too long (max<50 characters)";
         }else{
-            Pattern p=Pattern.compile("^[A-Z0-9._%+-]+@[a-z0-9.-]+//.[a-z]$",Pattern.CASE_INSENSITIVE);
+            Pattern p=Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",Pattern.CASE_INSENSITIVE);
             Matcher m=p.matcher(mail);
-            if (!m.find()) {
+//            System.out.println(m.find());
+            if (m.find()==false) {
                 validateError="Invalid Email address";
             }
         }
@@ -92,6 +189,13 @@ public class Validations {
     }
     
     
+    public String DateValidation(String getDate){
+        String validateError="";
+        
+        return validateError;
+    }
+    
+    
     
     
     
@@ -99,7 +203,7 @@ public class Validations {
     
     public static void main(String[] args) {
         Validations v1=new Validations();
-        System.out.println(v1.NICvalidate("20013360070"));
+        System.out.println(v1.emailChecker("vishatla2001@gmail.com"));
     }
     
 }
