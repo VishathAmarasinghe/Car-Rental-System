@@ -204,8 +204,8 @@ public class CashierPanel extends javax.swing.JFrame {
             if (tableType.equalsIgnoreCase("proceeded")) {
                 s = "select * from reservation where ReservationStatus=\"proceeded\" order by DropOffDate ";
                 proceedTableLoad = (DefaultTableModel) ProceededReservationTable.getModel();
-                proceedTableLoad.getDataVector().removeAllElements();
-                proceedTableLoad.fireTableDataChanged();
+                proceedTableLoad.getDataVector().removeAllElements();    //remove all data from table
+                proceedTableLoad.fireTableDataChanged();    
             } else if (tableType.equalsIgnoreCase("pending")) {
                 s = "select * from reservation where ReservationStatus=\"pending\" ";
                 pendingTableLoad = (DefaultTableModel) PendingReservationsTable.getModel();
@@ -221,7 +221,7 @@ public class CashierPanel extends javax.swing.JFrame {
             PreparedStatement ps = con.prepareStatement(s);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                String reserveID = rs.getString("ReservationID");
+                String reserveID = rs.getString("ReservationID");   //get reservation data from database
 
                 String pickedUpdate = rs.getString("PickedUpDate");
                 String dropOffDate = rs.getString("DropOffDate");
@@ -269,7 +269,7 @@ public class CashierPanel extends javax.swing.JFrame {
             PreparedStatement ps = con.prepareStatement(s);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                String billID = rs.getString("BillNo");
+                String billID = rs.getString("BillNo");    //get bill data from database
 
                 String BillDate = rs.getString("BillDate");
                 String totalAmount = rs.getString("TotalAmount");
@@ -289,7 +289,7 @@ public class CashierPanel extends javax.swing.JFrame {
     }
 
     /**
-     *
+     *edit selected customer details
      * @param raw
      */
     private void editSelectedCustomerData(int raw) {
@@ -298,7 +298,7 @@ public class CashierPanel extends javax.swing.JFrame {
         try {
 
             System.out.println("editbtnComes");
-            CustomerRegistrationForm form1 = new CustomerRegistrationForm(clickedIndexID, "customer", null);
+            CustomerRegistrationForm form1 = new CustomerRegistrationForm(clickedIndexID, "customer", null); //open customer detailspage
             form1.setVisible(true);
 
         } catch (Exception e) {
@@ -307,7 +307,7 @@ public class CashierPanel extends javax.swing.JFrame {
     }
 
     /**
-     *
+     *delete selected raw from table
      * @param rawNo
      */
     private void deleteSelectedRaw(int rawNo) {
