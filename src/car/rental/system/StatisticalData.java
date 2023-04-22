@@ -152,7 +152,7 @@ public class StatisticalData {
                 
             
         } catch (Exception e) {
-            System.out.println("Statiscal Error "+e);
+            System.out.println("Statiscal Error in cashier "+e);
         }
         
         finally{

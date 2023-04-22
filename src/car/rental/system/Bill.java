@@ -123,7 +123,7 @@ public class Bill extends javax.swing.JFrame {
         vehicalDriverDetailsGetter();
         verificationStatusShowerVehicalbtn.setVisible(false);
         verificationStatusShowerVehical.setVisible(false);
-        paymentCalculation(TableType);
+        
         AccessedCashierID=cashierID;
 //        verificationbtn.addAncestorListener(listener);
 
@@ -193,7 +193,7 @@ public class Bill extends javax.swing.JFrame {
             driverCharge = dirverPayment * number_of_Days;    //calculate driver payment 
             finalTotalPayment = driverCharge + total_car_Rent;
 
-            driverChargePerDay.setText("Rs: "+dirverPayment);
+            driverChargePerDay.setText(String.valueOf(dirverPayment));
 
         } else {
             finalTotalPayment = total_car_Rent;
@@ -383,7 +383,9 @@ public class Bill extends javax.swing.JFrame {
         if (!driverStatusBill.getText().equalsIgnoreCase("No")) {
             String[] driverRawData = {"Driver(" + driverSelectorBill.getSelectedItem().toString() + ")", driverChargePerDay.getText(), pickUpDateBill.getText(), dropOffDatebill.getText(), String.valueOf(driverCharge)};
             CarDriverTableBill.addRow(driverRawData);
+            
         }
+        paymentCalculation(correspondingTable);
 
     }
     
@@ -487,7 +489,7 @@ public class Bill extends javax.swing.JFrame {
             
 
         } catch (Exception e) {
-            System.out.println("Statiscal Error "+e);
+            System.out.println("customer mail getting Error "+e);
         }
         finally{
             return customerEmail;
@@ -504,8 +506,10 @@ public class Bill extends javax.swing.JFrame {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            
+            System.out.println("Driver ID "+driverSelectorBill.getSelectedItem().toString().substring(0,4));
                 
-            String slectMax = "select rentcharge from driver where empid=\""+DriverID+"\";";
+            String slectMax = "select RentCharge from driver where EmpID=\""+driverSelectorBill.getSelectedItem().toString().substring(0,4)+"\";";
             PreparedStatement ps = con.prepareStatement(slectMax);
             ResultSet rs = ps.executeQuery();
             rs.next();
@@ -516,7 +520,7 @@ public class Bill extends javax.swing.JFrame {
             
             
         } catch (Exception e) {
-            System.out.println("Statiscal Error "+e);
+            System.out.println("Driver Price Getting Error "+e);
         }
         finally{
             return driverpayment;
@@ -1177,15 +1181,15 @@ public class Bill extends javax.swing.JFrame {
 
         carchargeLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         carchargeLabel.setForeground(new java.awt.Color(0, 0, 0));
-        carchargeLabel.setText("Car Charge Per Day: ");
+        carchargeLabel.setText("Car Charge Per Day:                                          Rs:");
 
         nofoDaysLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         nofoDaysLabel.setForeground(new java.awt.Color(0, 0, 0));
-        nofoDaysLabel.setText("No of Days:");
+        nofoDaysLabel.setText("No of Days:                                                         ");
 
         totalCarRentLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         totalCarRentLabel.setForeground(new java.awt.Color(0, 0, 0));
-        totalCarRentLabel.setText("Total Car Rent");
+        totalCarRentLabel.setText("Total Car Rent                                                    Rs:");
 
         driverChargeLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         driverChargeLabel.setForeground(new java.awt.Color(0, 0, 0));
@@ -1193,27 +1197,27 @@ public class Bill extends javax.swing.JFrame {
 
         AdvancePaidCharge.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         AdvancePaidCharge.setForeground(new java.awt.Color(0, 0, 0));
-        AdvancePaidCharge.setText("Total Charge");
+        AdvancePaidCharge.setText("Total Charge                                                        Rs:");
 
         prepaidLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         prepaidLabel.setForeground(new java.awt.Color(0, 0, 0));
-        prepaidLabel.setText("Advance Payment(40% of Total Charge): ");
+        prepaidLabel.setText("Advance Payment(40% of Total Charge):       Rs:");
 
         jLabel18.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel18.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel18.setText("Pending Payment");
+        jLabel18.setText("Pending Payment                                                Rs:");
 
-        perDayCarCharge.setText("jLabel19");
+        perDayCarCharge.setText(".");
 
-        numberOfDays.setText("jLabel19");
+        numberOfDays.setText(".");
 
-        totalCarRent.setText("jLabel19");
+        totalCarRent.setText(".");
 
-        driverChargePerDay.setText("jLabel19");
+        driverChargePerDay.setText(".");
 
-        TotalChargebill.setText("jLabel19");
+        TotalChargebill.setText(".");
 
-        pendingPayments.setText("jLabel19");
+        pendingPayments.setText(".");
 
         verifyDriverVehicalBtn1.setText("Verify Paymant");
         verifyDriverVehicalBtn1.addActionListener(new java.awt.event.ActionListener() {
@@ -1227,7 +1231,7 @@ public class Bill extends javax.swing.JFrame {
         verificationStatusShowerVehical.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/correct2.png"))); // NOI18N
         verificationStatusShowerVehical.setText("Payment Verified");
 
-        advancePayment.setText("jTextField1");
+        advancePayment.setText(".");
         advancePayment.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 advancePaymentKeyTyped(evt);
@@ -1243,38 +1247,36 @@ public class Bill extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel9)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(carchargeLabel)
-                                    .addComponent(nofoDaysLabel)
-                                    .addComponent(totalCarRentLabel)
-                                    .addComponent(driverChargeLabel)
-                                    .addComponent(AdvancePaidCharge))
-                                .addGap(122, 122, 122)
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(driverChargePerDay, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(totalCarRent, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(numberOfDays, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(perDayCarCharge, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(TotalChargebill, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(27, 27, 27))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(prepaidLabel)
-                            .addComponent(jLabel18))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(pendingPayments, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(advancePayment, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(prepaidLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 352, Short.MAX_VALUE)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                                 .addComponent(verificationStatusShowerVehical)
                                 .addGap(37, 37, 37))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                                 .addComponent(verifyDriverVehicalBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(25, 25, 25))))))
+                                .addGap(25, 25, 25))))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(carchargeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(nofoDaysLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(totalCarRentLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(driverChargeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(AdvancePaidCharge, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(driverChargePerDay, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(totalCarRent, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(numberOfDays, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(TotalChargebill, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(perDayCarCharge, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(advancePayment, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(pendingPayments, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addContainerGap())))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

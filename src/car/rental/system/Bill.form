@@ -1266,38 +1266,10 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="carchargeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="nofoDaysLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="totalCarRentLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="driverChargeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="AdvancePaidCharge" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace min="-2" pref="122" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="driverChargePerDay" min="-2" pref="129" max="-2" attributes="0"/>
-                                          <Component id="totalCarRent" min="-2" pref="129" max="-2" attributes="0"/>
-                                          <Component id="numberOfDays" min="-2" pref="129" max="-2" attributes="0"/>
-                                          <Component id="perDayCarCharge" min="-2" pref="129" max="-2" attributes="0"/>
-                                          <Component id="TotalChargebill" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
+                                  <Component id="prepaidLabel" min="-2" pref="267" max="-2" attributes="0"/>
+                                  <Component id="jLabel18" alignment="1" min="-2" pref="267" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="prepaidLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel18" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="pendingPayments" min="-2" pref="129" max="-2" attributes="0"/>
-                                  <Component id="advancePayment" min="-2" pref="120" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace pref="352" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <Component id="verificationStatusShowerVehical" min="-2" max="-2" attributes="0"/>
@@ -1308,6 +1280,31 @@
                                       <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabel9" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="carchargeLabel" max="32767" attributes="0"/>
+                                          <Component id="nofoDaysLabel" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="totalCarRentLabel" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="driverChargeLabel" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="AdvancePaidCharge" alignment="0" max="32767" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="driverChargePerDay" min="-2" pref="129" max="-2" attributes="0"/>
+                                          <Component id="totalCarRent" min="-2" pref="129" max="-2" attributes="0"/>
+                                          <Component id="numberOfDays" min="-2" pref="129" max="-2" attributes="0"/>
+                                          <Component id="TotalChargebill" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
+                                          <Component id="perDayCarCharge" min="-2" pref="129" max="-2" attributes="0"/>
+                                          <Component id="advancePayment" alignment="0" min="-2" pref="120" max="-2" attributes="0"/>
+                                          <Component id="pendingPayments" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -1382,7 +1379,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Car Charge Per Day: "/>
+                <Property name="text" type="java.lang.String" value="Car Charge Per Day:                                          Rs:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="nofoDaysLabel">
@@ -1393,7 +1390,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="No of Days:"/>
+                <Property name="text" type="java.lang.String" value="No of Days:                                                         "/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="totalCarRentLabel">
@@ -1404,7 +1401,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Total Car Rent"/>
+                <Property name="text" type="java.lang.String" value="Total Car Rent                                                    Rs:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="driverChargeLabel">
@@ -1426,7 +1423,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Total Charge"/>
+                <Property name="text" type="java.lang.String" value="Total Charge                                                        Rs:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="prepaidLabel">
@@ -1437,7 +1434,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Advance Payment(40% of Total Charge): "/>
+                <Property name="text" type="java.lang.String" value="Advance Payment(40% of Total Charge):       Rs:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel18">
@@ -1448,37 +1445,37 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Pending Payment"/>
+                <Property name="text" type="java.lang.String" value="Pending Payment                                                Rs:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="perDayCarCharge">
               <Properties>
-                <Property name="text" type="java.lang.String" value="jLabel19"/>
+                <Property name="text" type="java.lang.String" value="."/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="numberOfDays">
               <Properties>
-                <Property name="text" type="java.lang.String" value="jLabel19"/>
+                <Property name="text" type="java.lang.String" value="."/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="totalCarRent">
               <Properties>
-                <Property name="text" type="java.lang.String" value="jLabel19"/>
+                <Property name="text" type="java.lang.String" value="."/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="driverChargePerDay">
               <Properties>
-                <Property name="text" type="java.lang.String" value="jLabel19"/>
+                <Property name="text" type="java.lang.String" value="."/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="TotalChargebill">
               <Properties>
-                <Property name="text" type="java.lang.String" value="jLabel19"/>
+                <Property name="text" type="java.lang.String" value="."/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="pendingPayments">
               <Properties>
-                <Property name="text" type="java.lang.String" value="jLabel19"/>
+                <Property name="text" type="java.lang.String" value="."/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="verifyDriverVehicalBtn1">
@@ -1505,7 +1502,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="advancePayment">
               <Properties>
-                <Property name="text" type="java.lang.String" value="jTextField1"/>
+                <Property name="text" type="java.lang.String" value="."/>
               </Properties>
               <Events>
                 <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="advancePaymentKeyTyped"/>

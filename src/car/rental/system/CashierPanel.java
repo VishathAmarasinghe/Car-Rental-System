@@ -177,6 +177,7 @@ public class CashierPanel extends javax.swing.JFrame {
             PreparedStatement ps = con.prepareStatement(singleData);
             ResultSet rs = ps.executeQuery();
 
+            System.out.println("executed here");
             Bill billrender = new Bill(rs, tableType, AccessedCashierID);  //create bill object 
             billrender.setVisible(true);
 
