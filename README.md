@@ -14,7 +14,7 @@ Designed and developed a car Rental Management System with functionalities of cu
 <hr>
 <img src="GitImages/carSearch.png" >
 <img src="GitImages/availableVehicals.png">
-<img src="GitImages/requestform.png" >
+<img src="GitImages/requestForm.png" >
 <img src="GitImages/login.png">
 <img src="GitImages/AdminPanel.png" >
 <img src="GitImages/employee.png">
