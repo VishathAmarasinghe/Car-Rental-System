@@ -10,7 +10,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
 
-import raven.cell.TableActionEvent;
+import EditDelete.cell.TableActionEvent;
 
 /**
  *

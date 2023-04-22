@@ -29,6 +29,8 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     public CustomerRegistrationForm(String tableType) {
         initComponents();
         removeTextfromError();
+        customer2=new CustomerData();
+        employee2=new EmployeeData();
         
 
         
@@ -70,6 +72,8 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         System.out.println("checking loading");
   
     }
+    
+    
     
     
     private void SetUpdateComponents(ResultSet detaiSet,ResultSet phoneDetails,String tableType){
@@ -176,7 +180,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
             
             if (role.equalsIgnoreCase("Driver")) {
                     NIC_licence.setText("Licence");
-                    RegNIC.setText(employee2.getLicenceNo());
+//                    RegNIC.setText(employee2.getLicenceNo());
                     RegTitle.setText("Update Driver");
                     addbtnRegister.setText("Update Driver");
                     
@@ -263,11 +267,6 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     }
     
     
-    public void userInputValidation(String firstname,String LastName,String Email,String Address1,String Address2,String city,int phoneno1,int phoneno2,int NIC){
-        
-        
-        
-    }
     
     private String randomNumberGenarator(String initailName){
        int value=(int)((Math.random())*(5000-2000+1)+2000);
@@ -319,7 +318,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         }else{
             if (peopleType.equalsIgnoreCase("Driver")) {
                 employee2.SetAllData(new String[]{"","Driver",
-                RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),null,RegNIC.getText(),RegPhoneNo1.getText(),
+                RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),RegNIC.getText(),RegPhoneNo1.getText(),
                 regPhoneNo2.getText()});
                 
                 boolean actionResult[]=employee2.InsertEmployeeData(peopleType);
@@ -328,6 +327,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                     if (actionResult[1]) {
                         JOptionPane.showMessageDialog(null, "Email Send To the New Employee","Registration",JOptionPane.INFORMATION_MESSAGE);
                     }
+                    CarRentalSystem.closeWindows(this);
             }
                 
             }else{
@@ -782,12 +782,6 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel7)
-                            .addComponent(regCity, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(RegAddress2, javax.swing.GroupLayout.Alignment.LEADING)
@@ -802,10 +796,12 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                                     .addComponent(jLabel8)
                                     .addComponent(phoneNo2Validator, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(RegAddress1)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(RegNIC, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(300, 300, 300))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(NICvalidator, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(RegNIC, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(NIC_licence, javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(addressValidator, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -825,16 +821,19 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                                             .addComponent(CustomerAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addComponent(RegEmail)
                                         .addComponent(jLabel4))
-                                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING))
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(fNameValidator, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(mailValidator, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(address2Validator, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cityValidator, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addGap(66, 66, 66))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fNameValidator, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(mailValidator, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(address2Validator, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cityValidator, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel7)
+                            .addComponent(regCity, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -891,18 +890,15 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                     .addComponent(phoneNo1Validator))
                 .addGap(3, 3, 3)
                 .addComponent(NIC_licence)
-                .addGap(2, 2, 2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(RegNIC, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(NICvalidator))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(addbtnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(CustomerAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(45, 45, 45))
+                .addGap(2, 2, 2)
+                .addComponent(NICvalidator)
+                .addGap(12, 12, 12)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(addbtnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(CustomerAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(122, 122, 122))
         );
 
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 0, 660, 670));

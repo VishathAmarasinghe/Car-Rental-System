@@ -90,4 +90,43 @@ select count(cars.carNumber) from cars where carNumber not in
  
  update cars set price=15000;
  
+ 
+ alter table cars add foreign key(OwnerID) references vehicalowner(VOwnerID);
+ 
+ 
+ 
+ alter table reservation add foreign key(VehicalNumber) references cars(CarNumber);
+ 
+  alter table reservation add foreign key(CustomerID) references customer(CustomerID);
+ 
+   alter table reservation add foreign key(CashierID) references employee(empID);
+   
+      alter table reservation add foreign key(DriverID) references employee(empID);
+ 
+ 
  alter table bill add primary key(BillNo);
+ 
+ 
+ 
+ select R.reservationID, R.PickedUpDate,R.DropOffDate,C.firstname,R.VehicalNumber from reservation R 
+ inner join Customer C on R.CustomerID=C.CustomerID where DriverID="A009" and reservationStatus="Proceeded";
+ 
+ 
+ 
+ alter table driver add foreign key(empID)  references employee(empid);
+ 
+ 
+ 
+ select count(ReservationID) from reservation where "2023-04-24" between pickedupdate and dropOffDate;
+ 
+ 
+ select count(empID) from employee;
+ 
+ select count(CustomerID) from Customer;
+ 
+ select count(carNumber) from cars;
+ 
+ select count(reservationID) from reservation where reservationStatus="Pending";
+ 
+ 
+  select count(reservationID) from reservation where reservationStatus="Proceeded";

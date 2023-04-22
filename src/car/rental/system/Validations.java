@@ -4,6 +4,11 @@
  */
 package car.rental.system;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -189,21 +194,126 @@ public class Validations {
     }
     
     
-    public String DateValidation(String getDate){
-        String validateError="";
+    public boolean DateValidation(String startDate ) throws ParseException{
+        boolean dateValidator=false;
+        System.out.println("incoming date "+startDate);
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+//        Date d1 = fmt.parse(selectedYear+selectedMonth+selectedDay);
+        Date date1=new SimpleDateFormat("dd-MM-yyyy").parse(startDate);
         
+        LocalDateTime myDateObj = LocalDateTime.now();
+
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String formattedDate=myDateObj.format(myFormatObj);
+        System.out.println(formattedDate);
+//        System.out.println(selectedDay+"-"+selectedMonth+"-"+selectedYear);
+        
+        if (date1.compareTo(new Date())<0) {
+            System.out.println("less una");
+            if (formattedDate.equals(startDate)) {
+                dateValidator=false;
+            }else{
+                dateValidator=true;
+            }
+            System.out.println("current state "+dateValidator);
+            
+        }
+        
+        return dateValidator;
+        
+    }
+    
+    
+    public String carNumberValidate(String carNumber){
+        String validateError="";
+        if (carNumber.length()==7 || carNumber.length()==6) {
+           Pattern p=Pattern.compile("^([A-z]{1,2})[0-9]{4}$|^([A-z]{1,3})[0-9]{4}$",Pattern.CASE_INSENSITIVE);
+            Matcher m=p.matcher(carNumber);
+            if (!m.find()) {
+                validateError="Invalid car Number";
+            }
+            
+        }else{
+            validateError="Not in the correct Format";
+        }
+        return validateError;
+    }
+    
+    public String carTypeAndModelValidator(String modelOrType){
+        String validateError="";
+        if (modelOrType.length()<=1) {
+            validateError="invalid input";
+        }
         return validateError;
     }
     
     
+    public String SeatNoValidator(String seatNo){
+        String validateError="";
+        try {
+            int seatno=Integer.parseInt(seatNo);
+            if (seatno>20) {
+                validateError="invalid Count";
+            }
+        } catch (Exception e) {
+            validateError="Not a Number";
+        }finally{
+            return validateError;
+        }
+    }
+    
+    
+    
+    public String priceValidator(String price){
+        String validateError="";
+        try {
+            double priceN=Double.valueOf(price);
+            if (priceN<=0) {
+                validateError="invalid price";
+            }
+        } catch (Exception e) {
+            validateError="Not a Number";
+        }finally{
+            return validateError;
+        }
+    }
+    
+    
+    public String discountNameDescriptionValidator(String validateString){
+        String validateError="";
+        if (validateString.length()<=2) {
+            validateError="need more Characters";
+        }
+        return validateError;
+    }
+    
+    public String discountprecentageValidator(String validateString){
+        String validateError="";
+        try {
+            double priceN=Double.valueOf(validateString);
+            if (priceN<=0) {
+                validateError="invalid price";
+            }
+        } catch (Exception e) {
+            validateError="Not a Number";
+        }finally{
+            return validateError;
+        }
+    }
+    
+    
+   
     
     
     
     
     
-    public static void main(String[] args) {
+    
+    
+    public static void main(String[] args) throws ParseException {
         Validations v1=new Validations();
-        System.out.println(v1.emailChecker("vishatla2001@gmail.com"));
+//        System.out.println(v1.DateValidation(""));
+        System.out.println(v1.carNumberValidate("A@A1212"));
     }
     
 }

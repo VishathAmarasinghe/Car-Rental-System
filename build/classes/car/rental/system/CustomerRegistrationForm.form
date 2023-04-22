@@ -74,14 +74,6 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="regCity" alignment="0" min="-2" pref="243" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="32767" attributes="0"/>
-                      </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Component id="RegAddress2" alignment="0" max="32767" attributes="0"/>
@@ -99,10 +91,13 @@
                                   </Group>
                               </Group>
                               <Component id="RegAddress1" alignment="1" max="32767" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Component id="RegNIC" min="-2" pref="243" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="300" max="-2" attributes="0"/>
+                              </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="1" attributes="0">
                                       <Component id="NICvalidator" alignment="0" min="-2" pref="161" max="-2" attributes="0"/>
-                                      <Component id="RegNIC" alignment="0" min="-2" pref="243" max="-2" attributes="0"/>
                                       <Component id="NIC_licence" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="addressValidator" alignment="0" min="-2" pref="161" max="-2" attributes="0"/>
                                       <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
@@ -128,6 +123,10 @@
                                           <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fNameValidator" alignment="0" min="-2" pref="161" max="-2" attributes="0"/>
+                                      <Component id="mailValidator" alignment="0" min="-2" pref="161" max="-2" attributes="0"/>
+                                      <Component id="address2Validator" alignment="0" min="-2" pref="161" max="-2" attributes="0"/>
+                                      <Component id="cityValidator" alignment="0" min="-2" pref="161" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               </Group>
@@ -136,12 +135,11 @@
                       </Group>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="fNameValidator" min="-2" pref="161" max="-2" attributes="0"/>
-                              <Component id="mailValidator" min="-2" pref="161" max="-2" attributes="0"/>
-                              <Component id="address2Validator" alignment="0" min="-2" pref="161" max="-2" attributes="0"/>
-                              <Component id="cityValidator" min="-2" pref="161" max="-2" attributes="0"/>
+                              <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="regCity" alignment="0" min="-2" pref="243" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <EmptySpace min="52" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -208,22 +206,16 @@
                   </Group>
                   <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
                   <Component id="NIC_licence" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="RegNIC" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="NICvalidator" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="addbtnRegister" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
-                              <Component id="CustomerAddingCancelation" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
+                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                  <Component id="NICvalidator" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="addbtnRegister" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
+                      <Component id="CustomerAddingCancelation" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="122" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

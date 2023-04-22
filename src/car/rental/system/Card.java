@@ -11,9 +11,7 @@ import javax.swing.JLabel;
  * @author Akila
  */
 public class Card extends javax.swing.JPanel {
-    
-    
-    
+
     String keyvalue;
     private boolean viewMoreBtnStatus;
 
@@ -79,18 +77,23 @@ public class Card extends javax.swing.JPanel {
     public void setSeatCountContainer(JLabel seatCountContainer) {
         this.seatCountContainer = seatCountContainer;
     }
-    
-    
+
     private ItemModel data;
-    public void setData(ItemModel data){
-        this.data=data;
+
+    
+    /**
+     * set car data to the corresponding card
+     * @param data 
+     */
+    public void setData(ItemModel data) {
+        this.data = data;
         CarTypeContainer.setText(data.car_type);
         car_ModelContainer.setText(data.car_model);
-        seatCountContainer.setText("Seat No "+data.seat_no);
+        seatCountContainer.setText(data.seat_no);
         acTypeContainer.setText(data.ac_Type);
-        fuelTypeContainer.setText("Fuel Type "+data.fuel_type);
+        fuelTypeContainer.setText(data.fuel_type);
         carImageContainer.setIcon(data.carimage);
-        keyvalue=data.car_keyValue;
+        keyvalue = data.car_keyValue;
     }
 
     /**
@@ -102,73 +105,116 @@ public class Card extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        carImageContainer = new javax.swing.JLabel();
-        acTypeContainer = new javax.swing.JLabel();
-        CarTypeContainer = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
         seatCountContainer = new javax.swing.JLabel();
-        fuelTypeContainer = new javax.swing.JLabel();
         car_ModelContainer = new javax.swing.JLabel();
+        carImageContainer = new javax.swing.JLabel();
+        CarTypeContainer = new javax.swing.JLabel();
+        acTypeContainer = new javax.swing.JLabel();
+        fuelTypeContainer = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
-        setBackground(new java.awt.Color(153, 255, 255));
+        setBackground(new java.awt.Color(28, 78, 128));
         setMaximumSize(new java.awt.Dimension(167, 228));
+
+        jPanel1.setBackground(new java.awt.Color(28, 128, 78));
+
+        seatCountContainer.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        seatCountContainer.setForeground(new java.awt.Color(255, 255, 255));
+        seatCountContainer.setText("s");
+
+        car_ModelContainer.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        car_ModelContainer.setForeground(new java.awt.Color(255, 255, 255));
+        car_ModelContainer.setText("Model");
 
         carImageContainer.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         carImageContainer.setForeground(new java.awt.Color(0, 0, 0));
-        carImageContainer.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        carImageContainer.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
 
-        acTypeContainer.setForeground(new java.awt.Color(0, 0, 0));
-        acTypeContainer.setText("AC/NON AC");
-
-        CarTypeContainer.setForeground(new java.awt.Color(0, 0, 0));
+        CarTypeContainer.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        CarTypeContainer.setForeground(new java.awt.Color(255, 255, 255));
         CarTypeContainer.setText("Car Type");
 
-        seatCountContainer.setForeground(new java.awt.Color(0, 0, 0));
-        seatCountContainer.setText("Seat Count");
+        acTypeContainer.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        acTypeContainer.setForeground(new java.awt.Color(255, 255, 255));
+        acTypeContainer.setText("ac");
 
-        fuelTypeContainer.setForeground(new java.awt.Color(0, 0, 0));
-        fuelTypeContainer.setText("Fuel Type");
+        fuelTypeContainer.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        fuelTypeContainer.setForeground(new java.awt.Color(255, 255, 255));
+        fuelTypeContainer.setText("f");
 
-        car_ModelContainer.setForeground(new java.awt.Color(0, 0, 0));
-        car_ModelContainer.setText("Model");
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/seatwhite.png"))); // NOI18N
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/fuelWhite.png"))); // NOI18N
+
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/ACWhite.png"))); // NOI18N
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(carImageContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(CarTypeContainer)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(fuelTypeContainer)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(car_ModelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(seatCountContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(acTypeContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(34, 34, 34))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(carImageContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(CarTypeContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(car_ModelContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(fuelTypeContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(seatCountContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(acTypeContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 16, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(car_ModelContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(seatCountContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fuelTypeContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(acTypeContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(carImageContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(CarTypeContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 11, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addGap(21, 21, 21)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(carImageContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(CarTypeContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(car_ModelContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(acTypeContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(seatCountContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fuelTypeContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(22, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -179,6 +225,10 @@ public class Card extends javax.swing.JPanel {
     private javax.swing.JLabel carImageContainer;
     private javax.swing.JLabel car_ModelContainer;
     private javax.swing.JLabel fuelTypeContainer;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel seatCountContainer;
     // End of variables declaration//GEN-END:variables
 }

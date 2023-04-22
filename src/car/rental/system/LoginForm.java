@@ -5,7 +5,6 @@
 package car.rental.system;
 
 import java.awt.Color;
-import org.w3c.dom.css.RGBColor;
 
 /**
  *
@@ -18,6 +17,7 @@ public class LoginForm extends javax.swing.JFrame {
      */
     public LoginForm() {
         initComponents();
+        wrongPasswordShower.setVisible(false);
     }
 
     /**
@@ -42,6 +42,8 @@ public class LoginForm extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         changeStateOfUser = new javax.swing.JLabel();
+        wrongPasswordShower = new javax.swing.JLabel();
+        driverState = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -135,32 +137,52 @@ public class LoginForm extends javax.swing.JFrame {
         changeStateOfUser.setForeground(new java.awt.Color(255, 0, 0));
         changeStateOfUser.setText("ADMIN");
 
+        wrongPasswordShower.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        wrongPasswordShower.setForeground(new java.awt.Color(255, 0, 51));
+
+        driverState.setBackground(new java.awt.Color(28, 78, 128));
+        driverState.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        driverState.setText("Driver");
+        driverState.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                driverStateActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(142, Short.MAX_VALUE)
-                .addComponent(AdminState, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
-                .addComponent(CashierState, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(142, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(102, 102, 102)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(UserNameGetter)
-                        .addComponent(PasswordGetter)
-                        .addComponent(loginToCredentials, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(199, 199, 199)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(changeStateOfUser)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(164, Short.MAX_VALUE)
+                .addComponent(wrongPasswordShower, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(148, 148, 148))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addGap(199, 199, 199)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(changeStateOfUser)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addGap(102, 102, 102)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(loginToCredentials, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(PasswordGetter, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(UserNameGetter, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(AdminState, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(driverState, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(CashierState, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel3))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addGap(70, 70, 70))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -168,7 +190,8 @@ public class LoginForm extends javax.swing.JFrame {
                 .addGap(113, 113, 113)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(CashierState, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(AdminState, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(AdminState, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(driverState, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(32, 32, 32)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
@@ -183,7 +206,9 @@ public class LoginForm extends javax.swing.JFrame {
                 .addComponent(PasswordGetter, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34)
                 .addComponent(loginToCredentials, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(91, Short.MAX_VALUE))
+                .addGap(26, 26, 26)
+                .addComponent(wrongPasswordShower)
+                .addContainerGap(65, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(427, 0, 550, 527));
@@ -195,35 +220,61 @@ public class LoginForm extends javax.swing.JFrame {
     private void AdminStateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AdminStateActionPerformed
         // TODO add your handling code here:
         changeStateOfUser.setText("ADMIN");
-        CashierState.setBackground(new Color(150,180,245));
-        AdminState.setBackground(new Color(28,78,128));
+        CashierState.setBackground(new Color(150, 180, 245));
+        AdminState.setBackground(new Color(28, 78, 128));
+        driverState.setBackground(new Color(150, 180, 245));
     }//GEN-LAST:event_AdminStateActionPerformed
 
     private void CashierStateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CashierStateActionPerformed
         // TODO add your handling code here:
         changeStateOfUser.setText("CASHIER");
-        AdminState.setBackground(new Color(150,180,245));
-        CashierState.setBackground(new Color(28,78,128));
+        AdminState.setBackground(new Color(150, 180, 245));
+        CashierState.setBackground(new Color(28, 78, 128));
+        driverState.setBackground(new Color(150, 180, 245));
     }//GEN-LAST:event_CashierStateActionPerformed
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
         // TODO add your handling code here:
         CarRentalSystem.closeWindows(this);
-        CustomSearch1 c1=new CustomSearch1();
+        CustomSearch1 c1 = new CustomSearch1();
         c1.setVisible(true);
     }//GEN-LAST:event_jLabel5MouseClicked
 
     private void loginToCredentialsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginToCredentialsActionPerformed
-        if (changeStateOfUser.getText().equalsIgnoreCase("admin")) {
-            CarRentalSystem.closeWindows(this);
-            AdminPage admin1=new AdminPage();
-            admin1.setVisible(true);
-        }else if(changeStateOfUser.getText().equalsIgnoreCase("cashier")){
-            CarRentalSystem.closeWindows(this);
-            CashierPanel cashiertab=new CashierPanel();
-            cashiertab.setVisible(true);
+        wrongPasswordShower.setVisible(false);
+        EmployeeData emp1 = new EmployeeData();
+        String[] passwordChecker = emp1.checkPassword(UserNameGetter.getText(), changeStateOfUser.getText(), PasswordGetter.getPassword());
+        if (passwordChecker[0].equalsIgnoreCase("True")) {
+            if (changeStateOfUser.getText().equalsIgnoreCase("admin")) {
+                CarRentalSystem.closeWindows(this);
+                AdminPage admin1 = new AdminPage();
+                admin1.setVisible(true);
+            } else if (changeStateOfUser.getText().equalsIgnoreCase("cashier")) {
+                CarRentalSystem.closeWindows(this);
+                CashierPanel cashiertab = new CashierPanel(passwordChecker[1]);
+                cashiertab.setVisible(true);
+            }else if (changeStateOfUser.getText().equalsIgnoreCase("driver")) {
+                DriverPanel d1=new DriverPanel(passwordChecker[1]);
+                d1.setVisible(true);
+                CarRentalSystem.closeWindows(this);
+                
+            }
+        } else {
+            wrongPasswordShower.setVisible(true);
+            wrongPasswordShower.setText("Incorrect UserName or Password!");
+
         }
+
+
     }//GEN-LAST:event_loginToCredentialsActionPerformed
+
+    private void driverStateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_driverStateActionPerformed
+        // TODO add your handling code here:
+        changeStateOfUser.setText("DRIVER");
+        CashierState.setBackground(new Color(150, 180, 245));
+        AdminState.setBackground(new Color(150, 180, 245));
+        driverState.setBackground(new Color(28, 78, 128));
+    }//GEN-LAST:event_driverStateActionPerformed
 
     /**
      * @param args the command line arguments
@@ -266,6 +317,7 @@ public class LoginForm extends javax.swing.JFrame {
     private javax.swing.JPasswordField PasswordGetter;
     private javax.swing.JTextField UserNameGetter;
     private javax.swing.JLabel changeStateOfUser;
+    private javax.swing.JButton driverState;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -274,5 +326,6 @@ public class LoginForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JButton loginToCredentials;
+    private javax.swing.JLabel wrongPasswordShower;
     // End of variables declaration//GEN-END:variables
 }

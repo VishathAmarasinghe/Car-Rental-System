@@ -5,10 +5,14 @@
         <group>
             <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/EmployeeData.java</file>
             <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/Validations.java</file>
+            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/DiscountAdder.java</file>
             <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/AdminPage.java</file>
+            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/CarAddingPanel.java</file>
+            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/VOwnerRegistrationFrom.java</file>
             <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/CustomerRegistrationForm.java</file>
-            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/MailGenerator.java</file>
-            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/CustomSearch1.java</file>
+            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/CustomerData.java</file>
+            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/VehicalOwner.java</file>
+            <file>file:/C:/Users/Akila/Documents/NetBeansProjects/Car%20Rental%20System/src/car/rental/system/Car.java</file>
         </group>
     </open-files>
 </project-private>

@@ -4,19 +4,11 @@
  */
 package car.rental.system;
 
-import java.awt.Image;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import raven.cell.TableActionCellEditor;
-import raven.cell.TableActionCellRender;
-import raven.cell.TableActionEvent;
+import EditDelete.cell.TableActionCellEditor;
+import EditDelete.cell.TableActionCellRender;
+import EditDelete.cell.TableActionEvent;
 
 /**
  *
@@ -25,334 +17,273 @@ import raven.cell.TableActionEvent;
 public class AdminPage extends javax.swing.JFrame {
 
     /**
-     * Creates new form AdminPage
-     * 
-     * 
-     
+     *
      */
-    
-    
-    private int tableSelectedIndex=0;
-    private String clickedIndexID="";
-    private String currentPageHolder="dashboardPage";
-    private EmployeeData employee1=null;
+    private int tableSelectedIndex = 0;
+
+    /**
+     *
+     */
+    private String clickedIndexID = "";
+
+    /**
+     *holding current user selected page panel
+     */
+    private String currentPageHolder = "dashboardPage";
+
+    /**
+     *declaration of employee object
+     */
+    private EmployeeData employee1 = null;
+
+    /**
+     *declaration of vehical owner object
+     */
+    private VehicalOwner owner = null;
+
+    /**
+     *declaration of statistical data class object
+     */
+    private StatisticalData stat1 = null;
+
+    /**
+     *declaration of car class object
+     */
+    private Car car1 = null;
+
+    /**
+     *declaration of discount class object
+     */
+    private DiscountAdder discountData = null;
+
+    /**
+     *Default constructor
+     */
     public AdminPage() {
         initComponents();
-//        loadOwnerData("ALL");
-        employee1=new EmployeeData();
-        employee1.loadEmployeeData("all", null, vehicalOwnerTable, null);
-        renderCarTable();
+        employee1 = new EmployeeData(); //initialize employee object
+        owner = new VehicalOwner();   //initialize owner object
+        car1 = new Car();   //initialize car object
+        discountData = new DiscountAdder();  //initialize discount object
+        stat1 = new StatisticalData();   //initialize statistical class object
+        showStatisticalData();    //get all statistical data
+
+        owner.loadOwnerData(vehicalOwnerAddingtable);    //load owner table data
+        employee1.loadEmployeeData("all", null, employeeTable, null);    //load employee tabledata 
+        car1.renderCarTable(CarTable);   //load car table data
+        
+        
+        
+        
+        
+        //tables edit delete button function
         TableActionEvent event = new TableActionEvent() {
             @Override
             public void onEdit(int row) {
                 System.out.println("Edit row : " + row);
                 if (CarTable.isEditing()) {
-                    editSelectedCarData(row);
-                }else if(vehicalOwnerTable.isEditing()){
-                    System.out.println("Car table edit check   "+CarTable.isEditing());
-                    editSelectedEmployeeData(row);
-                }else if(discountTable.isEditing()){
+                    editSelectedCarData(row);   //open seledted car details in new panel
+                } else if (employeeTable.isEditing()) {
+                    System.out.println("Car table edit check   " + CarTable.isEditing());
+                    editSelectedEmployeeData(row);   //open selected employee details in new panel
+                } else if (discountTable.isEditing()) {
                     System.out.println("edit dis available");
-                    editSelectedDiscountData(row);
+                    editSelectedDiscountData(row);   //open selected discount data in new panel
+                } else if (vehicalOwnerAddingtable.isEditing()) {
+                    System.out.println("edit owner available");
+                    editSelectedOwnerData(row);    //open selected owner data in new panel
                 }
-                
+
             }
 
             @Override
             public void onDelete(int row) {
                 System.out.println("Delete row : " + row);
-                if (vehicalOwnerTable.isEditing()) {
-                    vehicalOwnerTable.getCellEditor().stopCellEditing();
+                if (employeeTable.isEditing()) {
+                    employeeTable.getCellEditor().stopCellEditing();   //stop cell editing if it is in the cell editing mode
                 }
-                
-                
-               int resultofDelete= JOptionPane.showConfirmDialog(null,"Are you sure that you want to delete record","Deleting Confirmation",
-                       JOptionPane.YES_NO_OPTION);
-                if (resultofDelete==0) {
-                    deleteSelectedRaw(row);
+
+                int resultofDelete = JOptionPane.showConfirmDialog(null, "Are you sure that you want to delete record", "Deleting Confirmation",
+                        JOptionPane.YES_NO_OPTION);
+                if (resultofDelete == 0) {
+                    deleteSelectedRaw(row);   //delete selected raw corresponding to the table
                 }
-                
+
             }
 
         };
-        
-        
-       
-        vehicalOwnerTable.getColumnModel().getColumn(9).setCellRenderer(new TableActionCellRender());
-        vehicalOwnerTable.getColumnModel().getColumn(9).setCellEditor(new TableActionCellEditor(event));
-        
-        
-        
+
+        //adding edit and delete btn to the employee table last column
+        employeeTable.getColumnModel().getColumn(9).setCellRenderer(new TableActionCellRender());
+        employeeTable.getColumnModel().getColumn(9).setCellEditor(new TableActionCellEditor(event));
+
+        //adding edit and delete btn to the discount table last column
         discountTable.getColumnModel().getColumn(4).setCellRenderer(new TableActionCellRender());
         discountTable.getColumnModel().getColumn(4).setCellEditor(new TableActionCellEditor(event));
-        
-        
-        CarTable.getColumnModel().getColumn(7).setCellRenderer(new TableActionCellRender());
+
+        //adding edit and delete btn to the vehical Owner table last column
+        vehicalOwnerAddingtable.getColumnModel().getColumn(7).setCellRenderer(new TableActionCellRender());
+        vehicalOwnerAddingtable.getColumnModel().getColumn(7).setCellEditor(new TableActionCellEditor(event));
+
+        //adding edit and delete btn to the car table last column
+        CarTable.getColumnModel().getColumn(8).setCellRenderer(new TableActionCellRender());
         CarTable.getColumnModel().getColumn(6).setCellRenderer(new tableImageCellRender());
-        CarTable.getColumnModel().getColumn(7).setCellEditor(new TableActionCellEditor(event));
+        CarTable.getColumnModel().getColumn(8).setCellEditor(new TableActionCellEditor(event));
     }
-    
-    
-    
-    
-    
 
     /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
+     * display statistical data inside the dashboard
      */
-    @SuppressWarnings("unchecked")
-    
-//    private void loadOwnerData(String searchType){
-//        try {
-//            DefaultTableModel ownerTableLoad=(DefaultTableModel)vehicalOwnerTable.getModel();
-//            ownerTableLoad.getDataVector().removeAllElements();
-//            ownerTableLoad.fireTableDataChanged();
-//            
-//            Class.forName("com.mysql.cj.jdbc.Driver");
-//            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-//            String s="";
-//            if (searchType.equalsIgnoreCase("all")) {
-//                s="select empID, role, firstname,lastname,NIC,email,city from employee";
-//            }else{
-//                s="select empID,role, firstname,lastname,NIC,email,city from employee where role=\""+searchType+"\"";
-//            }
-//            
-//            PreparedStatement ps = con.prepareStatement(s);
-//            ResultSet rs=ps.executeQuery();
-//            while (rs.next()) {                
-//                String empID=rs.getString("empID");
-//                System.out.println("Substring check "+empID.substring(0,4));
-//                String sd="select phoneNo from employeephone where empID=\""+empID+"\"";
-//                PreparedStatement psd = con.prepareStatement(sd);
-//                ResultSet numberResult=psd.executeQuery();
-//                String[] numberArray=new String[2];
-//                int count=0;
-//                while (numberResult.next()) {                    
-//                    numberArray[count]=numberResult.getString("phoneNo");
-//                    count++;
-//                }
-//                psd.close();
-//                numberResult.close();
-//                String role=rs.getString("role");
-//                String Fname=rs.getString("FirstName");
-//                String Lname=rs.getString("lastName");
-//                String NICno=rs.getString("NIC");
-//                String email=rs.getString("Email");
-//                String city=rs.getString("city");
-//               
-//                String[] ownerData={empID,Fname,Lname,role,email,NICno,city,numberArray[0],numberArray[1]};
-//                
-//                ownerTableLoad.addRow(ownerData);
-//
-//            }
-//            rs.close();
-//            ps.close();
-//            con.close();
-// 
-//        } catch (Exception e) {
-//            System.out.println(e);
-//        }
-//    }
-    
-    
-    private void deleteSelectedRaw(int rawNo){
+    private void showStatisticalData() {
+        stat1.barchart(barchartPanel);
+        String[] statResut = stat1.statisticalDataSender();
+        customerStat.setText(statResut[1]);
+        vehicalStat.setText(statResut[2]);
+        employeeStat.setText(statResut[0]);
+
+    }
+
+    /**
+     * Delete selected raw from selected table
+     *
+     * @param rawNo clicked raw number
+     */
+    private void deleteSelectedRaw(int rawNo) {
         try {
 
-        DefaultTableModel carModel=(DefaultTableModel) CarTable.getModel();
-        DefaultTableModel ownerTableclicked=(DefaultTableModel)vehicalOwnerTable.getModel();
-        DefaultTableModel discountTableclicked=(DefaultTableModel)discountTable.getModel();
-        
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-        
-        String deletePhoneNoRaw="";
-        Statement st=con.createStatement();
-        System.out.println("Clicked indez  "+clickedIndexID);
-            
-        if (currentPageHolder.equalsIgnoreCase("CarPage")) {
-                    clickedIndexID=(String) carModel.getValueAt(rawNo, 0);
-                    deletePhoneNoRaw="delete from cars where CarNumber=\""+clickedIndexID+"\"";
-                    st.executeUpdate(deletePhoneNoRaw);
-                    carModel.removeRow(rawNo);
-            
-        }else if(currentPageHolder.equalsIgnoreCase("employeePage")){
-                    clickedIndexID=(String) ownerTableclicked.getValueAt(rawNo, 0);
-                    deletePhoneNoRaw="delete from employeephone where empId=\""+clickedIndexID+"\"";
-                    st.executeUpdate(deletePhoneNoRaw);
-                    String deleteRaw="delete from employee where empId=\""+clickedIndexID+"\"";
-                    st.executeUpdate(deleteRaw);
-                    ownerTableclicked.removeRow(rawNo);
-        }
-        else if(currentPageHolder.equalsIgnoreCase("discountPage")){
-                    clickedIndexID=(String) discountTable.getValueAt(rawNo, 0);
-                    deletePhoneNoRaw="delete from discount where discountID=\""+clickedIndexID+"\"";
-                    st.executeUpdate(deletePhoneNoRaw);
-                    discountTableclicked.removeRow(rawNo);
-        }
-         
-        con.close();
+            DefaultTableModel carModel = (DefaultTableModel) CarTable.getModel();
+            DefaultTableModel ownerTableclicked = (DefaultTableModel) employeeTable.getModel();
+            DefaultTableModel discountTableclicked = (DefaultTableModel) discountTable.getModel();
+
+            System.out.println("Clicked indez  " + clickedIndexID);
+
+            if (currentPageHolder.equalsIgnoreCase("CarPage")) {
+                clickedIndexID = (String) carModel.getValueAt(rawNo, 0);
+                car1.deleteItem(clickedIndexID);  //delete selected car
+                carModel.removeRow(rawNo);
+
+            } else if (currentPageHolder.equalsIgnoreCase("employeePage")) {
+                clickedIndexID = (String) ownerTableclicked.getValueAt(rawNo, 0);
+                String clickedRole = (String) ownerTableclicked.getValueAt(rawNo, 3);
+                if (clickedRole.equalsIgnoreCase("Driver")) {
+                    Driver d1 = new Driver();
+                    d1.deleteDriverAdditionalData(clickedIndexID);
+                    employee1.deleteEmployee(clickedIndexID);   //delete selected employee
+                } else {
+                    employee1.deleteEmployee(clickedIndexID);  //delete selected driver
+                }
+
+                ownerTableclicked.removeRow(rawNo);
+            } else if (currentPageHolder.equalsIgnoreCase("discountPage")) {
+                clickedIndexID = (String) discountTable.getValueAt(rawNo, 0);
+                discountData.deleteSelectedDiscount(clickedIndexID);   //delete selected discount
+                discountTableclicked.removeRow(rawNo);
+            } else if (currentPageHolder.equalsIgnoreCase("vehicalOwnerPage")) {
+                clickedIndexID = (String) discountTable.getValueAt(rawNo, 0);
+                owner.deleteSelectedOwner(clickedIndexID);    //delete selected owner
+                discountTableclicked.removeRow(rawNo);
+            }
+
         } catch (Exception e) {
-            System.out.println("Error from adminpanel 154  "+e);
+            System.out.println("Error from adminpanel deleting  " + e);
         }
-        
+
     }
-    private void editSelectedEmployeeData(int raw){
-        DefaultTableModel ownerTableclicked=(DefaultTableModel)vehicalOwnerTable.getModel();
-        clickedIndexID=(String) ownerTableclicked.getValueAt(raw, 0);
+
+    /**
+     * functionality for edit data in employee table
+     *
+     * @param raw
+     */
+    private void editSelectedEmployeeData(int raw) {
+        DefaultTableModel ownerTableclicked = (DefaultTableModel) employeeTable.getModel();
+        clickedIndexID = (String) ownerTableclicked.getValueAt(raw, 0);
+        String clickedRole = (String) ownerTableclicked.getValueAt(raw, 3);
         try {
-            
-//            Class.forName("com.mysql.cj.jdbc.Driver");
-//            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-//            String singleData="select * from employee where empID=\""+clickedIndexID+"\"";
-//            PreparedStatement ps = con.prepareStatement(singleData);
-//            ResultSet rs=ps.executeQuery();
-//            
-//            String singleDataPhoneNumbers="select * from employeephone where empID=\""+clickedIndexID+"\"";
-//            PreparedStatement psnumbers = con.prepareStatement(singleDataPhoneNumbers);
-//            ResultSet rs2=psnumbers.executeQuery();
-//            
-            CustomerRegistrationForm form1=new CustomerRegistrationForm(clickedIndexID,"employee",null);
+
+            if (clickedRole.equalsIgnoreCase("Driver")) {
+                DriverRegistrationForm driverform = new DriverRegistrationForm(clickedIndexID);   //load clicked driver details in new form
+                driverform.setVisible(true);
+
+            } else {
+                
+                //open clicked customer detail in new form
+                CustomerRegistrationForm form1 = new CustomerRegistrationForm(clickedIndexID, "employee", null);
+                form1.setVisible(true);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    /**
+     * functionality for edit data in vehicalowner table
+     *
+     * @param raw
+     */
+    private void editSelectedOwnerData(int raw) {
+        DefaultTableModel ownerTableclicked = (DefaultTableModel) vehicalOwnerAddingtable.getModel();
+        clickedIndexID = (String) ownerTableclicked.getValueAt(raw, 0);
+        try {
+
+            VOwnerRegistrationFrom form1 = new VOwnerRegistrationFrom(clickedIndexID);   //open new panel to update selected owner
             form1.setVisible(true);
-            
-//            con.close();
 
         } catch (Exception e) {
             System.out.println(e);
         }
     }
-    
-    private void editSelectedCarData(int raw){
-        DefaultTableModel CarTableclicked=(DefaultTableModel)CarTable.getModel();
-        clickedIndexID=(String) CarTableclicked.getValueAt(raw, 0);
+
+    /**
+     * functionality for edit data in car table
+     *
+     * @param raw
+     */
+    private void editSelectedCarData(int raw) {
+        DefaultTableModel CarTableclicked = (DefaultTableModel) CarTable.getModel();
+        clickedIndexID = (String) CarTableclicked.getValueAt(raw, 0);   //get clicked raw number
         try {
-            
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            String singleData="select * from cars where CarNumber=\""+clickedIndexID+"\"";
-            PreparedStatement ps = con.prepareStatement(singleData);
-            ResultSet rs=ps.executeQuery();
-            
-           
-            CarAddingPanel carAdd1=new CarAddingPanel(rs);
+
+            CarAddingPanel carAdd1 = new CarAddingPanel(clickedIndexID);   //open car panel to update 
             carAdd1.setVisible(true);
-            
-            con.close();
 
         } catch (Exception e) {
             System.out.println(e);
         }
     }
-    
-    
-    private void editSelectedDiscountData(int raw){
-        DefaultTableModel discountclicked=(DefaultTableModel)discountTable.getModel();
-        clickedIndexID=(String) discountclicked.getValueAt(raw, 0);
+
+    /**
+     * functionality for edit data in discount table
+     *
+     * @param raw
+     */
+    private void editSelectedDiscountData(int raw) {
+        DefaultTableModel discountclicked = (DefaultTableModel) discountTable.getModel();
+        clickedIndexID = (String) discountclicked.getValueAt(raw, 0);
         try {
-            
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            String singleData="select * from discount where discountID=\""+clickedIndexID+"\"";
-            PreparedStatement ps = con.prepareStatement(singleData);
-            ResultSet rs=ps.executeQuery();
-            
-           
-            DiscountAdder disc1=new DiscountAdder(rs);
+
+            DiscountAdder disc1 = new DiscountAdder(clickedIndexID);   //open discount panel to update discount data
             disc1.setVisible(true);
-            
-            con.close();
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("AAAAAAAAAAA   " + e);
         }
     }
-    
-    
-    
-    
-    
-    
-    private void renderCarTable(){
+
+    /**
+     * load all data in discount table in database
+     */
+    private void renderDiscountTable() {
         try {
-            DefaultTableModel CartableLoad=(DefaultTableModel)CarTable.getModel();
-            CartableLoad.getDataVector().removeAllElements();
-            CartableLoad.fireTableDataChanged();
-            
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            String s="select * from cars";
-            PreparedStatement ps = con.prepareStatement(s);
-            ResultSet rs=ps.executeQuery();
-            
-            while (rs.next()) {            
-                String car_keyValue=rs.getString("CarNumber");
-                String car_type=rs.getString("CarType");
-                String car_model=rs.getString("CarModel");
-                String seat_no=rs.getString("SeatNo");
-                String ac_Type=rs.getString("ACType");
-                String fuel_type=rs.getString("FuelType"); 
-                byte[] img=rs.getBytes("CarImage");
-                
-                ImageIcon image=new ImageIcon(img);
-                Image im=image.getImage();
-                Image myimage=im.getScaledInstance(120, 100, Image.SCALE_SMOOTH);
-                ImageIcon newimage=new ImageIcon(myimage);
-                
-                JLabel imageLable=new JLabel();
-                imageLable.setIcon(newimage);
-               
-               CartableLoad.addRow(new Object[]{car_keyValue,car_model,car_type,seat_no,ac_Type,fuel_type,imageLable});
+            discountData.renderDiscountTable(discountTable);    //load discount data to the 
 
-            }
-            rs.close();
-            ps.close();
-            con.close();
- 
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Discount Table Render " + e);
         }
     }
-    
-    
-    
-    private void renderDiscountTable(){
-        try {
-            DefaultTableModel discountTableRender=(DefaultTableModel)discountTable.getModel();
-            discountTableRender.getDataVector().removeAllElements();
-            discountTableRender.fireTableDataChanged();
-            
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            String s="select * from discount";
-            PreparedStatement ps = con.prepareStatement(s);
-            ResultSet rs=ps.executeQuery();
-            
-            while (rs.next()) {            
-                String discountID=rs.getString("discountID");
-                String discountName=rs.getString("discountName");
-                String discountPrecentage=rs.getString("precentage");
-                String discountDiscription=rs.getString("Description");
-                
-                
-               
-               
-               discountTableRender.addRow(new String[]{discountID,discountName,discountPrecentage,discountDiscription});
 
-            }
-            rs.close();
-            ps.close();
-            con.close();
- 
-        } catch (Exception e) {
-            System.out.println("Discount Table Render "+e);
-        }
-    }
-    
-    
-    
-    
-    
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -363,15 +294,23 @@ public class AdminPage extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        jLabel8 = new javax.swing.JLabel();
+        customerStat = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
+        vehicalStat = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
-        jLabel12 = new javax.swing.JLabel();
+        employeeStat = new javax.swing.JLabel();
+        barchartPanel = new javax.swing.JPanel();
+        employeeDetailPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        employeeTable = new javax.swing.JTable();
+        employeeSearchTextGetter = new javax.swing.JTextField();
+        employeeSearchBtn = new javax.swing.JButton();
+        employeeTypeSelector = new javax.swing.JComboBox<>();
+        selectQueryEmp = new javax.swing.JComboBox<>();
         CarAddingPanel = new javax.swing.JPanel();
         jScrollPane6 = new javax.swing.JScrollPane();
         CarTable = new javax.swing.JTable();
@@ -384,18 +323,18 @@ public class AdminPage extends javax.swing.JFrame {
         discountTable = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        vehicalOwnerpanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        vehicalOwnerTable = new javax.swing.JTable();
-        employeeSearchTextGetter = new javax.swing.JTextField();
-        employeeSearchBtn = new javax.swing.JButton();
-        employeeTypeSelector = new javax.swing.JComboBox<>();
-        selectQueryEmp = new javax.swing.JComboBox<>();
+        vehicalOwnerPanel = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        vehicalOwnerAddingtable = new javax.swing.JTable();
+        jLabel3 = new javax.swing.JLabel();
+        vehicalOwnerAddingbtn = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        vehicalownerbtn = new javax.swing.JButton();
+        employeeDetailsbtn = new javax.swing.JButton();
         discountbtn = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
+        carDetailsbtn = new javax.swing.JButton();
+        dashboardbtn = new javax.swing.JButton();
+        VehicalOweneState = new javax.swing.JButton();
+        logout = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -431,9 +370,9 @@ public class AdminPage extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(28, 128, 64));
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setText("50");
+        customerStat.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        customerStat.setForeground(new java.awt.Color(255, 255, 255));
+        customerStat.setText("50");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -441,14 +380,14 @@ public class AdminPage extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(24, Short.MAX_VALUE)
-                .addComponent(jLabel8)
+                .addComponent(customerStat)
                 .addGap(21, 21, 21))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(19, Short.MAX_VALUE)
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(customerStat, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18))
         );
 
@@ -477,13 +416,13 @@ public class AdminPage extends javax.swing.JFrame {
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("Pending Reservations");
+        jLabel9.setText("No of Vehicals");
 
         jPanel5.setBackground(new java.awt.Color(28, 128, 64));
 
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel10.setText("50");
+        vehicalStat.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        vehicalStat.setForeground(new java.awt.Color(255, 255, 255));
+        vehicalStat.setText("50");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -491,14 +430,14 @@ public class AdminPage extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap(26, Short.MAX_VALUE)
-                .addComponent(jLabel10)
+                .addComponent(vehicalStat)
                 .addGap(19, 19, 19))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap(22, Short.MAX_VALUE)
-                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(vehicalStat, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15))
         );
 
@@ -527,13 +466,13 @@ public class AdminPage extends javax.swing.JFrame {
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jLabel11.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel11.setText("Proceeded Reservations");
+        jLabel11.setText("Total Number of Employees");
 
         jPanel7.setBackground(new java.awt.Color(28, 128, 64));
 
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel12.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel12.setText("50");
+        employeeStat.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        employeeStat.setForeground(new java.awt.Color(255, 255, 255));
+        employeeStat.setText("50");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -541,14 +480,14 @@ public class AdminPage extends javax.swing.JFrame {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                 .addContainerGap(25, Short.MAX_VALUE)
-                .addComponent(jLabel12)
+                .addComponent(employeeStat)
                 .addGap(20, 20, 20))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                 .addContainerGap(21, Short.MAX_VALUE)
-                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(employeeStat, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(16, 16, 16))
         );
 
@@ -559,9 +498,9 @@ public class AdminPage extends javax.swing.JFrame {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel11)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -572,6 +511,9 @@ public class AdminPage extends javax.swing.JFrame {
                     .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(33, 33, 33))
         );
+
+        barchartPanel.setBackground(new java.awt.Color(255, 255, 255));
+        barchartPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout DashboardPanelLayout = new javax.swing.GroupLayout(DashboardPanel);
         DashboardPanel.setLayout(DashboardPanelLayout);
@@ -589,6 +531,11 @@ public class AdminPage extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(DashboardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, DashboardPanelLayout.createSequentialGroup()
+                    .addContainerGap(44, Short.MAX_VALUE)
+                    .addComponent(barchartPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(59, Short.MAX_VALUE)))
         );
         DashboardPanelLayout.setVerticalGroup(
             DashboardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -601,26 +548,139 @@ public class AdminPage extends javax.swing.JFrame {
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(422, Short.MAX_VALUE))
+            .addGroup(DashboardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, DashboardPanelLayout.createSequentialGroup()
+                    .addContainerGap(296, Short.MAX_VALUE)
+                    .addComponent(barchartPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 364, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(19, Short.MAX_VALUE)))
         );
 
         jTabbedPane1.addTab("tab6", DashboardPanel);
+
+        employeeDetailPanel.setBackground(new java.awt.Color(241, 241, 241));
+
+        employeeTable.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        employeeTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "First Name", "Last Name", "Role", "Email", "NIC", "City", "Phone No 1", "Phone No 2", "Settings"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        employeeTable.setRowHeight(30);
+        employeeTable.setSelectionBackground(new java.awt.Color(28, 78, 128));
+        employeeTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                employeeTableMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(employeeTable);
+        if (employeeTable.getColumnModel().getColumnCount() > 0) {
+            employeeTable.getColumnModel().getColumn(0).setResizable(false);
+            employeeTable.getColumnModel().getColumn(0).setPreferredWidth(15);
+            employeeTable.getColumnModel().getColumn(4).setResizable(false);
+            employeeTable.getColumnModel().getColumn(4).setPreferredWidth(100);
+            employeeTable.getColumnModel().getColumn(5).setResizable(false);
+            employeeTable.getColumnModel().getColumn(7).setResizable(false);
+            employeeTable.getColumnModel().getColumn(7).setPreferredWidth(50);
+            employeeTable.getColumnModel().getColumn(8).setResizable(false);
+            employeeTable.getColumnModel().getColumn(8).setPreferredWidth(50);
+        }
+
+        employeeSearchTextGetter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                employeeSearchTextGetterActionPerformed(evt);
+            }
+        });
+        employeeSearchTextGetter.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                employeeSearchTextGetterKeyTyped(evt);
+            }
+        });
+
+        employeeSearchBtn.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        employeeSearchBtn.setText("Search");
+        employeeSearchBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                employeeSearchBtnActionPerformed(evt);
+            }
+        });
+
+        employeeTypeSelector.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        employeeTypeSelector.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Add Admin", "Add Cashier", "Add Driver", " " }));
+        employeeTypeSelector.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                employeeTypeSelectorActionPerformed(evt);
+            }
+        });
+
+        selectQueryEmp.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        selectQueryEmp.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Show All Employees", "Show All Admins", "Show All Cashiers", "Show All Drivers" }));
+        selectQueryEmp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectQueryEmpActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout employeeDetailPanelLayout = new javax.swing.GroupLayout(employeeDetailPanel);
+        employeeDetailPanel.setLayout(employeeDetailPanelLayout);
+        employeeDetailPanelLayout.setHorizontalGroup(
+            employeeDetailPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(employeeDetailPanelLayout.createSequentialGroup()
+                .addContainerGap(65, Short.MAX_VALUE)
+                .addGroup(employeeDetailPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(employeeDetailPanelLayout.createSequentialGroup()
+                        .addComponent(employeeTypeSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(employeeSearchTextGetter, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(employeeSearchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(selectQueryEmp, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(65, Short.MAX_VALUE))
+        );
+        employeeDetailPanelLayout.setVerticalGroup(
+            employeeDetailPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(employeeDetailPanelLayout.createSequentialGroup()
+                .addContainerGap(51, Short.MAX_VALUE)
+                .addGroup(employeeDetailPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(employeeSearchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(employeeSearchTextGetter, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(employeeTypeSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(selectQueryEmp, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(58, 58, 58))
+        );
+
+        jTabbedPane1.addTab("vehicalowner", employeeDetailPanel);
 
         CarAddingPanel.setBackground(new java.awt.Color(241, 241, 241));
 
         CarTable.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         CarTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Car Number", "Car Model", "Car Type", "Seat No", "AC Type", "Fuel Type", "Image", "Settings"
+                "Car Number", "Car Model", "Car Type", "Seat No", "AC Type", "Fuel Type", "Image", "Price Per Day", "Settings"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true, false, true
+                false, false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -749,126 +809,86 @@ public class AdminPage extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("discount", discountPanel);
 
-        vehicalOwnerpanel.setBackground(new java.awt.Color(241, 241, 241));
+        vehicalOwnerPanel.setBackground(new java.awt.Color(241, 241, 241));
 
-        vehicalOwnerTable.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        vehicalOwnerTable.setModel(new javax.swing.table.DefaultTableModel(
+        vehicalOwnerAddingtable.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        vehicalOwnerAddingtable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "First Name", "Last Name", "Role", "Email", "NIC", "City", "Phone No 1", "Phone No 2", "Settings"
+                "VehicalOwnerID", "FirstName", "LastName", "Email", "City", "NIC  No", "Phone No", "Settings"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        vehicalOwnerTable.setRowHeight(30);
-        vehicalOwnerTable.setSelectionBackground(new java.awt.Color(28, 78, 128));
-        vehicalOwnerTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                vehicalOwnerTableMouseClicked(evt);
-            }
-        });
-        jScrollPane1.setViewportView(vehicalOwnerTable);
-        if (vehicalOwnerTable.getColumnModel().getColumnCount() > 0) {
-            vehicalOwnerTable.getColumnModel().getColumn(0).setResizable(false);
-            vehicalOwnerTable.getColumnModel().getColumn(0).setPreferredWidth(15);
-            vehicalOwnerTable.getColumnModel().getColumn(4).setResizable(false);
-            vehicalOwnerTable.getColumnModel().getColumn(4).setPreferredWidth(100);
-            vehicalOwnerTable.getColumnModel().getColumn(5).setResizable(false);
-            vehicalOwnerTable.getColumnModel().getColumn(7).setResizable(false);
-            vehicalOwnerTable.getColumnModel().getColumn(7).setPreferredWidth(50);
-            vehicalOwnerTable.getColumnModel().getColumn(8).setResizable(false);
-            vehicalOwnerTable.getColumnModel().getColumn(8).setPreferredWidth(50);
+        vehicalOwnerAddingtable.setRowHeight(30);
+        vehicalOwnerAddingtable.setSelectionBackground(new java.awt.Color(28, 78, 128));
+        jScrollPane3.setViewportView(vehicalOwnerAddingtable);
+        if (vehicalOwnerAddingtable.getColumnModel().getColumnCount() > 0) {
+            vehicalOwnerAddingtable.getColumnModel().getColumn(3).setResizable(false);
+            vehicalOwnerAddingtable.getColumnModel().getColumn(3).setPreferredWidth(200);
         }
 
-        employeeSearchTextGetter.addActionListener(new java.awt.event.ActionListener() {
+        jLabel3.setForeground(new java.awt.Color(0, 204, 204));
+        jLabel3.setText("vehical Owner panel");
+
+        vehicalOwnerAddingbtn.setText("Add Owner");
+        vehicalOwnerAddingbtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                employeeSearchTextGetterActionPerformed(evt);
-            }
-        });
-        employeeSearchTextGetter.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                employeeSearchTextGetterKeyTyped(evt);
+                vehicalOwnerAddingbtnActionPerformed(evt);
             }
         });
 
-        employeeSearchBtn.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        employeeSearchBtn.setText("Search");
-        employeeSearchBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                employeeSearchBtnActionPerformed(evt);
-            }
-        });
-
-        employeeTypeSelector.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        employeeTypeSelector.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Add Admin", "Add Cashier", "Add Driver", "Add Vehical Owner" }));
-        employeeTypeSelector.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                employeeTypeSelectorActionPerformed(evt);
-            }
-        });
-
-        selectQueryEmp.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        selectQueryEmp.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Show All Employees", "Show All Admins", "Show All Cashiers", "Show All Drivers", "Show All Vehical Owners" }));
-        selectQueryEmp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectQueryEmpActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout vehicalOwnerpanelLayout = new javax.swing.GroupLayout(vehicalOwnerpanel);
-        vehicalOwnerpanel.setLayout(vehicalOwnerpanelLayout);
-        vehicalOwnerpanelLayout.setHorizontalGroup(
-            vehicalOwnerpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(vehicalOwnerpanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout vehicalOwnerPanelLayout = new javax.swing.GroupLayout(vehicalOwnerPanel);
+        vehicalOwnerPanel.setLayout(vehicalOwnerPanelLayout);
+        vehicalOwnerPanelLayout.setHorizontalGroup(
+            vehicalOwnerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(vehicalOwnerPanelLayout.createSequentialGroup()
                 .addContainerGap(65, Short.MAX_VALUE)
-                .addGroup(vehicalOwnerpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(vehicalOwnerpanelLayout.createSequentialGroup()
-                        .addComponent(employeeTypeSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(employeeSearchTextGetter, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(employeeSearchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(selectQueryEmp, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(vehicalOwnerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(vehicalOwnerPanelLayout.createSequentialGroup()
+                        .addComponent(vehicalOwnerAddingbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(539, 539, 539)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(65, Short.MAX_VALUE))
         );
-        vehicalOwnerpanelLayout.setVerticalGroup(
-            vehicalOwnerpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(vehicalOwnerpanelLayout.createSequentialGroup()
-                .addContainerGap(51, Short.MAX_VALUE)
-                .addGroup(vehicalOwnerpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(employeeSearchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(employeeSearchTextGetter, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(employeeTypeSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(selectQueryEmp, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(58, 58, 58))
+        vehicalOwnerPanelLayout.setVerticalGroup(
+            vehicalOwnerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(vehicalOwnerPanelLayout.createSequentialGroup()
+                .addContainerGap(61, Short.MAX_VALUE)
+                .addGroup(vehicalOwnerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(vehicalOwnerAddingbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37))
         );
 
-        jTabbedPane1.addTab("vehicalowner", vehicalOwnerpanel);
+        jTabbedPane1.addTab("discount", vehicalOwnerPanel);
 
         getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 0, 1230, 710));
 
         jPanel1.setBackground(new java.awt.Color(28, 78, 128));
 
-        vehicalownerbtn.setBackground(new java.awt.Color(28, 78, 128));
-        vehicalownerbtn.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        vehicalownerbtn.setForeground(new java.awt.Color(255, 255, 255));
-        vehicalownerbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
-        vehicalownerbtn.setText("Employee");
-        vehicalownerbtn.addActionListener(new java.awt.event.ActionListener() {
+        employeeDetailsbtn.setBackground(new java.awt.Color(28, 78, 128));
+        employeeDetailsbtn.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        employeeDetailsbtn.setForeground(new java.awt.Color(255, 255, 255));
+        employeeDetailsbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
+        employeeDetailsbtn.setText("Employee");
+        employeeDetailsbtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                vehicalownerbtnActionPerformed(evt);
+                employeeDetailsbtnActionPerformed(evt);
             }
         });
 
@@ -883,25 +903,47 @@ public class AdminPage extends javax.swing.JFrame {
             }
         });
 
-        jButton6.setBackground(new java.awt.Color(28, 78, 128));
-        jButton6.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        jButton6.setForeground(new java.awt.Color(255, 255, 255));
-        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
-        jButton6.setText("Cars");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        carDetailsbtn.setBackground(new java.awt.Color(28, 78, 128));
+        carDetailsbtn.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        carDetailsbtn.setForeground(new java.awt.Color(255, 255, 255));
+        carDetailsbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
+        carDetailsbtn.setText("Cars");
+        carDetailsbtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                carDetailsbtnActionPerformed(evt);
             }
         });
 
-        jButton7.setBackground(new java.awt.Color(28, 78, 128));
-        jButton7.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        jButton7.setForeground(new java.awt.Color(255, 255, 255));
-        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
-        jButton7.setText("Dashboard");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        dashboardbtn.setBackground(new java.awt.Color(28, 78, 128));
+        dashboardbtn.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        dashboardbtn.setForeground(new java.awt.Color(255, 255, 255));
+        dashboardbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
+        dashboardbtn.setText("Dashboard");
+        dashboardbtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                dashboardbtnActionPerformed(evt);
+            }
+        });
+
+        VehicalOweneState.setBackground(new java.awt.Color(28, 78, 128));
+        VehicalOweneState.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        VehicalOweneState.setForeground(new java.awt.Color(255, 255, 255));
+        VehicalOweneState.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
+        VehicalOweneState.setText("Vehical Owner");
+        VehicalOweneState.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                VehicalOweneStateActionPerformed(evt);
+            }
+        });
+
+        logout.setBackground(new java.awt.Color(28, 78, 128));
+        logout.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        logout.setForeground(new java.awt.Color(255, 255, 255));
+        logout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
+        logout.setText("Log Out");
+        logout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutActionPerformed(evt);
             }
         });
 
@@ -912,24 +954,30 @@ public class AdminPage extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(46, 46, 46)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(logout, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(VehicalOweneState, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dashboardbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(discountbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(vehicalownerbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(carDetailsbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(employeeDetailsbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(54, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(64, 64, 64)
-                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(dashboardbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(36, 36, 36)
-                .addComponent(vehicalownerbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(employeeDetailsbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(36, 36, 36)
-                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(carDetailsbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(36, 36, 36)
                 .addComponent(discountbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(404, Short.MAX_VALUE))
+                .addGap(34, 34, 34)
+                .addComponent(VehicalOweneState, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 255, Short.MAX_VALUE)
+                .addComponent(logout, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(45, 45, 45))
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 270, -1));
@@ -937,106 +985,117 @@ public class AdminPage extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void vehicalownerbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vehicalownerbtnActionPerformed
+/**
+     * employee button to navigate to employee table panel
+     *
+     * @param evt
+     */
+    private void employeeDetailsbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_employeeDetailsbtnActionPerformed
         // TODO add your handling code here:
-        currentPageHolder="employeePage";
+        currentPageHolder = "employeePage";
 //        loadOwnerData("all");
-          employee1.loadEmployeeData("all", null, vehicalOwnerTable, null);
-        jTabbedPane1.setSelectedIndex(3);
+        employee1.loadEmployeeData("all", null, employeeTable, null);
+        jTabbedPane1.setSelectedIndex(1);
         if (CarTable.isEditing()) {
-            CarTable.getCellEditor().stopCellEditing();
+            CarTable.getCellEditor().stopCellEditing();  //stop cell editing of car table
         }
-        
-    }//GEN-LAST:event_vehicalownerbtnActionPerformed
+
+    }//GEN-LAST:event_employeeDetailsbtnActionPerformed
 
     private void discountbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discountbtnActionPerformed
-        jTabbedPane1.setSelectedIndex(2);
+        jTabbedPane1.setSelectedIndex(3);
         renderDiscountTable();
-        currentPageHolder="discountPage";
+        currentPageHolder = "discountPage";
         // TODO add your handling code here:
     }//GEN-LAST:event_discountbtnActionPerformed
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+    private void carDetailsbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_carDetailsbtnActionPerformed
         // TODO add your handling code here:
-        currentPageHolder="CarPage";
-        renderCarTable();
-        
-        jTabbedPane1.setSelectedIndex(1);
-        if (vehicalOwnerTable.isEditing()) {
-            vehicalOwnerTable.getCellEditor().stopCellEditing();
-        }
-    }//GEN-LAST:event_jButton6ActionPerformed
+        currentPageHolder = "CarPage";
+        car1.renderCarTable(CarTable);
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        jTabbedPane1.setSelectedIndex(2);
+        if (employeeTable.isEditing()) {
+            employeeTable.getCellEditor().stopCellEditing();   //stop cell editing of employee table
+        }
+    }//GEN-LAST:event_carDetailsbtnActionPerformed
+
+    private void dashboardbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dashboardbtnActionPerformed
         // TODO add your handling code here:
         jTabbedPane1.setSelectedIndex(0);
-    }//GEN-LAST:event_jButton7ActionPerformed
+        showStatisticalData();
+    }//GEN-LAST:event_dashboardbtnActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        CarAddingPanel carUpdate1=new CarAddingPanel();
+        CarAddingPanel carUpdate1 = new CarAddingPanel();  //open car adding panel to insert new car
         carUpdate1.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void employeeTypeSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_employeeTypeSelectorActionPerformed
         // TODO add your handling code here:
         System.out.println(employeeTypeSelector.getSelectedIndex());
-        if (employeeTypeSelector.getSelectedIndex()==3) {
+        if (employeeTypeSelector.getSelectedIndex() == 3) {
             System.out.println("Vowner Selected");
-            CustomerRegistrationForm c1=new CustomerRegistrationForm(null,"employee","VOwner");
+            CustomerRegistrationForm c1 = new CustomerRegistrationForm(null, "employee", "VOwner");
             c1.SetRegistrationFrameTitle("Car Owner Registration", "Add Owner");
+
             c1.setVisible(true);
-        }else if (employeeTypeSelector.getSelectedIndex()==2) {
-            CustomerRegistrationForm c1=new CustomerRegistrationForm(null,"employee","Driver");
-            c1.SetRegistrationFrameTitle("Driver Registration", "Add Driver");
-            c1.setVisible(true);
-        }else if (employeeTypeSelector.getSelectedIndex()==1) {
-            CustomerRegistrationForm c1=new CustomerRegistrationForm(null,"employee","Cashier");
+        } else if (employeeTypeSelector.getSelectedIndex() == 2) {
+
+            DriverRegistrationForm d1 = new DriverRegistrationForm();
+            d1.setVisible(true);
+        } else if (employeeTypeSelector.getSelectedIndex() == 1) {
+            CustomerRegistrationForm c1 = new CustomerRegistrationForm(null, "employee", "Cashier");
             c1.SetRegistrationFrameTitle("Cashier Registration", "Add Cashier");
             c1.setVisible(true);
-        }else if (employeeTypeSelector.getSelectedIndex()==0) {
-            CustomerRegistrationForm c1=new CustomerRegistrationForm(null,"employee","Admin");
+        } else if (employeeTypeSelector.getSelectedIndex() == 0) {
+            CustomerRegistrationForm c1 = new CustomerRegistrationForm(null, "employee", "Admin");
             c1.SetRegistrationFrameTitle("Admin Registration", "Add Admin");
             c1.setVisible(true);
         }
     }//GEN-LAST:event_employeeTypeSelectorActionPerformed
 
+    
+    
+    /**
+     * load all data corresponding to the selected employee type
+     * @param evt 
+     */
     private void selectQueryEmpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectQueryEmpActionPerformed
         // TODO add your handling code here:
-        if (selectQueryEmp.getSelectedIndex()==0) {
-//            loadOwnerData("All");
-              employee1.loadEmployeeData("all", null, vehicalOwnerTable, null);
-        }else if(selectQueryEmp.getSelectedIndex()==1){
-//            loadOwnerData("Admin");
-            employee1.loadEmployeeData("all", null, vehicalOwnerTable, "Admin");
-        }else if(selectQueryEmp.getSelectedIndex()==2){
-//            loadOwnerData("Cashier");
-            employee1.loadEmployeeData("all", null, vehicalOwnerTable, "Cashier");
-        }else if(selectQueryEmp.getSelectedIndex()==3){
-//            loadOwnerData("Driver");
-            employee1.loadEmployeeData("all", null, vehicalOwnerTable, "Driver");
-        }else if(selectQueryEmp.getSelectedIndex()==4){
-//            loadOwnerData("VOwner");
-            employee1.loadEmployeeData("all", null, vehicalOwnerTable, "VOwner");
+        if (selectQueryEmp.getSelectedIndex() == 0) {
+            employee1.loadEmployeeData("all", null, employeeTable, null);  
+        } else if (selectQueryEmp.getSelectedIndex() == 1) {
+
+            employee1.loadEmployeeData("all", null, employeeTable, "Admin");   //load admin data
+        } else if (selectQueryEmp.getSelectedIndex() == 2) {
+
+            employee1.loadEmployeeData("all", null, employeeTable, "Cashier");   //load cashier data
+        } else if (selectQueryEmp.getSelectedIndex() == 3) {
+
+            employee1.loadEmployeeData("all", null, employeeTable, "Driver");   //load driver data
+        } else if (selectQueryEmp.getSelectedIndex() == 4) {
+
+            employee1.loadEmployeeData("all", null, employeeTable, "VOwner");   //load vehical owner data
         }
     }//GEN-LAST:event_selectQueryEmpActionPerformed
 
-    private void vehicalOwnerTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vehicalOwnerTableMouseClicked
+    private void employeeTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_employeeTableMouseClicked
         // TODO add your handling code here:
-        
-        
-    }//GEN-LAST:event_vehicalOwnerTableMouseClicked
+
+
+    }//GEN-LAST:event_employeeTableMouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        DiscountAdder di=new DiscountAdder();
+
+        DiscountAdder di = new DiscountAdder();
         di.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void employeeSearchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_employeeSearchBtnActionPerformed
-        // TODO add your handling code here:
-        employee1.searchEmployee(employeeSearchTextGetter.getText(),vehicalOwnerTable);
+
+        employee1.searchEmployee(employeeSearchTextGetter.getText(), employeeTable);
     }//GEN-LAST:event_employeeSearchBtnActionPerformed
 
     private void employeeSearchTextGetterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_employeeSearchTextGetterActionPerformed
@@ -1044,9 +1103,29 @@ public class AdminPage extends javax.swing.JFrame {
     }//GEN-LAST:event_employeeSearchTextGetterActionPerformed
 
     private void employeeSearchTextGetterKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_employeeSearchTextGetterKeyTyped
-        // TODO add your handling code here:
-        employee1.searchEmployee(employeeSearchTextGetter.getText(),vehicalOwnerTable);
+
+        employee1.searchEmployee(employeeSearchTextGetter.getText(), employeeTable);
     }//GEN-LAST:event_employeeSearchTextGetterKeyTyped
+
+    private void VehicalOweneStateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VehicalOweneStateActionPerformed
+
+        jTabbedPane1.setSelectedIndex(4);
+        currentPageHolder = "vehicalOwnerPage";
+        owner.loadOwnerData(vehicalOwnerAddingtable);
+    }//GEN-LAST:event_VehicalOweneStateActionPerformed
+
+    private void vehicalOwnerAddingbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vehicalOwnerAddingbtnActionPerformed
+
+        VOwnerRegistrationFrom owner1 = new VOwnerRegistrationFrom();   //open the vehical owner details adding form 
+        owner1.setVisible(true);
+    }//GEN-LAST:event_vehicalOwnerAddingbtnActionPerformed
+
+    private void logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutActionPerformed
+
+        CarRentalSystem.closeWindows(this);
+        CustomSearch1 search = new CustomSearch1();   //open the car search customer page
+        search.setVisible(true);
+    }//GEN-LAST:event_logoutActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1057,8 +1136,7 @@ public class AdminPage extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        
- 
+
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -1091,24 +1169,29 @@ public class AdminPage extends javax.swing.JFrame {
     private javax.swing.JTable CarTable;
     private javax.swing.JPanel DashboardPanel;
     private javax.swing.JPanel SidepanelAdminboard;
+    private javax.swing.JButton VehicalOweneState;
+    private javax.swing.JPanel barchartPanel;
+    private javax.swing.JButton carDetailsbtn;
+    private javax.swing.JLabel customerStat;
+    private javax.swing.JButton dashboardbtn;
     private javax.swing.JPanel discountPanel;
     private javax.swing.JTable discountTable;
     private javax.swing.JButton discountbtn;
+    private javax.swing.JPanel employeeDetailPanel;
+    private javax.swing.JButton employeeDetailsbtn;
     private javax.swing.JButton employeeSearchBtn;
     private javax.swing.JTextField employeeSearchTextGetter;
+    private javax.swing.JLabel employeeStat;
+    private javax.swing.JTable employeeTable;
     private javax.swing.JComboBox<String> employeeTypeSelector;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -1119,12 +1202,15 @@ public class AdminPage extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JButton logout;
     private javax.swing.JButton searchCarIcon;
     private javax.swing.JComboBox<String> selectQueryEmp;
-    private javax.swing.JTable vehicalOwnerTable;
-    private javax.swing.JPanel vehicalOwnerpanel;
-    private javax.swing.JButton vehicalownerbtn;
+    private javax.swing.JButton vehicalOwnerAddingbtn;
+    private javax.swing.JTable vehicalOwnerAddingtable;
+    private javax.swing.JPanel vehicalOwnerPanel;
+    private javax.swing.JLabel vehicalStat;
     // End of variables declaration//GEN-END:variables
 }

@@ -29,12 +29,23 @@ public class GenerateKeys {
                 slectMax="Select max(ReservationID) as maxID from reservation";
             }else if (peopleType.equalsIgnoreCase("bill")){
                 slectMax="Select max(BillNo) as maxID from bill";
+            }else if (peopleType.equalsIgnoreCase("driver")){
+                slectMax="Select max(DriverID) as maxID from driver";
             }
             
             PreparedStatement ps = con.prepareStatement(slectMax);
             ResultSet rs=ps.executeQuery();
             while (rs.next()) {                
                 employeeLastIndex=rs.getString("maxID");
+                if (employeeLastIndex==null) {
+                    if (peopleType.equalsIgnoreCase("reserve")) {
+                        employeeLastIndex="R000";
+                    }else if (peopleType.equalsIgnoreCase("bill")) {
+                        employeeLastIndex="B000";
+                    }else if (peopleType.equalsIgnoreCase("driver")) {
+                        employeeLastIndex="D000";
+                    }
+                }
                 System.out.println("Max ID "+employeeLastIndex);
             }
             
@@ -52,18 +63,20 @@ public class GenerateKeys {
         int currentValue=Integer.parseInt(empID.substring(1));
         int newValue=currentValue+1;
         String newGenaratedID=String.format("%03d", newValue);
-        if (empID.charAt(0)=='A') {
-            System.out.println("new one    "+"A"+newGenaratedID);
-            return "A"+newGenaratedID;
-        }else if (empID.charAt(0)=='C'){
-            System.out.println("new one    "+"C"+newGenaratedID);
-            return "C"+newGenaratedID;
-        }else if (empID.charAt(0)=='R'){
-            return "R"+newGenaratedID;
-        }else if (empID.charAt(0)=='B'){
-            return "B"+newGenaratedID;
-        }else{
-           return "D"+newGenaratedID;
+        if (empID.charAt(0) == 'A') {
+            System.out.println("new one    " + "A" + newGenaratedID);
+            return "A" + newGenaratedID;
+        } else if (empID.charAt(0) == 'C') {
+            System.out.println("new one    " + "C" + newGenaratedID);
+            return "C" + newGenaratedID;
+        } else if (empID.charAt(0) == 'R') {
+            return "R" + newGenaratedID;
+        } else if (empID.charAt(0) == 'B') {
+            return "B" + newGenaratedID;
+        } else if (empID.charAt(0) == 'D') {
+            return "D" + newGenaratedID;
+        } else {
+            return "X" + newGenaratedID;
         }
     }
     

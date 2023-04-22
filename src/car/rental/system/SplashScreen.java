@@ -16,6 +16,14 @@ public class SplashScreen extends javax.swing.JFrame {
     public SplashScreen() {
         initComponents();
     }
+    
+    
+    /**
+     * change text when splash goes >50%
+     */
+    public void changeText(){
+        splashtext.setText("High Service for  Every Customer");
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -28,6 +36,7 @@ public class SplashScreen extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         progressBarshower = new javax.swing.JProgressBar();
+        splashtext = new javax.swing.JLabel();
         presentageValue = new javax.swing.JLabel();
         backgroundSplash = new javax.swing.JLabel();
         backgroundsplash2 = new javax.swing.JLabel();
@@ -35,7 +44,6 @@ public class SplashScreen extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(892, 444));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(892, 444));
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
@@ -47,15 +55,20 @@ public class SplashScreen extends javax.swing.JFrame {
         progressBarshower.setForeground(new java.awt.Color(28, 78, 128));
         jPanel1.add(progressBarshower, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 430, 900, -1));
 
+        splashtext.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        splashtext.setForeground(new java.awt.Color(0, 0, 0));
+        splashtext.setText("Easy and Fast way to Rent your Car");
+        jPanel1.add(splashtext, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 70, 600, 60));
+
         presentageValue.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         jPanel1.add(presentageValue, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 400, 60, 30));
 
-        backgroundSplash.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/splashScreen1.png"))); // NOI18N
+        backgroundSplash.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/splash1.png"))); // NOI18N
         backgroundSplash.setIconTextGap(0);
         backgroundSplash.setInheritsPopupMenu(false);
         jPanel1.add(backgroundSplash, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
-        backgroundsplash2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/splashScreen2.png"))); // NOI18N
+        backgroundsplash2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/splash2.png"))); // NOI18N
         backgroundsplash2.setText("jLabel1");
         jPanel1.add(backgroundsplash2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 900, 430));
 
@@ -119,5 +132,6 @@ public class SplashScreen extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     public javax.swing.JLabel presentageValue;
     public javax.swing.JProgressBar progressBarshower;
+    private javax.swing.JLabel splashtext;
     // End of variables declaration//GEN-END:variables
 }

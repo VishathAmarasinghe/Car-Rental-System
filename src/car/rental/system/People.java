@@ -4,13 +4,9 @@
  */
 package car.rental.system;
 
-
-import java.sql.*;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -30,6 +26,10 @@ public class People {
     
     private String phoneNo1;
     private String phoneNo2;
+    
+    
+    private Connection con = null;
+    private PreparedStatement ps = null;
     
     
     
@@ -124,6 +124,57 @@ public class People {
 
     public void setPhoneNo2(String phoneNo2) {
         this.phoneNo2 = phoneNo2;
+    }
+    
+    
+    
+    
+    public String getLastIndexEmployeeTable(String searchID,String searchTableName) {
+        String returnIndex="";
+        if (searchTableName.equalsIgnoreCase("employee")) {
+           returnIndex  = "A000";
+        }else if (searchTableName.equalsIgnoreCase("customer")) {
+            returnIndex  = "C000";
+        }else if (searchTableName.equalsIgnoreCase("vehicalowner")) {
+            returnIndex  = "V000";
+        }
+        
+        try {
+            Connection con=DatabaseConnection.StablishDatabaseConnection();
+            String slectMax = slectMax = "Select max("+searchID+") as maxID from "+searchTableName;
+            PreparedStatement ps = con.prepareStatement(slectMax);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                returnIndex = rs.getString("maxID");
+                System.out.println("Max ID " + returnIndex);
+            }
+            rs.close();
+            ps.close();
+            con.close();
+            return returnIndex;
+        } catch (Exception e) {
+            System.out.println("Error from 49 " + e);
+            return returnIndex;
+        }
+    }
+
+    public String genaratedID(String empID) {
+        System.out.println("Generation " + empID);
+        int currentValue = Integer.parseInt(empID.substring(1));
+        int newValue = currentValue + 1;
+        String newGenaratedID = String.format("%03d", newValue);
+        if (empID.charAt(0) == 'A') {
+            System.out.println("new one    " + "A" + newGenaratedID);
+            return "A" + newGenaratedID;
+        }else if (empID.charAt(0) == 'V') {
+            System.out.println("new one    " + "V" + newGenaratedID);
+            return "V" + newGenaratedID;
+        }
+        else {
+            System.out.println("new one    " + "C" + newGenaratedID);
+            return "C" + newGenaratedID;
+        }
+
     }
     
     

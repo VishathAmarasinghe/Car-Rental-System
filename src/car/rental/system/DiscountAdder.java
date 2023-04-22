@@ -10,6 +10,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -24,13 +26,33 @@ public class DiscountAdder extends javax.swing.JFrame {
     private int updatingDiscountID=0;
     public DiscountAdder() {
         initComponents();
+        setAllDiscountErrorShowers(new String[]{"","",""});
     }
     
-    public DiscountAdder(ResultSet discountResult) {
-        try{
-        initComponents();
-        discountPressAdder.setText("Update");
-        while (discountResult.next()) {   
+    public DiscountAdder(String SelectedIndexID) {
+        
+        
+        try {
+            initComponents();
+            setAllDiscountErrorShowers(new String[]{"","",""});
+            discountPressAdder.setText("Update");
+            settingUpComponentsToUpdate(SelectedIndexID);
+
+        } catch (Exception e) {
+            System.out.println("Reloading Discounts " + e);
+        }
+
+    }
+    
+    private void settingUpComponentsToUpdate(String SelectedIndexID){
+        try {
+            
+            
+            Connection con = DatabaseConnection.StablishDatabaseConnection();
+            String singleData="select * from discount where discountID=\""+SelectedIndexID+"\"";
+            PreparedStatement ps = con.prepareStatement(singleData);
+            ResultSet discountResult=ps.executeQuery();
+            while (discountResult.next()) {   
             
             updatingDiscountID=Integer.parseInt(discountResult.getString("discountID"));
             discountNameAdder1.setText(discountResult.getString("discountName"));
@@ -38,10 +60,12 @@ public class DiscountAdder extends javax.swing.JFrame {
             discountDisc.setText(discountResult.getString("Description"));
             
         }
-        }catch(Exception e){
-            System.out.println("Reloading Discounts "+e);
+         
+            con.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
         }
-        
     }
     private void updateDiscount(){
         try{
@@ -79,6 +103,75 @@ public class DiscountAdder extends javax.swing.JFrame {
         }
         
     }
+    
+    public void deleteSelectedDiscount(String clickedIndexID){
+        try {
+            Connection con = DatabaseConnection.StablishDatabaseConnection();
+            Statement st = con.createStatement();
+            String deletePhoneNoRaw = "delete from discount where discountID=\"" + clickedIndexID + "\"";
+            st.executeUpdate(deletePhoneNoRaw);
+        } catch (Exception e) {
+            System.out.println("Data deleting Error");
+        }
+    }
+    
+    
+    public void renderDiscountTable(JTable discountTable){
+        try {
+            DefaultTableModel discountTableRender = (DefaultTableModel) discountTable.getModel();
+            discountTableRender.getDataVector().removeAllElements();
+            discountTableRender.fireTableDataChanged();
+
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            String s = "select * from discount";
+            PreparedStatement ps = con.prepareStatement(s);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String discountID = rs.getString("discountID");
+                String discountName = rs.getString("discountName");
+                String discountPrecentage = rs.getString("precentage");
+                String discountDiscription = rs.getString("Description");
+
+                discountTableRender.addRow(new String[]{discountID, discountName, discountPrecentage, discountDiscription});
+
+            }
+            rs.close();
+            ps.close();
+            con.close();
+
+        } catch (Exception e) {
+            System.out.println("Discount Table Render " + e);
+        }
+    }
+    
+    
+    private void setAllDiscountErrorShowers(String[] arr){
+        discountNameErrorShower.setText(arr[0]);
+        discountPrecentageErrShower.setText(arr[1]);
+        discountDiscErrorShower.setText(arr[2]);
+    }
+    
+    
+    private boolean checkDiscountValidations(){
+        boolean validateResult = true;
+        Validations v1 = new Validations();
+        setAllDiscountErrorShowers(new String[]{"", "", ""});
+        String discountNameError = v1.discountNameDescriptionValidator(discountNameAdder1.getText());
+        String discountDescError = v1.discountNameDescriptionValidator(discountDisc.getText());
+        String dispresentageError = v1.discountprecentageValidator(discountPrecentageAdder.getText());
+        boolean result = discountNameError.equalsIgnoreCase("") && dispresentageError.equalsIgnoreCase("") && discountDescError.equalsIgnoreCase("");
+        if (result) {
+            return validateResult;
+        } else {
+            validateResult = false;
+            setAllDiscountErrorShowers(new String[]{discountNameError, dispresentageError, discountDescError});
+
+        }
+
+        return validateResult;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -100,6 +193,9 @@ public class DiscountAdder extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        discountNameErrorShower = new javax.swing.JLabel();
+        discountPrecentageErrShower = new javax.swing.JLabel();
+        discountDiscErrorShower = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -115,10 +211,10 @@ public class DiscountAdder extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 310, Short.MAX_VALUE)
+            .addGap(0, 360, Short.MAX_VALUE)
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 310));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 360));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -159,6 +255,18 @@ public class DiscountAdder extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("Description");
 
+        discountNameErrorShower.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        discountNameErrorShower.setForeground(new java.awt.Color(255, 0, 51));
+        discountNameErrorShower.setText("jLabel5");
+
+        discountPrecentageErrShower.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        discountPrecentageErrShower.setForeground(new java.awt.Color(255, 0, 51));
+        discountPrecentageErrShower.setText("jLabel5");
+
+        discountDiscErrorShower.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        discountDiscErrorShower.setForeground(new java.awt.Color(255, 0, 51));
+        discountDiscErrorShower.setText("jLabel5");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -177,18 +285,23 @@ public class DiscountAdder extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                         .addGap(38, 38, 38)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                            .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(discountNameAdder1, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                                    .addComponent(discountNameAdder1)
+                                    .addComponent(discountNameErrorShower, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 141, Short.MAX_VALUE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(discountPrecentageAdder, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(discountPrecentageErrShower, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(discountDiscErrorShower, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(38, 38, 38))
         );
         jPanel2Layout.setVerticalGroup(
@@ -204,18 +317,24 @@ public class DiscountAdder extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(discountNameAdder1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(discountPrecentageAdder, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(discountNameErrorShower)
+                    .addComponent(discountPrecentageErrShower))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(discountDiscErrorShower)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(discountPressAdder, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15))
+                .addGap(30, 30, 30))
         );
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 0, 530, 310));
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 0, 530, 360));
 
         pack();
         setLocationRelativeTo(null);
@@ -228,9 +347,15 @@ public class DiscountAdder extends javax.swing.JFrame {
     private void discountPressAdderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discountPressAdderActionPerformed
         // TODO add your handling code here:
         if (discountPressAdder.getText().equalsIgnoreCase("Update")) {
-            updateDiscount();
-        }else{
-            addDiscount();
+            if (checkDiscountValidations()) {
+                updateDiscount();
+            }
+
+        } else {
+            if (checkDiscountValidations()) {
+                addDiscount();
+            }
+
         }
         
     }//GEN-LAST:event_discountPressAdderActionPerformed
@@ -277,8 +402,11 @@ public class DiscountAdder extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea discountDisc;
+    private javax.swing.JLabel discountDiscErrorShower;
     private javax.swing.JTextField discountNameAdder1;
+    private javax.swing.JLabel discountNameErrorShower;
     private javax.swing.JTextField discountPrecentageAdder;
+    private javax.swing.JLabel discountPrecentageErrShower;
     private javax.swing.JButton discountPressAdder;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
