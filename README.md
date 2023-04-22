@@ -1,7 +1,7 @@
 <h1>Car Rental Management System</h1>
 <hr>
 <h3>
-Designed and developed a car Rental Management System with functionalities of customer car reservation, billing payment, Email Services, Cashier billing Interfaces. Statistical Data representations.
+Designed and developed a Car Rental Management System with functionalities of customer car reservation, Bill Genaration, Email Services, Cashier billing Interfaces , Admin dashboad. Statistical Data representations.
 </h3>
 <h3>Technologies</h3>
 <hr>
