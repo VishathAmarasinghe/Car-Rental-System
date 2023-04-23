@@ -48,7 +48,7 @@ public class CarRentalSystem {
                 Logger.getLogger(CarRentalSystem.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        splash.dispose();
+        closeWindows(splash);
         CustomSearch1 s1=new CustomSearch1();   //open car search window
         s1.setVisible(true);
     }

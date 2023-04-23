@@ -103,17 +103,11 @@ public class EmployeeData extends People {
                 while (rs.next()) {
                     String empID = rs.getString("empID");
                     System.out.println("Substring check " + empID.substring(0, 4));
-                    String sd = "select phoneNo from employeephone where empID=\"" + empID + "\"";
-                    PreparedStatement psd = con.prepareStatement(sd);
-                    ResultSet numberResult = psd.executeQuery();
+                   
                     String[] numberArray = new String[10];
-                    int count = 0;
-                    while (numberResult.next()) {
-                        numberArray[count] = numberResult.getString("phoneNo");
-                        count++;
-                    }
-                    psd.close();
-                    numberResult.close();
+                   
+                    numberArray[0] = rs.getString("phoneNo1");
+                    numberArray[1] = rs.getString("phoneNo2");
                     String role = rs.getString("role");
                     String Fname = rs.getString("FirstName");
                     String Lname = rs.getString("lastName");
@@ -164,19 +158,12 @@ public class EmployeeData extends People {
             st = con.createStatement();
 
             String query = "insert into employee values(\"" + getID() + "\",\"" + getRole() + "\",\"" + getFirstName() + "\",\"" + getLastName() + "\",\"" + getEmail() + "\",\"" + getAddress1() + "\",\"" + getAddress2() + "\",\"" + getCity() + "\","
-                    + "\"" + getNIC() + "\",\"" + getUseName() + "\",\"" + getPassword() + "\")";
+                    + "\"" + getNIC() + "\",\""+getPhoneNo1()+"\",\""+getPhoneNo2()+"\",\"" + getUseName() + "\",\"" + getPassword() + "\")";
 
             System.out.println("Quary " + query);
             st.executeUpdate(query);
 
-            System.out.println("get phone no of people " + getPhoneNo1());
-
-            System.out.println("initial Query Succedd");
-            String phoneNoQuery1 = "insert into employeephone values(\"" + getID() + "\",\"" + getPhoneNo1() + "\")";
-            System.out.println("employee phone no adding " + phoneNoQuery1);
-            st.executeUpdate(phoneNoQuery1);
-            String phoneNoQuery2 = "insert into employeephone values(\"" + getID() + "\",\"" + getPhoneNo2() + "\")";
-            st.executeUpdate(phoneNoQuery2);
+            
 
             resultArray[0] = true;
 
@@ -212,27 +199,16 @@ public class EmployeeData extends People {
         try {
             con = DatabaseConnection.StablishDatabaseConnection();
             Statement st = con.createStatement();
+            
+            System.out.println("phone aaaaaaaaa "+getPhoneNo1()+"   "+getPhoneNo2());
 
             String query = "update employee set FirstName=\"" + getFirstName() + "\",LastName=\"" + getLastName() + "\",Email=\"" + getEmail() + "\",Address1=\"" + getAddress1() + "\",Address2=\"" + getAddress2() + "\","
-                    + "city=\"" + getCity() + "\" where empID=\"" + customerID + "\"";
+                    + "city=\"" + getCity() + "\", NIC=\""+getNIC()+"\",phoneNo1=\""+getPhoneNo1()+"\" ,phoneNo2=\""+getPhoneNo2()+"\" where empID=\"" + customerID + "\"";
 
             System.out.println("Quary " + query);
             st.executeUpdate(query);
 
-            String sd = "select phoneNo from employeephone where empID=\"" + customerID + "\"";
-            PreparedStatement psd = con.prepareStatement(sd);
-            ResultSet numberResult = psd.executeQuery();
-            String[] numberArray = new String[10];
-            String[] newphoneNoArray={getPhoneNo1(),getPhoneNo2()};
-            int count = 0;
-            while (numberResult.next()) {
-                numberArray[count] = numberResult.getString("phoneNo");
-                String updatePhoneNo = "update employeephone set phoneNo=\"" + newphoneNoArray[count] + "\" where empID=\"" + customerID + "\" and phoneNo=\""+numberArray[count]+"\"";
-                st.executeUpdate(updatePhoneNo);
-                count++;
-            }
-            psd.close();
-            numberResult.close();
+            
 
             return true;
 
@@ -259,16 +235,9 @@ public class EmployeeData extends People {
         try {
 
             con=DatabaseConnection.StablishDatabaseConnection();
-            String[] searchfeilds = {"EmpID", "firstName", "LastName", "Email", "Address1", "City", "NIC", "PhoneNo"};
+            String[] searchfeilds = {"EmpID", "firstName", "LastName", "Email", "Address1", "City", "NIC", "PhoneNo1","PhoneNo2"};
             for (int i = 0; i < searchfeilds.length; i++) {
-                if (i == 7) {
-                    ResultSet phoneResult1 = checkSearCustomer(con, "employeephone", "phoneNo", searchData);
-                    if (phoneResult1 != null) {
-                        loadEmployeeData("id", phoneResult1.getString("empID"), resultTable, null);
-
-                        break;
-                    }
-                } else {
+                
                     ResultSet result1 = checkSearCustomer(con, "employee", searchfeilds[i], searchData);
 
                     if (result1 != null) {
@@ -276,7 +245,7 @@ public class EmployeeData extends People {
                         loadEmployeeData("id", result1.getString("empID"), resultTable, null);
                         break;
                     }
-                }
+                
             }
 
             con.close();
@@ -394,14 +363,12 @@ public class EmployeeData extends People {
         
         try {
             con=DatabaseConnection.StablishDatabaseConnection();
-            String deletePhoneNoRaw = "delete from employeephone where empId=\"" + clickedIndexID + "\"";
-            Statement st=con.createStatement();
-            st.executeUpdate(deletePhoneNoRaw);
+            Statement st = con.createStatement();
             String deleteRaw = "delete from employee where empId=\"" + clickedIndexID + "\"";
             st.executeUpdate(deleteRaw);
             con.close();
         } catch (Exception e) {
-            System.out.println("Data Deletion Error Found");
+            System.out.println("Data Deletion Error Found "+e);
         }
                     
     }

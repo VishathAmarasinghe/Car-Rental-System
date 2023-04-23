@@ -282,6 +282,23 @@ public class AdminPage extends javax.swing.JFrame {
             System.out.println("Discount Table Render " + e);
         }
     }
+    
+    
+    private void stopCellEditing() {
+        if (employeeTable.isEditing()) {
+            employeeTable.getCellEditor().stopCellEditing();   //stop cell editing if it is in the cell editing mode
+        }
+        if (discountTable.isEditing()) {
+            discountTable.getCellEditor().stopCellEditing();   //stop cell editing if it is in the cell editing mode
+        }
+        if (vehicalOwnerAddingtable.isEditing()) {
+            vehicalOwnerAddingtable.getCellEditor().stopCellEditing();   //stop cell editing if it is in the cell editing mode
+        }
+        if (CarTable.isEditing()) {
+            employeeTable.getCellEditor().stopCellEditing();   //stop cell editing if it is in the cell editing mode
+        }
+        
+    }
 
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -576,7 +593,7 @@ public class AdminPage extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        employeeTable.setRowHeight(30);
+        employeeTable.setRowHeight(35);
         employeeTable.setSelectionBackground(new java.awt.Color(28, 78, 128));
         employeeTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -616,7 +633,7 @@ public class AdminPage extends javax.swing.JFrame {
         });
 
         employeeTypeSelector.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        employeeTypeSelector.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Add Admin", "Add Cashier", "Add Driver", " " }));
+        employeeTypeSelector.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Add Admin", "Add Cashier", "Add Driver" }));
         employeeTypeSelector.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 employeeTypeSelectorActionPerformed(evt);
@@ -705,6 +722,11 @@ public class AdminPage extends javax.swing.JFrame {
 
         searchCarIcon.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         searchCarIcon.setText("Search");
+        searchCarIcon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchCarIconActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout CarAddingPanelLayout = new javax.swing.GroupLayout(CarAddingPanel);
         CarAddingPanel.setLayout(CarAddingPanelLayout);
@@ -1008,9 +1030,7 @@ public class AdminPage extends javax.swing.JFrame {
 //        loadOwnerData("all");
         employee1.loadEmployeeData("all", null, employeeTable, null);
         jTabbedPane1.setSelectedIndex(1);
-        if (CarTable.isEditing()) {
-            CarTable.getCellEditor().stopCellEditing();  //stop cell editing of car table
-        }
+        stopCellEditing();
 
     }//GEN-LAST:event_employeeDetailsbtnActionPerformed
 
@@ -1018,6 +1038,7 @@ public class AdminPage extends javax.swing.JFrame {
         jTabbedPane1.setSelectedIndex(3);
         renderDiscountTable();
         currentPageHolder = "discountPage";
+        stopCellEditing();
         // TODO add your handling code here:
     }//GEN-LAST:event_discountbtnActionPerformed
 
@@ -1027,9 +1048,7 @@ public class AdminPage extends javax.swing.JFrame {
         car1.renderCarTable(CarTable);
 
         jTabbedPane1.setSelectedIndex(2);
-        if (employeeTable.isEditing()) {
-            employeeTable.getCellEditor().stopCellEditing();   //stop cell editing of employee table
-        }
+        stopCellEditing();
     }//GEN-LAST:event_carDetailsbtnActionPerformed
 
     private void dashboardbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dashboardbtnActionPerformed
@@ -1076,6 +1095,11 @@ public class AdminPage extends javax.swing.JFrame {
      */
     private void selectQueryEmpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectQueryEmpActionPerformed
         // TODO add your handling code here:
+        
+        if (employeeTable.isEditing()) {
+            employeeTable.getCellEditor().stopCellEditing();   //stop cell editing if it is in the cell editing mode
+        }
+
         if (selectQueryEmp.getSelectedIndex() == 0) {
             employee1.loadEmployeeData("all", null, employeeTable, null);  
         } else if (selectQueryEmp.getSelectedIndex() == 1) {
@@ -1124,6 +1148,7 @@ public class AdminPage extends javax.swing.JFrame {
         jTabbedPane1.setSelectedIndex(4);
         currentPageHolder = "vehicalOwnerPage";
         owner.loadOwnerData(vehicalOwnerAddingtable);
+        stopCellEditing();
     }//GEN-LAST:event_VehicalOweneStateActionPerformed
 
     private void vehicalOwnerAddingbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vehicalOwnerAddingbtnActionPerformed
@@ -1138,6 +1163,12 @@ public class AdminPage extends javax.swing.JFrame {
         CustomSearch1 search = new CustomSearch1();   //open the car search customer page
         search.setVisible(true);
     }//GEN-LAST:event_logoutActionPerformed
+
+    private void searchCarIconActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchCarIconActionPerformed
+        // TODO add your handling code here:
+        car1.searchCarNew(CarSearchBar.getText(), CarTable);
+        
+    }//GEN-LAST:event_searchCarIconActionPerformed
 
     /**
      * @param args the command line arguments

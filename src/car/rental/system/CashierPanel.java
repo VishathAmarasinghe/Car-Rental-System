@@ -154,6 +154,19 @@ public class CashierPanel extends javax.swing.JFrame {
         proceededReservationStat.setText(statResut[2]);
 
     }
+    
+    private void stopCellEditing(){
+        if (PendingReservationsTable.isEditing()) {
+            PendingReservationsTable.getCellEditor().stopCellEditing();   //stop cell editing
+        }
+        if (ProceededReservationTable.isEditing()) {
+            ProceededReservationTable.getCellEditor().stopCellEditing();   //stop cell editing
+        }
+        if (customerTable.isEditing()) {
+            customerTable.getCellEditor().stopCellEditing();   //stop cell editing
+        }
+        
+    }
 
     /**
      *edit selected pending table
@@ -1071,14 +1084,12 @@ public class CashierPanel extends javax.swing.JFrame {
         currentPageHolder = "customerPage";
         customer1.loadCustomerData("All", null, customerTable);
         jTabbedPane1.setSelectedIndex(1);
+        stopCellEditing();
     }//GEN-LAST:event_addCustomerBtnActionPerformed
 
     private void proceedReservationBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proceedReservationBtnActionPerformed
         // TODO add your handling code here:
-        if (PendingReservationsTable.isEditing()) {
-            PendingReservationsTable.getCellEditor().stopCellEditing();
-            System.out.println("came herea aa");
-        }
+        stopCellEditing();
         currentPageHolder = "ProceedReservationPage";
         jTabbedPane1.setSelectedIndex(3);
         loadPendingData("proceeded");
@@ -1086,9 +1097,7 @@ public class CashierPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_proceedReservationBtnActionPerformed
 
     private void pendingreservationsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pendingreservationsBtnActionPerformed
-        if (ProceededReservationTable.isEditing()) {
-            ProceededReservationTable.getCellEditor().stopCellEditing();
-        }
+        stopCellEditing();
         jTabbedPane1.setSelectedIndex(2);
         currentPageHolder = "PendingReservationPage";
         loadPendingData("pending");
@@ -1099,6 +1108,9 @@ public class CashierPanel extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
+        CarRentalSystem.closeWindows(this);
+        CustomSearch1 carsearch=new CustomSearch1();
+        carsearch.setVisible(true);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -1109,6 +1121,7 @@ public class CashierPanel extends javax.swing.JFrame {
 
     private void succeededReservationsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_succeededReservationsActionPerformed
         // TODO add your handling code here:
+        stopCellEditing();
         currentPageHolder = "finishedReservationPage";
         jTabbedPane1.setSelectedIndex(4);
         loadPendingData("Done");
@@ -1165,7 +1178,7 @@ public class CashierPanel extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CashierPanel("A003").setVisible(true);
+                new CashierPanel("A002").setVisible(true);
             }
         });
     }

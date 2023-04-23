@@ -115,6 +115,7 @@ public class DriverRegistrationForm extends javax.swing.JFrame {
         if (result) {
             JOptionPane.showMessageDialog(null, "Data Updated Successfully!", "DBMS", JOptionPane.INFORMATION_MESSAGE);
         }
+        CarRentalSystem.closeWindows(this);
 
         
         

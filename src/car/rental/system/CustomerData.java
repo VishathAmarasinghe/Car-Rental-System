@@ -131,7 +131,7 @@ public class CustomerData extends People {
             int count = 0;
             while (numberResult.next()) {
                 numberArray[count] = numberResult.getString("phoneNo");
-                String updatePhoneNo = "update customerphone set phoneNo=\"" + newphoneNoArray[count] + "\" where empID=\"" + customerID + "\" and phoneNo=\"" + numberArray[count] + "\"";
+                String updatePhoneNo = "update customerphone set phoneNo=\"" + newphoneNoArray[count] + "\" where CustomerID=\"" + customerID + "\" and phoneNo=\"" + numberArray[count] + "\"";
                 st.executeUpdate(updatePhoneNo);
                 count++;
             }

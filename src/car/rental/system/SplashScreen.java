@@ -4,6 +4,9 @@
  */
 package car.rental.system;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Akila
@@ -41,7 +44,7 @@ public class SplashScreen extends javax.swing.JFrame {
         backgroundSplash = new javax.swing.JLabel();
         backgroundsplash2 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(892, 444));
         setUndecorated(true);
         setResizable(false);
@@ -51,7 +54,7 @@ public class SplashScreen extends javax.swing.JFrame {
         jPanel1.setPreferredSize(new java.awt.Dimension(930, 454));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        progressBarshower.setBackground(new java.awt.Color(255, 255, 255));
+        progressBarshower.setBackground(new java.awt.Color(0, 255, 255));
         progressBarshower.setForeground(new java.awt.Color(28, 78, 128));
         jPanel1.add(progressBarshower, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 430, 900, -1));
 
@@ -117,14 +120,31 @@ public class SplashScreen extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new SplashScreen().setVisible(true);
+
+                SplashScreen splash = new SplashScreen();   //create splash screen object
+                splash.setVisible(true);
+
+                for (int i = 0; i <= 100; i++) {
+                    try {
+                        Thread.sleep(50);
+                        splash.presentageValue.setText(String.valueOf(i) + "%");  //splash screen visibility
+                        splash.progressBarshower.setValue(i);
+                        if (i > 50) {
+                            splash.backgroundSplash.setVisible(false);   //change splash 2nd image
+                            splash.changeText();   // change splash screen text
+                        }
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(CarRentalSystem.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                splash.dispose();
+                CustomSearch1 s1 = new CustomSearch1();   //open car search window
+                s1.setVisible(true);
+
             }
-        });
         
-        
-    }
+
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JLabel backgroundSplash;

@@ -77,9 +77,7 @@ public class Driver extends EmployeeData{
 
             System.out.println("Quary " + query);
             st.executeUpdate(query);
-
-            
-
+//            JOptionPane.showMessageDialog(null, "Data Updated Successfully!", "DBMS", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Data Updating Driver Addi Error!", "DBMS", JOptionPane.ERROR_MESSAGE);

@@ -129,6 +129,7 @@ public class CarAddingPanel extends javax.swing.JFrame {
             car1.getSelectedCarDetails(SelectedIndex);
 
             previousCarNumber = SelectedIndex;
+            carNumberPlate.setText(SelectedIndex);
 
             carNumberPlate.setEditable(false);
 

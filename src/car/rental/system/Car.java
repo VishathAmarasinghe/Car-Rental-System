@@ -380,6 +380,89 @@ public class Car {
 
         }
     }
+    
+    public void searchCarNew(String searchData, JTable resultTable) {
+
+        System.out.println("searched Name " + searchData);
+        Connection con;
+
+        try {
+            
+            DefaultTableModel CartableLoad = (DefaultTableModel) resultTable.getModel();
+            CartableLoad.getDataVector().removeAllElements();
+            CartableLoad.fireTableDataChanged();
+
+            con = DatabaseConnection.StablishDatabaseConnection();
+            String[] searchfeilds = {"carNumber", "VehicalType", "CarType", "CarModel", "SeatNo", "ACType", "FuelType", "OwnerID", "Price"};
+            for (int i = 0; i < searchfeilds.length; i++) {
+
+                ResultSet rs = searchCar(con, "cars", searchfeilds[i], searchData,i);
+
+                if (rs != null) {
+
+//                    loadEmployeeData("id", result1.getString("empID"), resultTable, null);
+                    while (rs.next()) {
+                        String car_keyValue = rs.getString("CarNumber");
+                        String car_type = rs.getString("CarType");
+                        String car_model = rs.getString("CarModel");
+                        String seat_no = rs.getString("SeatNo");
+                        String ac_Type = rs.getString("ACType");
+                        String fuel_type = rs.getString("FuelType");
+                        String carprice = rs.getString("price");
+                        byte[] img = rs.getBytes("CarImage");
+
+                        ImageIcon image = new ImageIcon(img);
+                        Image im = image.getImage();
+                        Image myimage = im.getScaledInstance(120, 100, Image.SCALE_SMOOTH);
+                        ImageIcon newimage = new ImageIcon(myimage);
+
+                        JLabel imageLable = new JLabel();
+                        imageLable.setIcon(newimage);
+
+                        CartableLoad.addRow(new Object[]{car_keyValue, car_model, car_type, seat_no, ac_Type, fuel_type, imageLable, carprice});  //add car details to the table
+
+                    }
+//                    break;
+                }
+
+            }
+
+            con.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            try {
+//                st.close();
+//                con.close();
+            } catch (Exception e) {
+                System.out.println("connection Closing Error " + e);
+            }
+        }
+    }
+
+    private ResultSet searchCar(Connection con, String tableName, String searchField, String searchData,int num) {
+        try {
+            String singleData;
+            if (num==2  || num==3) {
+                String editors="\"%"+String.valueOf(searchData)+"%\"";
+                singleData = "select * from " + tableName + " where " + searchField + " like "+editors;
+                System.out.println(singleData);
+            }else{
+               singleData = "select * from " + tableName + " where " + searchField + "=\"" + searchData + "\"";
+            }
+             
+            PreparedStatement ps = con.prepareStatement(singleData);
+            ResultSet rs = ps.executeQuery();
+
+            
+            return rs;
+            
+        } catch (Exception e) {
+            System.out.println("checkCustomer Search " + e);
+            return null;
+        }
+    }
 
     /**
      * set all details to the parameters

@@ -130,23 +130,32 @@ public class People {
     
     
     public String getLastIndexEmployeeTable(String searchID,String searchTableName) {
-        String returnIndex="";
+        String returnIndex = "";
         if (searchTableName.equalsIgnoreCase("employee")) {
-           returnIndex  = "A000";
-        }else if (searchTableName.equalsIgnoreCase("customer")) {
-            returnIndex  = "C000";
-        }else if (searchTableName.equalsIgnoreCase("vehicalowner")) {
-            returnIndex  = "V000";
+            returnIndex = "A000";
+        } else if (searchTableName.equalsIgnoreCase("customer")) {
+            returnIndex = "C000";
+        } else if (searchTableName.equalsIgnoreCase("vehicalowner")) {
+            returnIndex = "V000";
         }
-        
+
         try {
-            Connection con=DatabaseConnection.StablishDatabaseConnection();
-            String slectMax = slectMax = "Select max("+searchID+") as maxID from "+searchTableName;
+            Connection con = DatabaseConnection.StablishDatabaseConnection();
+            String slectMax = slectMax = "Select max(" + searchID + ") as maxID from " + searchTableName;
             PreparedStatement ps = con.prepareStatement(slectMax);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 returnIndex = rs.getString("maxID");
                 System.out.println("Max ID " + returnIndex);
+            }
+            if (returnIndex == null) {
+                if (searchTableName.equalsIgnoreCase("employee")) {
+                    returnIndex = "A000";
+                } else if (searchTableName.equalsIgnoreCase("customer")) {
+                    returnIndex = "C000";
+                } else if (searchTableName.equalsIgnoreCase("vehicalowner")) {
+                    returnIndex = "V000";
+                }
             }
             rs.close();
             ps.close();

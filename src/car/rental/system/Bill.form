@@ -677,7 +677,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="350" y="550" width="-1" height="20"/>
+                      <AbsoluteConstraints x="350" y="550" width="50" height="20"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -1299,7 +1299,11 @@
                                           <Component id="numberOfDays" min="-2" pref="129" max="-2" attributes="0"/>
                                           <Component id="TotalChargebill" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
                                           <Component id="perDayCarCharge" min="-2" pref="129" max="-2" attributes="0"/>
-                                          <Component id="advancePayment" alignment="0" min="-2" pref="120" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="advancePayment" min="-2" pref="120" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="errorShower" min="-2" pref="76" max="-2" attributes="0"/>
+                                          </Group>
                                           <Component id="pendingPayments" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -1345,6 +1349,7 @@
                           <Component id="prepaidLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="verifyDriverVehicalBtn1" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
                           <Component id="advancePayment" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="errorShower" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -1507,6 +1512,17 @@
               <Events>
                 <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="advancePaymentKeyTyped"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="errorShower">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="12" style="1"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="."/>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>

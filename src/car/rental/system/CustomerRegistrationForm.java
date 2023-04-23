@@ -65,8 +65,6 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         }
         if (clickedIDno!=null) {
             SetUpdateComponents(clickedIDno,tableType);
-        }else{
-            
         }
         
         System.out.println("checking loading");
@@ -332,7 +330,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                 
             }else{
                employee2.SetAllData(new String[]{"",peopleType,
-                RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),RegNIC.getText(),null,RegPhoneNo1.getText(),
+                RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),RegNIC.getText(),RegPhoneNo1.getText(),
                 regPhoneNo2.getText()});
                 
                 boolean actionResult[]=employee2.InsertEmployeeData(peopleType);
@@ -384,7 +382,8 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         
         
         if (RegPhoneNo1.getText().equalsIgnoreCase(regPhoneNo2.getText())) {
-            phoneNoError1="Same number";
+            phoneNoError1="Same Number";
+            phoneNoError2="Same Number";
         }
         
         
@@ -424,7 +423,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                 
             }else{
                employee2.SetAllData(new String[]{"",peopleType,
-                RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),RegNIC.getText(),null,RegPhoneNo1.getText(),
+                RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),RegNIC.getText(),RegPhoneNo1.getText(),
                 regPhoneNo2.getText()});
                 
                 if ( employee2.updateEmployeeData(EmployeeUpadingIndex)) {
