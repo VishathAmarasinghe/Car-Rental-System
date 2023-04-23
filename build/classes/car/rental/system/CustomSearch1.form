@@ -121,11 +121,11 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Create Your own travel comfort!"/>
+                <Property name="text" type="java.lang.String" value="Create Your Own Travel Comfort!"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="350" y="110" width="540" height="50"/>
+                  <AbsoluteConstraints x="350" y="110" width="570" height="50"/>
                 </Constraint>
               </Constraints>
             </Component>

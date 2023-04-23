@@ -25,7 +25,7 @@ public class SplashScreen extends javax.swing.JFrame {
      * change text when splash goes >50%
      */
     public void changeText(){
-        splashtext.setText("High Service for  Every Customer");
+        splashtext.setText("   High Service For Every Customer");
     }
 
     /**
