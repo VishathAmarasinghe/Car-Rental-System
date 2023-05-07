@@ -18,6 +18,10 @@ import javax.swing.table.DefaultTableModel;
  * @author Akila
  */
 public class DiscountAdder extends javax.swing.JFrame {
+    Connection con=null;
+    Statement st=null;
+    ResultSet rs=null;
+    PreparedStatement ps=null;
 
     /**
      * Creates new form DiscountAdder
@@ -26,6 +30,7 @@ public class DiscountAdder extends javax.swing.JFrame {
     private int updatingDiscountID=0;
     public DiscountAdder() {
         initComponents();
+        con=DatabaseConnection.StablishDatabaseConnection();
         setAllDiscountErrorShowers(new String[]{"","",""});
     }
     
@@ -34,6 +39,7 @@ public class DiscountAdder extends javax.swing.JFrame {
         
         try {
             initComponents();
+            con=DatabaseConnection.StablishDatabaseConnection();
             setAllDiscountErrorShowers(new String[]{"","",""});
             discountPressAdder.setText("Update");
             settingUpComponentsToUpdate(SelectedIndexID);
@@ -61,17 +67,18 @@ public class DiscountAdder extends javax.swing.JFrame {
             
         }
          
-            con.close();
+            
 
         } catch (Exception e) {
             System.out.println(e);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, null);
         }
     }
     private void updateDiscount(){
         try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            Statement st=con.createStatement();
+            
+            st=con.createStatement();
             String query="update discount set discountName= \""+discountNameAdder1.getText()+"\",precentage= \""+discountPrecentageAdder.getText()+"\","
                     + "Description= \""+discountDisc.getText()+"\" where discountID="+updatingDiscountID;
             st.executeUpdate(query);
@@ -79,6 +86,8 @@ public class DiscountAdder extends javax.swing.JFrame {
             CarRentalSystem.closeWindows(this);
         }catch(Exception e){
             System.out.println("Update Discount "+e);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, null);
         }
     }
 
@@ -86,10 +95,9 @@ public class DiscountAdder extends javax.swing.JFrame {
     
     private void addDiscount(){
         try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            con=DatabaseConnection.StablishDatabaseConnection();
             String querys="insert into discount(discountName,precentage,Description) values(?,?,?)";
-            PreparedStatement ps=con.prepareStatement(querys);
+            ps=con.prepareStatement(querys);
             ps.setString(1, discountNameAdder1.getText());
             ps.setString(2, discountPrecentageAdder.getText());
             ps.setString(3, discountDisc.getText());
@@ -100,6 +108,8 @@ public class DiscountAdder extends javax.swing.JFrame {
             
         }catch (Exception e){
             System.out.println("Discount Adder "+e);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, null);
         }
         
     }
@@ -112,6 +122,8 @@ public class DiscountAdder extends javax.swing.JFrame {
             st.executeUpdate(deletePhoneNoRaw);
         } catch (Exception e) {
             System.out.println("Data deleting Error");
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
         }
     }
     
@@ -122,11 +134,10 @@ public class DiscountAdder extends javax.swing.JFrame {
             discountTableRender.getDataVector().removeAllElements();
             discountTableRender.fireTableDataChanged();
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            con=DatabaseConnection.StablishDatabaseConnection();
             String s = "select * from discount";
-            PreparedStatement ps = con.prepareStatement(s);
-            ResultSet rs = ps.executeQuery();
+            ps = con.prepareStatement(s);
+            rs = ps.executeQuery();
 
             while (rs.next()) {
                 String discountID = rs.getString("discountID");
@@ -137,12 +148,11 @@ public class DiscountAdder extends javax.swing.JFrame {
                 discountTableRender.addRow(new String[]{discountID, discountName, discountPrecentage, discountDiscription});
 
             }
-            rs.close();
-            ps.close();
-            con.close();
-
+            
         } catch (Exception e) {
             System.out.println("Discount Table Render " + e);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
         }
     }
     
@@ -355,13 +365,13 @@ public class DiscountAdder extends javax.swing.JFrame {
             if (checkDiscountValidations()) {
                 addDiscount();
             }
-
         }
         
     }//GEN-LAST:event_discountPressAdderActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        DatabaseConnection.removeConnection(rs, st, ps, con);
         CarRentalSystem.closeWindows(this);
     }//GEN-LAST:event_jButton2ActionPerformed
 

@@ -23,6 +23,10 @@ import javax.swing.table.DefaultTableModel;
  * @author Akila
  */
 public class Car {
+    Connection con=null;
+    Statement st=null;
+    ResultSet rs=null;
+    PreparedStatement ps=null;
 
     private String CarNumber;
 
@@ -156,10 +160,9 @@ public class Car {
      */
     public void getSelectedCarDetails(String selectedCarID) {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            con=DatabaseConnection.StablishDatabaseConnection();
             String query = "Select * from cars where CarNumber=\"" + selectedCarID + "\"";
-            PreparedStatement ps = con.prepareStatement(query);
+            ps = con.prepareStatement(query);
             ResultSet CarResult = ps.executeQuery();
 
             while (CarResult.next()) {
@@ -188,6 +191,9 @@ public class Car {
         } catch (Exception e) {
             System.out.println("DB Error : " + e);
         }
+        finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
+        }
     }
 
     /**
@@ -201,13 +207,12 @@ public class Car {
     public ArrayList<Car> getAvailableCarDetails(String startDate, String endDate, String vehicalTypeSelector) {
         ArrayList<Car> carArray = new ArrayList<>();
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            con=DatabaseConnection.StablishDatabaseConnection();
             String s = "select * from cars where carNumber not in (select VehicalNumber from reservation where pickedUpdate between \"" + startDate + "\" "
                     + "and \"" + endDate + "\" and dropOffdate between \"" + startDate + "\"and \"" + endDate + "\") and vehicalType= \"" + vehicalTypeSelector + "\"";
-            PreparedStatement ps = con.prepareStatement(s);
+            ps = con.prepareStatement(s);
 
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
             while (rs.next()) {
 
                 Car c1 = new Car();   //create car card
@@ -246,9 +251,12 @@ public class Car {
 
         } catch (Exception e) {
             System.out.println("DB Error car range  Selecting : " + e);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
+            return carArray;
         }
 
-        return carArray;
+        
     }
 
     /**
@@ -256,10 +264,9 @@ public class Car {
      */
     public void addNewCar() {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            con=DatabaseConnection.StablishDatabaseConnection();
             String querys = "insert into cars(CarNumber,VehicalType,CarType,CarModel,SeatNo,ACType,FuelType,CarImage,OwnerID,Price) values(?,?,?,?,?,?,?,?,?,?)";
-            PreparedStatement ps = con.prepareStatement(querys);
+            ps = con.prepareStatement(querys);
 //            InputStream iss=new FileInputStream(new File(selectedImagePath));
             ps.setString(1, getCarNumber());
             ps.setString(2, getVehicalType());
@@ -275,12 +282,13 @@ public class Car {
             ps.executeUpdate();
             JOptionPane.showMessageDialog(null, "Car Added Successfully", "Data Manipulation", JOptionPane.INFORMATION_MESSAGE);
 
-            ps.close();
-            con.close();
+            
 
         } catch (Exception e) {
             System.out.println("DB Error : " + e);
             JOptionPane.showMessageDialog(null, "Car Adding Error Found", "Data Manipulation", JOptionPane.ERROR_MESSAGE);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
         }
     }
 
@@ -289,9 +297,8 @@ public class Car {
      */
     public void updateSelectedCarClass() {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            Statement st = con.createStatement();
+            con=DatabaseConnection.StablishDatabaseConnection();
+            st = con.createStatement();
             String query = "update cars set VehicalType= \"" + getVehicalType()
                     + "\", CarType= \"" + getCarType() + "\",CarModel= \"" + getCarModel() + "\",SeatNo= \"" + getSeatNo() + "\","
                     + "ACType= \"" + getAcType() + "\", FuelType= \"" + getFuelType() + "\","
@@ -314,6 +321,8 @@ public class Car {
         } catch (Exception ex) {
             System.out.println("Update Existing Car " + ex);
             JOptionPane.showMessageDialog(null, "Car Updating Error", "Data Manipulation", JOptionPane.ERROR_MESSAGE);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
         }
     }
 
@@ -328,11 +337,10 @@ public class Car {
             CartableLoad.getDataVector().removeAllElements();
             CartableLoad.fireTableDataChanged();
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            con=DatabaseConnection.StablishDatabaseConnection();
             String s = "select * from cars";
-            PreparedStatement ps = con.prepareStatement(s);
-            ResultSet rs = ps.executeQuery();
+            ps = con.prepareStatement(s);
+            rs = ps.executeQuery();
 
             while (rs.next()) {
                 String car_keyValue = rs.getString("CarNumber");
@@ -355,12 +363,12 @@ public class Car {
                 CartableLoad.addRow(new Object[]{car_keyValue, car_model, car_type, seat_no, ac_Type, fuel_type, imageLable, carprice});  //add car details to the table
 
             }
-            rs.close();
-            ps.close();
-            con.close();
+            
 
         } catch (Exception e) {
             System.out.println(e);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
         }
     }
 
@@ -371,20 +379,22 @@ public class Car {
      */
     public void deleteItem(String clickedIndexID) {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            Statement st = con.createStatement();
+            con=DatabaseConnection.StablishDatabaseConnection();
+            st = con.createStatement();
             String deletePhoneNoRaw = "delete from cars where CarNumber=\"" + clickedIndexID + "\"";
             st.executeUpdate(deletePhoneNoRaw);
         } catch (Exception e) {
 
+        }
+        finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
         }
     }
     
     public void searchCarNew(String searchData, JTable resultTable) {
 
         System.out.println("searched Name " + searchData);
-        Connection con;
+        
 
         try {
             
@@ -396,7 +406,7 @@ public class Car {
             String[] searchfeilds = {"carNumber", "VehicalType", "CarType", "CarModel", "SeatNo", "ACType", "FuelType", "OwnerID", "Price"};
             for (int i = 0; i < searchfeilds.length; i++) {
 
-                ResultSet rs = searchCar(con, "cars", searchfeilds[i], searchData,i);
+                rs = searchCar(con, "cars", searchfeilds[i], searchData,i);
 
                 if (rs != null) {
 
@@ -427,17 +437,12 @@ public class Car {
 
             }
 
-            con.close();
+            
 
         } catch (Exception e) {
             System.out.println(e);
         } finally {
-            try {
-//                st.close();
-//                con.close();
-            } catch (Exception e) {
-                System.out.println("connection Closing Error " + e);
-            }
+            DatabaseConnection.removeConnection(null, st, ps, con);
         }
     }
 
@@ -461,6 +466,9 @@ public class Car {
         } catch (Exception e) {
             System.out.println("checkCustomer Search " + e);
             return null;
+        }
+        finally{
+            DatabaseConnection.removeConnection(null, st, ps, null);
         }
     }
 

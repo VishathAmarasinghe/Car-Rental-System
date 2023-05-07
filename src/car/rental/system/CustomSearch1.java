@@ -18,6 +18,7 @@ import com.raven.datechooser.EventDateChooser;
 import com.raven.datechooser.SelectedAction;
 import com.raven.datechooser.SelectedDate;
 import java.awt.Color;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.Month;
@@ -37,6 +38,10 @@ public class CustomSearch1 extends javax.swing.JFrame {
      */
     
     
+    Statement st=null;
+  
+   
+    
     private EventHandle event;
     private ResultSet rs;
     private Connection con;
@@ -53,6 +58,7 @@ public class CustomSearch1 extends javax.swing.JFrame {
     }
     public CustomSearch1() {
         initComponents();
+        con =DatabaseConnection.StablishDatabaseConnection();
         Validations datevalidate=new Validations();
         startDateChooser.setTextRefernce(startDate);
         endDateChooser.setTextRefernce(endDate);
@@ -118,15 +124,17 @@ public class CustomSearch1 extends javax.swing.JFrame {
     
     public ResultSet databaseExecuation(String s){
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            
             ps = con.prepareStatement(s);
             rs=ps.executeQuery();
             
         } catch (Exception e) {
             System.out.println("DB Error 117 : "+e);
+        }finally{
+            
+            return rs;
         }
-        return rs;
+        
     }
     
     
@@ -175,6 +183,9 @@ public class CustomSearch1 extends javax.swing.JFrame {
             
         }catch (Exception e){
             System.out.println("DB Error req card : "+e);
+        }
+        finally{
+            DatabaseConnection.removeConnection(rs, st, ps, null);
         }
     }
     
@@ -769,7 +780,7 @@ public class CustomSearch1 extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        
+        DatabaseConnection.removeConnection(rs, st, ps, con);
         CarRentalSystem.closeWindows(this);
         LoginForm l1=new LoginForm();
         l1.setVisible(true);
@@ -817,30 +828,30 @@ public class CustomSearch1 extends javax.swing.JFrame {
         withOutDriverRadio.setActionCommand("no");
         
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con3 = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            
             String querys="insert into reservation(ReservationID,ReservationStatus,pickedUpDate,dropOffDate,VehicalNumber,DummyName,DriverStatus) values(?,?,?,?,?,?,?)";
-            PreparedStatement ps3=con3.prepareStatement(querys);
+            ps=con.prepareStatement(querys);
             
             GenerateKeys g1=new GenerateKeys();
             
-            ps3.setString(1,g1.getGeneratedNewID("reserve"));
-            ps3.setString(2, "pending");
-            ps3.setString(3, dateChanger(startDate.getText()));
-            ps3.setString(4, dateChanger(endDate.getText()));
-            ps3.setString(5, selectedCarNumer);
-            ps3.setString(6, dummyValue.getText());
-            ps3.setString(7, driverbtngroup.getSelection().getActionCommand());
+            ps.setString(1,g1.getGeneratedNewID("reserve"));
+            ps.setString(2, "pending");
+            ps.setString(3, dateChanger(startDate.getText()));
+            ps.setString(4, dateChanger(endDate.getText()));
+            ps.setString(5, selectedCarNumer);
+            ps.setString(6, dummyValue.getText());
+            ps.setString(7, driverbtngroup.getSelection().getActionCommand());
             
             
-            ps3.executeUpdate();
+            ps.executeUpdate();
             JOptionPane.showMessageDialog(null, "Request Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
             
-            ps3.close();
-            con3.close();
+            
             jTabbedPane1.setSelectedIndex(0);
         } catch (Exception e) {
             System.out.println("DB Error : "+e);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, null);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

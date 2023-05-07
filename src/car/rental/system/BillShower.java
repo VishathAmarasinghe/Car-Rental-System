@@ -10,23 +10,29 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.swing.ImageIcon;
+import java.sql.Statement;
 
 /**
  *
  * @author Akila
  */
 public class BillShower extends javax.swing.JFrame {
+    
+    Connection con=null;
+    
 
     /**
      * Creates new form BillShower
      */
     public BillShower(String billNO) {
         initComponents();
+        con = DatabaseConnection.StablishDatabaseConnection();
         selectedBillImage(billNO);  //get selected bill
     }
     
     public BillShower() {
         initComponents();
+        con = DatabaseConnection.StablishDatabaseConnection();
         
     }
     
@@ -35,24 +41,28 @@ public class BillShower extends javax.swing.JFrame {
      * get image of selected bill
      * @param BillNO 
      */
-    private void selectedBillImage(String BillNO){
-        try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            String singleData="select * from bill where billNo=\""+BillNO+"\"";
-            PreparedStatement ps = con.prepareStatement(singleData);
-            ResultSet rs=ps.executeQuery();
+    private void selectedBillImage(String BillNO) {
+        Statement st = null;
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+        try {
+            
+            String singleData = "select * from bill where billNo=\"" + BillNO + "\"";
+            ps = con.prepareStatement(singleData);
+            rs = ps.executeQuery();
             rs.next();
-            byte[] img=rs.getBytes("Bill1Image");
-            ImageIcon image=new ImageIcon(img);
-            Image im=image.getImage();
-            Image myimage=im.getScaledInstance(billimageholder.getWidth(), billimageholder.getHeight(), Image.SCALE_SMOOTH);
-            ImageIcon newimage=new ImageIcon(myimage);
-            
+            byte[] img = rs.getBytes("Bill1Image");
+            ImageIcon image = new ImageIcon(img);
+            Image im = image.getImage();
+            Image myimage = im.getScaledInstance(billimageholder.getWidth(), billimageholder.getHeight(), Image.SCALE_SMOOTH);
+            ImageIcon newimage = new ImageIcon(myimage);
+
             billimageholder.setIcon(newimage);
-            
-        }catch(Exception e){
-            System.out.println("Bill image "+e);
+
+        } catch (Exception e) {
+            System.out.println("Bill image " + e);
+        } finally {
+            DatabaseConnection.removeConnection(rs, st, ps, null);
         }
     }
 
@@ -137,6 +147,7 @@ public class BillShower extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        DatabaseConnection.removeConnection(null, null, null, null);
         CarRentalSystem.closeWindows(this);
     }//GEN-LAST:event_jButton1ActionPerformed
 

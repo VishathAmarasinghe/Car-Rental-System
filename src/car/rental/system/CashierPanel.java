@@ -23,6 +23,10 @@ import successBtn.TableBtnActionEvent;
  * @author Akila
  */
 public class CashierPanel extends javax.swing.JFrame {
+    Connection con=null;
+    Statement st=null;
+    ResultSet rs=null;
+    PreparedStatement ps=null;
 
     /**
      * Creates new form AdminPage
@@ -57,6 +61,7 @@ public class CashierPanel extends javax.swing.JFrame {
      */
     public CashierPanel(String cashierID) {
         initComponents();
+        con=DatabaseConnection.StablishDatabaseConnection();
         AccessedCashierID = cashierID;     //assgin the selected cashier ID
         customer1 = new CustomerData();   //initialize customer object
         stat1 = new StatisticalData();      //initialize statistical object
@@ -184,20 +189,21 @@ public class CashierPanel extends javax.swing.JFrame {
                 clickedIndexID = (String) proceedTableGetClicked.getValueAt(raw, 0);
             }
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            
             String singleData = "select * from reservation where reservationID=\"" + clickedIndexID + "\"";
-            PreparedStatement ps = con.prepareStatement(singleData);
-            ResultSet rs = ps.executeQuery();
+            ps = con.prepareStatement(singleData);
+            rs = ps.executeQuery();
 
             System.out.println("executed here");
             Bill billrender = new Bill(rs, tableType, AccessedCashierID);  //create bill object 
             billrender.setVisible(true);
 
-            con.close();
+            
 
         } catch (Exception e) {
             System.out.println("edit selected Pnael " + e);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, null);
         }
     }
 
@@ -212,8 +218,7 @@ public class CashierPanel extends javax.swing.JFrame {
             DefaultTableModel pendingTableLoad = null;
             DefaultTableModel doneProceedTableLoad = null;
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            
             String s = "";
             if (tableType.equalsIgnoreCase("proceeded")) {
                 s = "select * from reservation where ReservationStatus=\"proceeded\" order by DropOffDate ";
@@ -232,8 +237,8 @@ public class CashierPanel extends javax.swing.JFrame {
                 doneProceedTableLoad.fireTableDataChanged();
             }
 
-            PreparedStatement ps = con.prepareStatement(s);
-            ResultSet rs = ps.executeQuery();
+            ps = con.prepareStatement(s);
+            rs = ps.executeQuery();
             while (rs.next()) {
                 String reserveID = rs.getString("ReservationID");   //get reservation data from database
 
@@ -256,12 +261,13 @@ public class CashierPanel extends javax.swing.JFrame {
                     doneProceedTableLoad.addRow(finisedData);  //add retreived data to the corresponding table
                 }
             }
-            rs.close();
-            ps.close();
-            con.close();
+            
 
         } catch (Exception e) {
             System.out.println(e);
+        }
+        finally{
+            DatabaseConnection.removeConnection(rs, st, ps, null);
         }
     }
 
@@ -276,12 +282,11 @@ public class CashierPanel extends javax.swing.JFrame {
             billdataTable.getDataVector().removeAllElements();
             billdataTable.fireTableDataChanged();
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            
             String s = "select * from Bill";
 
-            PreparedStatement ps = con.prepareStatement(s);
-            ResultSet rs = ps.executeQuery();
+            ps = con.prepareStatement(s);
+            rs = ps.executeQuery();
             while (rs.next()) {
                 String billID = rs.getString("BillNo");    //get bill data from database
 
@@ -293,12 +298,13 @@ public class CashierPanel extends javax.swing.JFrame {
                 billdataTable.addRow(finisedData);
 
             }
-            rs.close();
-            ps.close();
-            con.close();
+            
 
         } catch (Exception e) {
             System.out.println("Bill load details table " + e);
+        }
+        finally{
+            DatabaseConnection.removeConnection(rs, st, ps, null);
         }
     }
 
@@ -331,11 +337,10 @@ public class CashierPanel extends javax.swing.JFrame {
             DefaultTableModel proceedReservationTableClicked = (DefaultTableModel) ProceededReservationTable.getModel();
             DefaultTableModel PendingReservationTableClicked = (DefaultTableModel) PendingReservationsTable.getModel();
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            
 
             String deletePhoneNoRaw = "";
-            Statement st = con.createStatement();
+            st = con.createStatement();
             System.out.println("Clicked indez  " + clickedIndexID);
 
             if (currentPageHolder.equalsIgnoreCase("customerPage")) {
@@ -358,9 +363,12 @@ public class CashierPanel extends javax.swing.JFrame {
                 PendingReservationTableClicked.removeRow(rawNo);
             }
 
-            con.close();
+       
         } catch (Exception e) {
             System.out.println("Error from casherPanel 154  " + e);
+        }
+        finally{
+            DatabaseConnection.removeConnection(rs, st, ps, null);
         }
 
     }
@@ -397,7 +405,7 @@ public class CashierPanel extends javax.swing.JFrame {
         customerTable = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        customerTextField = new javax.swing.JTextField();
         PendingReservationsPanel = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         PendingReservationsTable = new javax.swing.JTable();
@@ -688,6 +696,11 @@ public class CashierPanel extends javax.swing.JFrame {
 
         jButton2.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         jButton2.setText("Search");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout customerAddingPanelLayout = new javax.swing.GroupLayout(customerAddingPanel);
         customerAddingPanel.setLayout(customerAddingPanelLayout);
@@ -701,7 +714,7 @@ public class CashierPanel extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(82, 82, 82)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(customerTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -714,7 +727,7 @@ public class CashierPanel extends javax.swing.JFrame {
                 .addGroup(customerAddingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customerTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1108,6 +1121,7 @@ public class CashierPanel extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
+        DatabaseConnection.removeConnection(rs, st, ps, con);
         CarRentalSystem.closeWindows(this);
         CustomSearch1 carsearch=new CustomSearch1();
         carsearch.setVisible(true);
@@ -1145,6 +1159,12 @@ public class CashierPanel extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_billTableMouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        customer1.searchCustomer(customerTextField.getText(),customerTable);
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1199,6 +1219,7 @@ public class CashierPanel extends javax.swing.JFrame {
     private javax.swing.JPanel customerAddingPanel;
     private javax.swing.JLabel customerNoStat;
     private javax.swing.JTable customerTable;
+    private javax.swing.JTextField customerTextField;
     private javax.swing.JPanel finishedReservationPanel;
     private javax.swing.JTable finishedReservationTable;
     private javax.swing.JButton jButton1;
@@ -1226,7 +1247,6 @@ public class CashierPanel extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JButton pendingreservationsBtn;
     private javax.swing.JLabel pendingreservationstat;
     private javax.swing.JButton proceedReservationBtn;

@@ -86,12 +86,14 @@ public class Bill extends javax.swing.JFrame {
      */
     private String AccessedCashierID="";
     String DriverID=null;
+    Connection con;
 
     /**
      *default constructor
      */
     public Bill() {
         initComponents();
+        con=DatabaseConnection.StablishDatabaseConnection();
         moreDetailsBtn.setVisible(false);
         verificationStatusShower.setVisible(false);
         verifyCustomerBtn.setVisible(false);   //set visibility of buttons
@@ -113,6 +115,7 @@ public class Bill extends javax.swing.JFrame {
      */
     public Bill(ResultSet reservationResult,String TableType,String cashierID) {
         initComponents();
+        con=DatabaseConnection.StablishDatabaseConnection();
         correspondingTable=TableType;
         moreDetailsBtn.setVisible(false);
         verificationStatusShower.setVisible(false);
@@ -223,13 +226,19 @@ public class Bill extends javax.swing.JFrame {
             totalCarRent.setVisible(false);
             prepaidLabel.setVisible(false);
             advancePayment.setVisible(false);
+            subtotalBillcontainer.setText("Paid Bill");
+            advancepaymenttexter.setText("Paid Amount");
+            advancepaymenttexter.setVisible(false);
+            advancePaymentBill.setVisible(false);
+            paymentvalue.setText("final payment");
             
+            PreparedStatement ps=null;
+            ResultSet rs=null;
             try{
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+                
                 String singleData = "select * from Bill where BillNo=\"" + previousBillID + "\"";
-                PreparedStatement ps = con.prepareStatement(singleData);
-                ResultSet rs = ps.executeQuery();
+                ps = con.prepareStatement(singleData);
+                rs = ps.executeQuery();
                 rs.next();
                 double totalAmountProceeded=Double.parseDouble(rs.getString("TotalAmount"));
                 double PaidAmountProceeded=Double.parseDouble(rs.getString("AdvancePaiedAmount"));
@@ -245,6 +254,8 @@ public class Bill extends javax.swing.JFrame {
                 
             }catch(Exception e){
                 System.out.println("Proceeded Table Handle error "+e);
+            }finally{
+                DatabaseConnection.removeConnection(rs, null, ps, null);
             }
         }
 
@@ -267,13 +278,14 @@ public class Bill extends javax.swing.JFrame {
      *get all vehical details from database
      */
     private void vehicalDriverDetailsGetter() {
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         try {
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            
             String singleData = "select * from cars where CarNumber=\"" + vehicalNoBill.getText() + "\"";
-            PreparedStatement ps = con.prepareStatement(singleData);
-            ResultSet rs = ps.executeQuery();
+            ps = con.prepareStatement(singleData);
+            rs = ps.executeQuery();
 
             rs.next();
             vehicalNameBill.setText(rs.getString("CarModel") + " " + rs.getString("CarType"));
@@ -292,10 +304,12 @@ public class Bill extends javax.swing.JFrame {
 
 
 
-            con.close();
+            
 
         } catch (Exception e) {
             System.out.println("Vehical Driver details Getter " + e);
+        }finally{
+            DatabaseConnection.removeConnection(rs, null, ps, null);
         }
     }
 
@@ -398,11 +412,12 @@ public class Bill extends javax.swing.JFrame {
      * @param tableType
      */
     private void UpdateBillTable(String tableType){
+        PreparedStatement ps=null;
+        Statement st=null;
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            
             String querys="insert into bill(BillNo,BillDate,TotalAmount,AdvancePaiedAmount,pendingPayment,pendingReturnDate,Bill1Image) values(?,?,?,?,?,?,?)";
-            PreparedStatement ps=con.prepareStatement(querys);
+            ps=con.prepareStatement(querys);
             GenerateKeys billkey=new GenerateKeys();
             
             String billNoNew=billkey.getGeneratedNewID("bill");
@@ -435,7 +450,7 @@ public class Bill extends javax.swing.JFrame {
             
             
             //update reservation details
-            Statement st=con.createStatement();
+            st=con.createStatement();
             String updateReservation="";
             if (tableType.equalsIgnoreCase("proceeding")){
                 if (DriverID==null) {
@@ -466,11 +481,12 @@ public class Bill extends javax.swing.JFrame {
             st.executeUpdate(updateReservation);
             JOptionPane.showMessageDialog(null, "Bill Record Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
 
-            ps.close();
-            con.close();
+            
 
         } catch (Exception e) {
             System.out.println("DB bill  Error : "+e);
+        }finally{
+            DatabaseConnection.removeConnection(null, st, ps, null);
         }
     }
 
@@ -489,14 +505,15 @@ public class Bill extends javax.swing.JFrame {
      * @return
      */
     private  String getCustomerEmail(){
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         String customerEmail="";
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            
                 
             String slectMax = "select email from customer where customerID=\""+CustomerIDshower.getText()+"\";";
-            PreparedStatement ps = con.prepareStatement(slectMax);
-            ResultSet rs = ps.executeQuery();
+            ps = con.prepareStatement(slectMax);
+            rs = ps.executeQuery();
             rs.next();
             customerEmail=rs.getString("email");
             
@@ -505,6 +522,7 @@ public class Bill extends javax.swing.JFrame {
             System.out.println("customer mail getting Error "+e);
         }
         finally{
+            DatabaseConnection.removeConnection(rs, null, ps, null);
             return customerEmail;
         }
     }
@@ -516,6 +534,8 @@ public class Bill extends javax.swing.JFrame {
      */
     private  String getDriverprice(){
         String driverpayment="";
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
@@ -523,8 +543,8 @@ public class Bill extends javax.swing.JFrame {
             System.out.println("Driver ID "+driverSelectorBill.getSelectedItem().toString().substring(0,4));
                 
             String slectMax = "select RentCharge from driver where EmpID=\""+driverSelectorBill.getSelectedItem().toString().substring(0,4)+"\";";
-            PreparedStatement ps = con.prepareStatement(slectMax);
-            ResultSet rs = ps.executeQuery();
+            ps = con.prepareStatement(slectMax);
+            rs = ps.executeQuery();
             rs.next();
             driverpayment=rs.getString("rentcharge");
             
@@ -536,6 +556,7 @@ public class Bill extends javax.swing.JFrame {
             System.out.println("Driver Price Getting Error "+e);
         }
         finally{
+            DatabaseConnection.removeConnection(rs, null, ps, null);
             return driverpayment;
         }
     }
@@ -580,9 +601,9 @@ public class Bill extends javax.swing.JFrame {
         DateAdder = new javax.swing.JLabel();
         jLabel41 = new javax.swing.JLabel();
         jLabel42 = new javax.swing.JLabel();
-        jLabel34 = new javax.swing.JLabel();
-        jLabel36 = new javax.swing.JLabel();
-        jLabel38 = new javax.swing.JLabel();
+        paymentvalue = new javax.swing.JLabel();
+        subtotalBillcontainer = new javax.swing.JLabel();
+        advancepaymenttexter = new javax.swing.JLabel();
         jLabel39 = new javax.swing.JLabel();
         pendingPaymentBillPrint = new javax.swing.JLabel();
         SubTotalBill1 = new javax.swing.JLabel();
@@ -827,20 +848,20 @@ public class Bill extends javax.swing.JFrame {
         jLabel42.setText("+94778586666");
         jPanel2.add(jLabel42, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 270, 110, 20));
 
-        jLabel34.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel34.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel34.setText("Pending Payment");
-        jPanel2.add(jLabel34, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 550, -1, 20));
+        paymentvalue.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        paymentvalue.setForeground(new java.awt.Color(0, 0, 0));
+        paymentvalue.setText("Pending Payment");
+        jPanel2.add(paymentvalue, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 550, -1, 20));
 
-        jLabel36.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel36.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel36.setText("Sub Total");
-        jPanel2.add(jLabel36, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 490, -1, 20));
+        subtotalBillcontainer.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        subtotalBillcontainer.setForeground(new java.awt.Color(0, 0, 0));
+        subtotalBillcontainer.setText("Sub Total");
+        jPanel2.add(subtotalBillcontainer, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 490, -1, 20));
 
-        jLabel38.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel38.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel38.setText("Advance Payment");
-        jPanel2.add(jLabel38, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 530, 130, 20));
+        advancepaymenttexter.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        advancepaymenttexter.setForeground(new java.awt.Color(0, 0, 0));
+        advancepaymenttexter.setText("Advance Payment");
+        jPanel2.add(advancepaymenttexter, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 530, 130, 20));
 
         jLabel39.setText("jLabel39");
         jPanel2.add(jLabel39, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
@@ -848,15 +869,15 @@ public class Bill extends javax.swing.JFrame {
         pendingPaymentBillPrint.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         pendingPaymentBillPrint.setForeground(new java.awt.Color(0, 0, 0));
         pendingPaymentBillPrint.setText(".");
-        jPanel2.add(pendingPaymentBillPrint, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 550, 50, 20));
+        jPanel2.add(pendingPaymentBillPrint, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 550, 80, 20));
 
         SubTotalBill1.setForeground(new java.awt.Color(0, 0, 0));
         SubTotalBill1.setText(".");
-        jPanel2.add(SubTotalBill1, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 490, -1, 20));
+        jPanel2.add(SubTotalBill1, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 490, 60, 20));
 
         advancePaymentBill.setForeground(new java.awt.Color(0, 0, 0));
         advancePaymentBill.setText(".");
-        jPanel2.add(advancePaymentBill, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 530, -1, 20));
+        jPanel2.add(advancePaymentBill, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 530, 70, 20));
 
         jLabel40.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel40.setForeground(new java.awt.Color(0, 0, 0));
@@ -865,7 +886,7 @@ public class Bill extends javax.swing.JFrame {
 
         SubTotalBill3.setForeground(new java.awt.Color(0, 0, 0));
         SubTotalBill3.setText(".");
-        jPanel2.add(SubTotalBill3, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 510, -1, 20));
+        jPanel2.add(SubTotalBill3, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 510, 60, 20));
 
         javax.swing.GroupLayout printBillLayout = new javax.swing.GroupLayout(printBill);
         printBill.setLayout(printBillLayout);
@@ -1445,13 +1466,14 @@ public class Bill extends javax.swing.JFrame {
 
     private void moreDetailsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moreDetailsBtnActionPerformed
         // TODO add your handling code here:
+        PreparedStatement ps=null;
+        ResultSet rs=null;
         try {
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            
             String singleData = "select * from customer where customerID=\"" + CustomerIDshower.getText() + "\"";
-            PreparedStatement ps = con.prepareStatement(singleData);
-            ResultSet rs = ps.executeQuery();
+            ps = con.prepareStatement(singleData);
+            rs = ps.executeQuery();
 
             String singleDataPhoneNumbers = "select * from customerphone where customerID=\"" + CustomerIDshower.getText() + "\"";
             PreparedStatement psnumbers = con.prepareStatement(singleDataPhoneNumbers);
@@ -1460,10 +1482,13 @@ public class Bill extends javax.swing.JFrame {
             CustomerRegistrationForm form1 = new CustomerRegistrationForm(rs, rs2, "customer");
             form1.setVisible(true);
 
-            con.close();
+            
 
         } catch (Exception e) {
             System.out.println(e);
+        }
+        finally{
+            DatabaseConnection.removeConnection(rs, null, ps, null);
         }
     }//GEN-LAST:event_moreDetailsBtnActionPerformed
 
@@ -1585,6 +1610,7 @@ public class Bill extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (verification_customer && verification_DriverVehical && verification_finalPayment) {
             UpdateBillTable(correspondingTable);
+            DatabaseConnection.removeConnection(null, null, null, con);
             CarRentalSystem.closeWindows(this);
            
         }else{
@@ -1647,6 +1673,7 @@ public class Bill extends javax.swing.JFrame {
     private javax.swing.JLabel TotalChargebill;
     private javax.swing.JTextField advancePayment;
     private javax.swing.JLabel advancePaymentBill;
+    private javax.swing.JLabel advancepaymenttexter;
     private javax.swing.JTextField billCustomerSearchField;
     private javax.swing.JTable billTable;
     private javax.swing.JLabel carNoPrintBill;
@@ -1684,10 +1711,7 @@ public class Bill extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
-    private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
-    private javax.swing.JLabel jLabel36;
-    private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel40;
@@ -1710,12 +1734,14 @@ public class Bill extends javax.swing.JFrame {
     private javax.swing.JButton moreDetailsBtn;
     private javax.swing.JLabel nofoDaysLabel;
     private javax.swing.JLabel numberOfDays;
+    private javax.swing.JLabel paymentvalue;
     private javax.swing.JLabel pendingPaymentBillPrint;
     private javax.swing.JLabel pendingPayments;
     private javax.swing.JLabel perDayCarCharge;
     private javax.swing.JLabel pickUpDateBill;
     private javax.swing.JLabel prepaidLabel;
     private javax.swing.JPanel printBill;
+    private javax.swing.JLabel subtotalBillcontainer;
     private javax.swing.JLabel totalCarRent;
     private javax.swing.JLabel totalCarRentLabel;
     private javax.swing.JLabel vehicalNameBill;

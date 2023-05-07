@@ -23,6 +23,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author Akila
  */
 public class CarAddingPanel extends javax.swing.JFrame {
+    
+    Connection con=null;
+    Statement st=null;
+    ResultSet rs=null;
+    PreparedStatement ps=null;
 
     /**
      *
@@ -74,12 +79,11 @@ public class CarAddingPanel extends javax.swing.JFrame {
     private void loadOwnerDetails() {
         try {
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            con=DatabaseConnection.StablishDatabaseConnection();
             String s = "select VOwnerID, FName,LName from vehicalOwner";
 
-            PreparedStatement ps = con.prepareStatement(s);
-            ResultSet rs = ps.executeQuery();
+            ps = con.prepareStatement(s);
+            rs = ps.executeQuery();
             while (rs.next()) {
                 String empID = rs.getString("VOwnerID");
                 String Fname = rs.getString("FName");
@@ -87,13 +91,14 @@ public class CarAddingPanel extends javax.swing.JFrame {
                 ownerComboBox.addItem(empID + " " + Fname + " " + Lname);
 
             }
-            rs.close();
-            ps.close();
-            con.close();
+            
             ownerComboBox.setSelectedItem(null);
 
         } catch (Exception e) {
             System.out.println(e);
+        }
+        finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
         }
     }
 

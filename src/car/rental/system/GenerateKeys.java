@@ -8,18 +8,22 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  *
  * @author Akila
  */
 public class GenerateKeys {
+    Connection con=null;
+    Statement st=null;
+    ResultSet rs=null;
+    PreparedStatement ps=null;
     
     private String getLastIndexEmployeeTable(String peopleType){
         String employeeLastIndex="";
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            con=DatabaseConnection.StablishDatabaseConnection();
             String slectMax="";
             if (peopleType.equalsIgnoreCase("customer")) {
                 slectMax="Select max(CustomerID) as maxID from customer";
@@ -33,8 +37,8 @@ public class GenerateKeys {
                 slectMax="Select max(DriverID) as maxID from driver";
             }
             
-            PreparedStatement ps = con.prepareStatement(slectMax);
-            ResultSet rs=ps.executeQuery();
+            ps = con.prepareStatement(slectMax);
+            rs=ps.executeQuery();
             while (rs.next()) {                
                 employeeLastIndex=rs.getString("maxID");
                 if (employeeLastIndex==null) {
@@ -49,13 +53,14 @@ public class GenerateKeys {
                 System.out.println("Max ID "+employeeLastIndex);
             }
             
-            rs.close();
-            ps.close();
-            con.close();
+            
         } catch (Exception e) {
             System.out.println("Error from 49 "+e);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
+            return employeeLastIndex;
         }
-        return employeeLastIndex;
+        
     }
     
     private String genaratedID(String empID){

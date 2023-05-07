@@ -16,9 +16,7 @@ import EditDelete.cell.TableActionEvent;
  */
 public class AdminPage extends javax.swing.JFrame {
 
-    /**
-     *
-     */
+    
     private int tableSelectedIndex = 0;
 
     /**
@@ -102,6 +100,7 @@ public class AdminPage extends javax.swing.JFrame {
                 if (employeeTable.isEditing()) {
                     employeeTable.getCellEditor().stopCellEditing();   //stop cell editing if it is in the cell editing mode
                 }
+                stopCellEditing();
 
                 int resultofDelete = JOptionPane.showConfirmDialog(null, "Are you sure that you want to delete record", "Deleting Confirmation",
                         JOptionPane.YES_NO_OPTION);
@@ -295,7 +294,7 @@ public class AdminPage extends javax.swing.JFrame {
             vehicalOwnerAddingtable.getCellEditor().stopCellEditing();   //stop cell editing if it is in the cell editing mode
         }
         if (CarTable.isEditing()) {
-            employeeTable.getCellEditor().stopCellEditing();   //stop cell editing if it is in the cell editing mode
+            CarTable.getCellEditor().stopCellEditing();   //stop cell editing if it is in the cell editing mode
         }
         
     }
@@ -1026,29 +1025,32 @@ public class AdminPage extends javax.swing.JFrame {
      */
     private void employeeDetailsbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_employeeDetailsbtnActionPerformed
         // TODO add your handling code here:
+        stopCellEditing();
         currentPageHolder = "employeePage";
 //        loadOwnerData("all");
         employee1.loadEmployeeData("all", null, employeeTable, null);
         jTabbedPane1.setSelectedIndex(1);
-        stopCellEditing();
+        
 
     }//GEN-LAST:event_employeeDetailsbtnActionPerformed
 
     private void discountbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discountbtnActionPerformed
+        stopCellEditing();
         jTabbedPane1.setSelectedIndex(3);
         renderDiscountTable();
         currentPageHolder = "discountPage";
-        stopCellEditing();
+        
         // TODO add your handling code here:
     }//GEN-LAST:event_discountbtnActionPerformed
 
     private void carDetailsbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_carDetailsbtnActionPerformed
         // TODO add your handling code here:
+        stopCellEditing();
         currentPageHolder = "CarPage";
         car1.renderCarTable(CarTable);
 
         jTabbedPane1.setSelectedIndex(2);
-        stopCellEditing();
+        
     }//GEN-LAST:event_carDetailsbtnActionPerformed
 
     private void dashboardbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dashboardbtnActionPerformed
@@ -1144,11 +1146,11 @@ public class AdminPage extends javax.swing.JFrame {
     }//GEN-LAST:event_employeeSearchTextGetterKeyTyped
 
     private void VehicalOweneStateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VehicalOweneStateActionPerformed
-
+        stopCellEditing();
         jTabbedPane1.setSelectedIndex(4);
         currentPageHolder = "vehicalOwnerPage";
         owner.loadOwnerData(vehicalOwnerAddingtable);
-        stopCellEditing();
+
     }//GEN-LAST:event_VehicalOweneStateActionPerformed
 
     private void vehicalOwnerAddingbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vehicalOwnerAddingbtnActionPerformed
@@ -1166,6 +1168,9 @@ public class AdminPage extends javax.swing.JFrame {
 
     private void searchCarIconActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchCarIconActionPerformed
         // TODO add your handling code here:
+        if (CarTable.isEditing()) {
+            CarTable.getCellEditor().stopCellEditing();   //stop cell editing if it is in the cell editing mode
+        }
         car1.searchCarNew(CarSearchBar.getText(), CarTable);
         
     }//GEN-LAST:event_searchCarIconActionPerformed

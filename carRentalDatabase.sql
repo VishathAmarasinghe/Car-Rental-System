@@ -130,3 +130,10 @@ select count(cars.carNumber) from cars where carNumber not in
  
  
   select count(reservationID) from reservation where reservationStatus="Proceeded";
+  
+  
+  select rentCharge from driver where empId="A009";
+  
+  select * from cars where carmodel like "%Aqua%";
+  
+drop database image;

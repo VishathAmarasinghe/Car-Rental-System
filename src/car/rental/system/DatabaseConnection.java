@@ -6,6 +6,9 @@ package car.rental.system;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import javax.swing.JOptionPane;
 
 /**
@@ -37,6 +40,34 @@ public class DatabaseConnection {
         }
     
     }
+    
+    
+    public static void removeConnection(ResultSet rs,Statement st,PreparedStatement ps,Connection con){
+        try {
+            if (rs!=null) {
+                rs.close();
+                rs=null;
+            }
+            if (st!=null) {
+                st.close();
+                st=null;
+            }
+            if (ps!=null) {
+                ps.close();
+                ps=null;
+            }
+            if (con!=null) {
+                con.close();
+                con=null;
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Connection Dispatching Error "+e);
+        }
+        
+        
+    }
+    
     
     public static void main(String[] args) {
         StablishDatabaseConnection();

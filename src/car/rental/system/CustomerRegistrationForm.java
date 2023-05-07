@@ -17,6 +17,11 @@ import javax.swing.JOptionPane;
  */
 public class CustomerRegistrationForm extends javax.swing.JFrame {
     
+    Connection con=null;
+    Statement st=null;
+    ResultSet rs=null;
+    PreparedStatement ps=null;
+    
     String employeeLastIndex="";
     String EmployeeUpadingIndex="";
     String customerLastIndex="";
@@ -147,7 +152,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
 
        String role=null;
         if (tableType.equalsIgnoreCase("customer")) {
-            customer2.searchCustomer(clickedIndex);
+            customer2.searchCustomer(clickedIndex,null);
             RegFirstName.setText(customer2.getFirstName());
             RegLastName.setText(customer2.getLastName());
             role=customer2.getRole();
@@ -225,8 +230,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     
     private void getLastIndexEmployeeTable(String peopleType){
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            con=DatabaseConnection.StablishDatabaseConnection();
             String slectMax="";
             if (peopleType.equalsIgnoreCase("customer")) {
                 slectMax="Select max(CustomerID) as maxID from customer";
@@ -234,17 +238,17 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                 slectMax="Select max(EmpID) as maxID from employee";
             }
             
-            PreparedStatement ps = con.prepareStatement(slectMax);
-            ResultSet rs=ps.executeQuery();
+            ps = con.prepareStatement(slectMax);
+            rs=ps.executeQuery();
             while (rs.next()) {                
                 employeeLastIndex=rs.getString("maxID");
                 System.out.println("Max ID "+employeeLastIndex);
             }
-            rs.close();
-            ps.close();
-            con.close();
+            
         } catch (Exception e) {
             System.out.println("Error from 49 "+e);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
         }
     }
     
@@ -455,9 +459,8 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         try {
             
   
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            Statement st=con.createStatement();
+            con=DatabaseConnection.StablishDatabaseConnection();
+            st=con.createStatement();
             String firstName=RegFirstName.getText();
             String LastName=RegLastName.getText();
             String email=RegEmail.getText();
@@ -552,12 +555,14 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                             
             
             JOptionPane.showMessageDialog(null, "Data \""+typeFormat[0]+"\" Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
-            con.close();
+          
             CarRentalSystem.closeWindows(this);
                  
             
         } catch (Exception e) {
             System.out.println("Error from 218 "+e);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
         }
     }
     

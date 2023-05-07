@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  *
@@ -15,7 +16,10 @@ import java.sql.ResultSet;
  */
 public class SearchFunction {
     
-    private Connection con;
+    Connection con=null;
+    Statement st=null;
+    ResultSet rs=null;
+    PreparedStatement ps=null;
     
    public String[] getSearchedCustomerName(String searchData){
        
@@ -25,8 +29,7 @@ public class SearchFunction {
         
         try {
             
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            con=DatabaseConnection.StablishDatabaseConnection();
             String[] searchfeilds={"CustomerID","firstName","LastName","Email","Address1","City","NIC","PhoneNo"};
             for (int i = 0; i < searchfeilds.length; i++) {
                 if (i==7) {
@@ -72,8 +75,11 @@ public class SearchFunction {
 
         } catch (Exception e) {
             System.out.println(e);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
+            return result;
         }
-        return result;
+        
     }
     
     private ResultSet checkSearCustomer(String tableName,String searchField,String searchData){

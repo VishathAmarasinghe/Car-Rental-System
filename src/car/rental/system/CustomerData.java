@@ -17,6 +17,10 @@ import javax.swing.table.DefaultTableModel;
  * @author Akila
  */
 public class CustomerData extends People {
+    Connection con=null;
+    Statement st=null;
+    ResultSet rs=null;
+    PreparedStatement ps=null;
 
 
     public void loadCustomerData(String loadType, String CustomerSearchID, JTable customerTable) {
@@ -29,8 +33,7 @@ public class CustomerData extends People {
 
         try {
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            con=DatabaseConnection.StablishDatabaseConnection();
             String s = "";
 
             if (loadType.equalsIgnoreCase("all")) {
@@ -39,8 +42,8 @@ public class CustomerData extends People {
                 s = "select * from customer where customerID= \"" + CustomerSearchID + "\"";
             }
 
-            PreparedStatement ps = con.prepareStatement(s);
-            ResultSet rs = ps.executeQuery();
+            ps = con.prepareStatement(s);
+            rs = ps.executeQuery();
             while (rs.next()) {
                 String empID = rs.getString("customerID");
                 System.out.println("Substring check " + empID.substring(0, 4));
@@ -74,12 +77,12 @@ public class CustomerData extends People {
                 }
 
             }
-            rs.close();
-            ps.close();
-            con.close();
+            
 
         } catch (Exception e) {
             System.out.println(e);
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
         }
     }
 
@@ -88,9 +91,8 @@ public class CustomerData extends People {
         try {
             getAllData();
             setID(genaratedID(getLastIndexEmployeeTable("CustomerID", "Customer")));
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            Statement st = con.createStatement();
+            con=DatabaseConnection.StablishDatabaseConnection();
+            st = con.createStatement();
 
             String query = "insert into customer values(\"" + getID() + "\",\"Customer\",\"" + getFirstName() + "\",\"" + getLastName() + "\",\"" + getEmail() + "\",\"" + getAddress1() + "\",\"" + getAddress2() + "\",\"" + getCity() + "\",\"" + getNIC() + "\",null)";
 
@@ -108,14 +110,15 @@ public class CustomerData extends People {
         } catch (Exception e) {
             System.out.println("Error from 218 " + e);
             return false;
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
         }
     }
 
     public boolean updateCustomer(String customerID) {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
-            Statement st = con.createStatement();
+            con=DatabaseConnection.StablishDatabaseConnection();
+            st = con.createStatement();
 
             String query = "update customer set FirstName=\"" + getFirstName() + "\",LastName=\"" + getLastName() + "\",Email=\"" + getEmail() + "\",Address1=\"" + getAddress1() + "\",Address2=\"" + getAddress2() + "\","
                     + "city=\"" + getCity() + "\" where CustomerID=\"" + customerID + "\"";
@@ -144,10 +147,12 @@ public class CustomerData extends People {
 
             System.out.println("Error from 218 " + e);
             return false;
+        }finally{
+            DatabaseConnection.removeConnection(rs, st, ps, con);
         }
     }
 
-    public void searchCustomer(String searchData) {
+    public void searchCustomer(String searchData,JTable table) {
 
         System.out.println("searched Name " + searchData);
 
@@ -155,14 +160,13 @@ public class CustomerData extends People {
 
         try {
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/carrentalsystem", "root", "akila123");
+            con=DatabaseConnection.StablishDatabaseConnection();
             String[] searchfeilds = {"CustomerID", "firstName", "LastName", "Email", "Address1", "City", "NIC", "PhoneNo"};
             for (int i = 0; i < searchfeilds.length; i++) {
                 if (i == 7) {
                     ResultSet phoneResult1 = checkSearCustomer(con, "customerphone", "phoneNo", searchData);
                     if (phoneResult1 != null) {
-                        loadCustomerData("id", phoneResult1.getString("CustomerID"), null);
+                        loadCustomerData("id", phoneResult1.getString("CustomerID"), table);
 
                         break;
                     }
@@ -171,16 +175,18 @@ public class CustomerData extends People {
 
                     if (result1 != null) {
 
-                        loadCustomerData("id", result1.getString("CustomerID"), null);
+                        loadCustomerData("id", result1.getString("CustomerID"), table);
                         break;
                     }
                 }
             }
 
-            con.close();
+            
 
         } catch (Exception e) {
             System.out.println(e);
+        }finally{
+            DatabaseConnection.removeConnection(null, st, ps, con);
         }
     }
 

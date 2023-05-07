@@ -74,6 +74,7 @@ public class MailGenerator {
     
     
     public void sendCustomerBill(String SendersEmailAddress,File selectedFile){
+        
         try {
             Properties properties=new Properties();
             properties.put("mail.smtp.auth", "true");
@@ -89,6 +90,7 @@ public class MailGenerator {
                 
             });
             Message message=new MimeMessage(session);
+            
             message.setSubject("Car Rent Payment Bill");
 //            message.setContent(content.getText(),"text/plain");
             message.setFrom(new InternetAddress("projectcarrent@gmail.com"));
@@ -96,6 +98,8 @@ public class MailGenerator {
             message.setSentDate(new Date());
             
             Multipart multipart=new MimeMultipart();
+            
+            
             
             BodyPart bodypart=new MimeBodyPart();
             String content="Hello Customer!!\nThank You for joining with us, Your payment Bill is attached here\n";
@@ -111,7 +115,9 @@ public class MailGenerator {
             
             
             message.setContent(multipart);
+            
             Transport.send(message);
+            System.out.println("image check here");
             JOptionPane.showMessageDialog(null,"Bill Sended to the Customer via Mail");
         } catch (Exception e) {
 //            JOptionPane.showMessageDialog(null,e.getMessage());

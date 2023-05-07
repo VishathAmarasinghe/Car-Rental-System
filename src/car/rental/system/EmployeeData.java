@@ -134,13 +134,7 @@ public class EmployeeData extends People {
             JOptionPane.showMessageDialog(null, "Data Loading Error!", "DBMS", JOptionPane.ERROR_MESSAGE);
 
         } finally {
-            try {
-                rs.close();
-                ps.close();
-                con.close();
-            } catch (Exception e) {
-                System.out.println("connection Closing Error");
-            }
+            DatabaseConnection.removeConnection(rs, st, ps, con);
 
         }
     }
@@ -184,21 +178,14 @@ public class EmployeeData extends People {
             return resultArray;
         } finally {
 
-            try {
-
-                st.close();
-                con.close();
-            } catch (Exception e) {
-                System.out.println("connection Closing Error " + e);
-            }
-
+            DatabaseConnection.removeConnection(rs, st, ps, con);
         }
     }
 
     public boolean updateEmployeeData(String customerID) {
         try {
             con = DatabaseConnection.StablishDatabaseConnection();
-            Statement st = con.createStatement();
+            st = con.createStatement();
             
             System.out.println("phone aaaaaaaaa "+getPhoneNo1()+"   "+getPhoneNo2());
 
@@ -217,12 +204,7 @@ public class EmployeeData extends People {
             System.out.println("Error from 218 " + e);
             return false;
         } finally {
-            try {
-//                st.close();
-                con.close();
-            } catch (Exception e) {
-                System.out.println("connection Closing Error " + e);
-            }
+            DatabaseConnection.removeConnection(rs, st, ps, con);
         }
     }
 
@@ -325,8 +307,8 @@ public class EmployeeData extends People {
             con=DatabaseConnection.StablishDatabaseConnection();
             String slectMax = "Select EmpID, password from employee where username=\"" + UserNameGetter + "\" and role=\"" + state + "\"";
 
-            PreparedStatement ps = con.prepareStatement(slectMax);
-            ResultSet rs = ps.executeQuery();
+            ps = con.prepareStatement(slectMax);
+            rs = ps.executeQuery();
             while (rs.next()) {
                 String password = rs.getString("password");
                 
@@ -341,22 +323,16 @@ public class EmployeeData extends People {
                     break;
                 }
             }
-            rs.close();
-            ps.close();
-            con.close();
+            
         } catch (Exception e) {
             System.out.println("Error from password checker " + e);
             JOptionPane.showMessageDialog(null, "Password Generating Error!", "DBMS", JOptionPane.ERROR_MESSAGE);
             
         }finally{
-             try {
-//                st.close();
-                con.close();
-            } catch (Exception e) {
-                System.out.println("connection Closing Error " + e);
-            }
+             DatabaseConnection.removeConnection(rs, st, ps, con);
+             return accessArray;
         }
-        return accessArray;
+        
     }
     
     public void deleteEmployee(String clickedIndexID){
@@ -421,13 +397,7 @@ public class EmployeeData extends People {
             JOptionPane.showMessageDialog(null, "Data Loading Error in driver reservations!", "DBMS", JOptionPane.ERROR_MESSAGE);
 
         } finally {
-            try {
-                rs.close();
-                ps.close();
-                con.close();
-            } catch (Exception e) {
-                System.out.println("connection Closing Error");
-            }
+            DatabaseConnection.removeConnection(rs, st, ps, con);
 
         }
     }
