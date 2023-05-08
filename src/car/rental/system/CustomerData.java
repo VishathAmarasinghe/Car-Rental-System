@@ -23,6 +23,10 @@ public class CustomerData extends People {
     PreparedStatement ps=null;
 
 
+    
+    
+    
+    //load all customer data
     public void loadCustomerData(String loadType, String CustomerSearchID, JTable customerTable) {
         DefaultTableModel customerTableLoad = null;
         if (customerTable != null) {
@@ -86,6 +90,10 @@ public class CustomerData extends People {
         }
     }
 
+    
+    
+    
+    //insert customer data to table
     public boolean InsertCustomerData() {
 
         try {
@@ -100,6 +108,10 @@ public class CustomerData extends People {
             st.executeUpdate(query);
 
             System.out.println("Executed Succeffull");
+            
+            
+            
+            //insert customer phone no
             String phoneNoQuery1 = "insert into customerphone values(\"" + getID() + "\",\"" + getPhoneNo1() + "\")";
             st.executeUpdate(phoneNoQuery1);
             String phoneNoQuery2 = "insert into customerphone values(\"" + getID() + "\",\"" + getPhoneNo2() + "\")";
@@ -115,6 +127,12 @@ public class CustomerData extends People {
         }
     }
 
+    
+    
+    
+    
+    
+    //update customer data
     public boolean updateCustomer(String customerID) {
         try {
             con=DatabaseConnection.StablishDatabaseConnection();
@@ -152,6 +170,12 @@ public class CustomerData extends People {
         }
     }
 
+    
+    
+    
+    
+    
+    //Search Customer Data
     public void searchCustomer(String searchData,JTable table) {
 
         System.out.println("searched Name " + searchData);
@@ -190,6 +214,11 @@ public class CustomerData extends People {
         }
     }
 
+    
+    
+    
+    
+    // get searched customer details
     private ResultSet checkSearCustomer(Connection con, String tableName, String searchField, String searchData) {
         try {
             String singleData = "select * from " + tableName + " where " + searchField + "=\"" + searchData + "\"";
@@ -208,6 +237,12 @@ public class CustomerData extends People {
         }
     }
 
+    
+    
+    
+    
+    
+    //set all data to the coresponding variables
     public void SetAllData(String[] CustomerDataArray) {
         setNIC(CustomerDataArray[8]);
         setID(CustomerDataArray[0]);
@@ -223,6 +258,12 @@ public class CustomerData extends People {
 
     }
 
+    
+    
+    
+    
+    
+    //get all data
     private void getAllData() {
         System.out.println("ID " + getID());
         System.out.println("role " + getRole());

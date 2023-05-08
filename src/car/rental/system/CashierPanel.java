@@ -160,6 +160,9 @@ public class CashierPanel extends javax.swing.JFrame {
 
     }
     
+    
+    //stop cell editing in corresponding tables
+    
     private void stopCellEditing(){
         if (PendingReservationsTable.isEditing()) {
             PendingReservationsTable.getCellEditor().stopCellEditing();   //stop cell editing
@@ -218,6 +221,8 @@ public class CashierPanel extends javax.swing.JFrame {
             DefaultTableModel pendingTableLoad = null;
             DefaultTableModel doneProceedTableLoad = null;
 
+            
+            //Select All reservation Details
             
             String s = "";
             if (tableType.equalsIgnoreCase("proceeded")) {
@@ -283,7 +288,7 @@ public class CashierPanel extends javax.swing.JFrame {
             billdataTable.fireTableDataChanged();
 
             
-            String s = "select * from Bill";
+            String s = "select * from Bill";    //get all bill data
 
             ps = con.prepareStatement(s);
             rs = ps.executeQuery();
@@ -313,7 +318,7 @@ public class CashierPanel extends javax.swing.JFrame {
      * @param raw
      */
     private void editSelectedCustomerData(int raw) {
-        DefaultTableModel ownerTableclicked = (DefaultTableModel) customerTable.getModel();
+        DefaultTableModel ownerTableclicked = (DefaultTableModel) customerTable.getModel();  //get selected table row index
         clickedIndexID = (String) ownerTableclicked.getValueAt(raw, 0);
         try {
 
@@ -1095,7 +1100,7 @@ public class CashierPanel extends javax.swing.JFrame {
     private void addCustomerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCustomerBtnActionPerformed
         // TODO add your handling code here:
         currentPageHolder = "customerPage";
-        customer1.loadCustomerData("All", null, customerTable);
+        customer1.loadCustomerData("All", null, customerTable);   //load all customer data 
         jTabbedPane1.setSelectedIndex(1);
         stopCellEditing();
     }//GEN-LAST:event_addCustomerBtnActionPerformed
@@ -1105,7 +1110,7 @@ public class CashierPanel extends javax.swing.JFrame {
         stopCellEditing();
         currentPageHolder = "ProceedReservationPage";
         jTabbedPane1.setSelectedIndex(3);
-        loadPendingData("proceeded");
+        loadPendingData("proceeded");    //load pending data
 
     }//GEN-LAST:event_proceedReservationBtnActionPerformed
 

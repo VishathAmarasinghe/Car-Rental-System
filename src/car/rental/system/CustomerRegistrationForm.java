@@ -44,7 +44,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     
     
 
-    
+    //constructor with result set of required customer details
     public CustomerRegistrationForm(ResultSet details,ResultSet phoneDetails,String tableType){
         initComponents();
         removeTextfromError();
@@ -78,7 +78,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     
     
     
-    
+    //re loading database data to corresponding customer form
     private void SetUpdateComponents(ResultSet detaiSet,ResultSet phoneDetails,String tableType){
         try{
             
@@ -147,7 +147,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     
     
     
-    
+    //set components to update
     private void SetUpdateComponents(String clickedIndex,String tableType){
 
        String role=null;

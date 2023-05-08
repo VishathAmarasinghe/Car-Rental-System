@@ -446,6 +446,10 @@ public class Car {
         }
     }
 
+    
+    
+    
+    //search car by type, ac type, model etc.
     private ResultSet searchCar(Connection con, String tableName, String searchField, String searchData,int num) {
         try {
             String singleData;

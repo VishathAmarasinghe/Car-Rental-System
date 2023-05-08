@@ -221,7 +221,7 @@ public class Bill extends javax.swing.JFrame {
             carchargeLabel.setVisible(false);
             perDayCarCharge.setVisible(false);
             nofoDaysLabel.setVisible(false);
-            numberOfDays.setVisible(false);
+            numberOfDays.setVisible(false);    //change the visibility of payment variables
             totalCarRentLabel.setVisible(false);
             totalCarRent.setVisible(false);
             prepaidLabel.setVisible(false);
@@ -236,7 +236,7 @@ public class Bill extends javax.swing.JFrame {
             ResultSet rs=null;
             try{
                 
-                String singleData = "select * from Bill where BillNo=\"" + previousBillID + "\"";
+                String singleData = "select * from Bill where BillNo=\"" + previousBillID + "\"";    //get previous bill data
                 ps = con.prepareStatement(singleData);
                 rs = ps.executeQuery();
                 rs.next();
@@ -282,6 +282,8 @@ public class Bill extends javax.swing.JFrame {
         ResultSet rs=null;
         try {
 
+            
+            //get selected car details
             
             String singleData = "select * from cars where CarNumber=\"" + vehicalNoBill.getText() + "\"";
             ps = con.prepareStatement(singleData);
@@ -415,6 +417,10 @@ public class Bill extends javax.swing.JFrame {
         PreparedStatement ps=null;
         Statement st=null;
         try {
+            
+            
+            
+            //update corresponding bill details
             
             String querys="insert into bill(BillNo,BillDate,TotalAmount,AdvancePaiedAmount,pendingPayment,pendingReturnDate,Bill1Image) values(?,?,?,?,?,?,?)";
             ps=con.prepareStatement(querys);
@@ -1471,6 +1477,8 @@ public class Bill extends javax.swing.JFrame {
         try {
 
             
+            //get details of customer
+            
             String singleData = "select * from customer where customerID=\"" + CustomerIDshower.getText() + "\"";
             ps = con.prepareStatement(singleData);
             rs = ps.executeQuery();
@@ -1496,6 +1504,9 @@ public class Bill extends javax.swing.JFrame {
         // TODO add your handling code here:
         int resultofCUstomerValidation = JOptionPane.showConfirmDialog(null, "Please Confirm that you double check the details with NIC", "Deleting Confirmation",
                 JOptionPane.YES_NO_OPTION);
+        
+        
+        //conformation of customer details
         if (resultofCUstomerValidation == 0) {
             verificationStatusShower.setVisible(true);
             verifyCustomerBtn.setVisible(false);
@@ -1511,7 +1522,7 @@ public class Bill extends javax.swing.JFrame {
     }//GEN-LAST:event_verifyCustomerBtnActionPerformed
 
     private void verifyDriverVehicalBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verifyDriverVehicalBtn1ActionPerformed
-        // TODO add your handling code here:
+        //verifiying selected car details and driver details
 
         if (!driverStatusBill.getText().equalsIgnoreCase("no")) {
 
@@ -1519,6 +1530,9 @@ public class Bill extends javax.swing.JFrame {
         int resultofDriverVehicalValidation = JOptionPane.showConfirmDialog(null, "Please Confirm that you double check the details with NIC", "Deleting Confirmation",
                 JOptionPane.YES_NO_OPTION);
         if (resultofDriverVehicalValidation == 0 && errorShower.getText().equalsIgnoreCase(".")) {
+            
+            
+            //adding confirmed details to the bill
 
             verifyDriverVehicalBtn1.setVisible(false);
             verificationStatusShowerVehical.setVisible(true);
@@ -1539,6 +1553,12 @@ public class Bill extends javax.swing.JFrame {
 
     private void advancePaymentKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_advancePaymentKeyTyped
         // TODO add your handling code here:
+        
+        
+        
+        //check added payments details are true or not
+        
+        
         errorShower.setText(".");
         if (advancePayment.getText() != "") {
             Validations v1 = new Validations();

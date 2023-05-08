@@ -104,6 +104,11 @@ public class CustomSearch1 extends javax.swing.JFrame {
         });
     }
     
+    
+    
+    
+    
+    //add items to the car selecting panel
     public void addItem(ItemModel data){
         Card card1=new Card();
         card1.setData(data);
@@ -137,7 +142,7 @@ public class CustomSearch1 extends javax.swing.JFrame {
         
     }
     
-    
+    //get selected car details
     public void RequestCardEditor(ItemModel data){
         try{
             String query="Select * from cars where CarNumber=\""+data.car_keyValue+"\"";
@@ -197,7 +202,7 @@ public class CustomSearch1 extends javax.swing.JFrame {
         return dayCount;
     }
     
-    
+    //load all car cards
     public void loadCarCards(){
         
         
@@ -233,6 +238,9 @@ public class CustomSearch1 extends javax.swing.JFrame {
         }        
     }
     
+    
+    
+    //change date type
     private String dateChanger(String date){
         String day=date.substring(0,2);
         String month=date.substring(3,5);
@@ -782,7 +790,7 @@ public class CustomSearch1 extends javax.swing.JFrame {
         // TODO add your handling code here:
         DatabaseConnection.removeConnection(rs, st, ps, con);
         CarRentalSystem.closeWindows(this);
-        LoginForm l1=new LoginForm();
+        LoginForm l1=new LoginForm();      //create login form jfram
         l1.setVisible(true);
 
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -821,6 +829,10 @@ public class CustomSearch1 extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    
+    
+    
+    // insert request data to database
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         
