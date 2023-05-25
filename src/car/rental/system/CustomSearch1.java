@@ -316,6 +316,7 @@ public class CustomSearch1 extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel6.setBackground(new java.awt.Color(255, 255, 255));
@@ -357,8 +358,8 @@ public class CustomSearch1 extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI Variable", 1, 36)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel2.setText("Create Your Own Travel Comfort!");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 110, 570, 50));
+        jLabel2.setText("CREATE YOUR OWN TRAVEL COMFORT!");
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 120, 680, 50));
 
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setText("Vehical Type");
@@ -824,8 +825,6 @@ public class CustomSearch1 extends javax.swing.JFrame {
         }else{
             JOptionPane.showMessageDialog(null, "Incorrect Input Data!", "DBMS", JOptionPane.ERROR_MESSAGE);
         }
-        
-        
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -836,8 +835,8 @@ public class CustomSearch1 extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         
-        withDriverRadio.setActionCommand("yes");
-        withOutDriverRadio.setActionCommand("no");
+        withDriverRadio.setActionCommand("yes");     //set button values to true
+        withOutDriverRadio.setActionCommand("no");   //set button values to false
         
         try {
             

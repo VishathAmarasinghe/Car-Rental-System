@@ -142,7 +142,7 @@ public class LoginForm extends javax.swing.JFrame {
 
         driverState.setBackground(new java.awt.Color(28, 78, 128));
         driverState.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        driverState.setText("Driver");
+        driverState.setText("DRIVER");
         driverState.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 driverStateActionPerformed(evt);

@@ -323,27 +323,30 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                 RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),RegNIC.getText(),RegPhoneNo1.getText(),
                 regPhoneNo2.getText()});
                 
-                boolean actionResult[]=employee2.InsertEmployeeData(peopleType);
-                if (actionResult[0]) {
-                JOptionPane.showMessageDialog(null, "Data Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
-                    if (actionResult[1]) {
-                        JOptionPane.showMessageDialog(null, "Email Send To the New Employee","Registration",JOptionPane.INFORMATION_MESSAGE);
-                    }
-                    CarRentalSystem.closeWindows(this);
-            }
+//                boolean actionResult[]=
+                  employee2.InsertEmployeeData(peopleType);
+//                if (actionResult[0]) {
+//                JOptionPane.showMessageDialog(null, "Data Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
+//                    if (actionResult[1]) {
+//                        JOptionPane.showMessageDialog(null, "Email Send To the New Employee","Registration",JOptionPane.INFORMATION_MESSAGE);
+//                    }
+//                    
+//            }
+                CarRentalSystem.closeWindows(this);
                 
             }else{
                employee2.SetAllData(new String[]{"",peopleType,
                 RegFirstName.getText(),RegLastName.getText(),RegEmail.getText(),RegAddress1.getText(),RegAddress2.getText(),regCity.getText(),RegNIC.getText(),RegPhoneNo1.getText(),
                 regPhoneNo2.getText()});
                 
-                boolean actionResult[]=employee2.InsertEmployeeData(peopleType);
-                if (actionResult[0]) {
-                JOptionPane.showMessageDialog(null, "Data Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
-                    if (actionResult[1]) {
-                        JOptionPane.showMessageDialog(null, "Email Send To the New Employee","Registration",JOptionPane.INFORMATION_MESSAGE);
-                    }
-            }
+//                boolean actionResult[]=
+                employee2.InsertEmployeeData(peopleType);
+//                if (actionResult[0]) {
+//                JOptionPane.showMessageDialog(null, "Data Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
+//                    if (actionResult[1]) {
+//                        JOptionPane.showMessageDialog(null, "Email Send To the New Employee","Registration",JOptionPane.INFORMATION_MESSAGE);
+//                    }
+//            }
             CarRentalSystem.closeWindows(this);
         }
  
@@ -621,6 +624,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         mailValidator = new javax.swing.JLabel();
         fNameValidator = new javax.swing.JLabel();
         lnameValidator = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -775,6 +779,9 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
         lnameValidator.setForeground(new java.awt.Color(255, 0, 0));
         lnameValidator.setText("abc");
 
+        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel1.setText("Required to fill all details");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -819,7 +826,8 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                                                 .addComponent(RegLastName, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(lnameValidator, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                            .addGap(0, 0, Short.MAX_VALUE)
+                                            .addComponent(jLabel1)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                             .addComponent(addbtnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGap(18, 18, 18)
                                             .addComponent(CustomerAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -901,7 +909,8 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
                 .addGap(12, 12, 12)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addbtnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(CustomerAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(CustomerAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
                 .addGap(122, 122, 122))
         );
 
@@ -1046,6 +1055,7 @@ public class CustomerRegistrationForm extends javax.swing.JFrame {
     private javax.swing.JLabel addressValidator;
     private javax.swing.JLabel cityValidator;
     private javax.swing.JLabel fNameValidator;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

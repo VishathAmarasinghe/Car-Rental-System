@@ -139,7 +139,7 @@ public class EmployeeData extends People {
         }
     }
 
-    public boolean[] InsertEmployeeData(String roleType) {
+    public void InsertEmployeeData(String roleType) {
         boolean resultArray[] = {false, false};
         try {
 //            if (getRole().equalsIgnoreCase("admin") || getRole().equalsIgnoreCase("cashier")) {
@@ -160,22 +160,24 @@ public class EmployeeData extends People {
             
 
             resultArray[0] = true;
+            JOptionPane.showMessageDialog(null, "Data Added Successfully","Data Manipulation",JOptionPane.INFORMATION_MESSAGE);
 
             if (resultArray[0] == true) {
-                MailGenerator mail1 = new MailGenerator();
-                boolean result2 = mail1.sendMailsAuthentications(getEmail(), getUseName(), getPassword());
+                MailGenerator mail1 = new MailGenerator(getEmail(), getUseName(), getPassword());
+                mail1.start();
+//                boolean result2 = mail1.sendMailsAuthentications(getEmail(), getUseName(), getPassword());
                
-                resultArray[1] = result2;
+//                resultArray[1] = result2;
             } else {
                 resultArray[1] = false;
             }
 
-            return resultArray;
+            
 
         } catch (Exception e) {
             System.out.println("Error from 218 " + e);
             JOptionPane.showMessageDialog(null, "Data Inserting employee Error!", "DBMS", JOptionPane.ERROR_MESSAGE);
-            return resultArray;
+            
         } finally {
 
             DatabaseConnection.removeConnection(rs, st, ps, con);
@@ -344,6 +346,7 @@ public class EmployeeData extends People {
             st.executeUpdate(deleteRaw);
             con.close();
         } catch (Exception e) {
+             JOptionPane.showMessageDialog(null, "Cannot Remove Employee, Employee is Already assigned to a task", "DBMS", JOptionPane.ERROR_MESSAGE);
             System.out.println("Data Deletion Error Found "+e);
         }
                     

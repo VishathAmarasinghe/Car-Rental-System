@@ -15,7 +15,7 @@ public class VOwnerRegistrationFrom extends javax.swing.JFrame {
     public VOwnerRegistrationFrom() {
         initComponents();
         owner1=new VehicalOwner();
-        defaultErrorShowerMsgEditor(new String[]{"","","","","",""});
+        defaultErrorShowerMsgEditor(new String[]{"","","","","",""});    //set all default value to null
     }
     
     public VOwnerRegistrationFrom(String ClickedIndex){
@@ -26,7 +26,7 @@ public class VOwnerRegistrationFrom extends javax.swing.JFrame {
     
     
     
-    
+    //set all update components
     private void setUpdateComponents(String clickedIndex){
         owner1=new VehicalOwner();
         owner1.getSingleOwnerData(clickedIndex);

@@ -171,6 +171,7 @@ public class DriverRegistrationForm extends javax.swing.JFrame {
         DriverPhoneNo1ErrorShower = new javax.swing.JLabel();
         DriverPhoneNo2ErrorShower = new javax.swing.JLabel();
         DriverPaymentErrorShower = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -347,6 +348,9 @@ public class DriverRegistrationForm extends javax.swing.JFrame {
         DriverPaymentErrorShower.setForeground(new java.awt.Color(255, 0, 0));
         DriverPaymentErrorShower.setText("jLabel13");
 
+        jLabel13.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel13.setText("Required to fill all details");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -366,8 +370,10 @@ public class DriverRegistrationForm extends javax.swing.JFrame {
                                 .addGap(3, 3, 3)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel10)
-                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addGroup(jPanel2Layout.createSequentialGroup()
+                                            .addComponent(jLabel13)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                             .addComponent(addbtnDriver1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGap(37, 37, 37)
                                             .addComponent(driverAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -500,7 +506,8 @@ public class DriverRegistrationForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addbtnDriver1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(driverAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(driverAddingCancelation, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13))
                 .addGap(18, 18, 18))
         );
 
@@ -544,14 +551,14 @@ public class DriverRegistrationForm extends javax.swing.JFrame {
             DriverAddress2.getText(),DriverCity.getText(),driverNIC.getText(),DriverphoneNo1.getText(),DriverphoneNo2.getText()};
             d1.SetAllData(details);
             d1.setAllDriverAdditionalData(new String[]{DriverLicence.getText(),DriverPayment.getText()});
-            boolean[] actionResult=d1.InsertEmployeeData("");
+            d1.InsertEmployeeData("");
             d1.addDriverAdditionalData();
-            if (actionResult[0]) {
-                JOptionPane.showMessageDialog(null, "Data Added Successfully", "Data Manipulation", JOptionPane.INFORMATION_MESSAGE);
-                if (actionResult[1]) {
-                    JOptionPane.showMessageDialog(null, "Email Send To the New Employee", "Registration", JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
+//            if (actionResult[0]) {
+//                JOptionPane.showMessageDialog(null, "Data Added Successfully", "Data Manipulation", JOptionPane.INFORMATION_MESSAGE);
+//                if (actionResult[1]) {
+//                    JOptionPane.showMessageDialog(null, "Email Send To the New Employee", "Registration", JOptionPane.INFORMATION_MESSAGE);
+//                }
+//            }
             CarRentalSystem.closeWindows(this);
         }
         }
@@ -637,6 +644,7 @@ public class DriverRegistrationForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

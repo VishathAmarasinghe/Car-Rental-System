@@ -216,6 +216,7 @@ public class VehicalOwner extends People {
             String deletePhoneNoRaw="delete from vehicalowner where VOwnerID=\""+clickedIndexID+"\"";
             st.executeUpdate(deletePhoneNoRaw);
         } catch (Exception e) {
+             JOptionPane.showMessageDialog(null, "Cannot Remove Vehical Owner, Owner is Already assigned to a car and Car is already assign to a task", "DBMS", JOptionPane.ERROR_MESSAGE);
             System.out.println("Data deleting Error");
         }
     }

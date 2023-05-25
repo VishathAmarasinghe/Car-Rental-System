@@ -103,6 +103,7 @@ public class Driver extends EmployeeData{
             con.close();
             JOptionPane.showMessageDialog(null, "Item Removed Successfully!", "DBMS", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Cannot Remove Driver, Driver is Already assigned to a task", "DBMS", JOptionPane.ERROR_MESSAGE);
             System.out.println("Data Deletion Error Found Driver Additional");
         }
     }

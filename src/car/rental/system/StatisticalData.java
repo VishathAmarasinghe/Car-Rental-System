@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
@@ -93,10 +95,10 @@ public class StatisticalData {
         try {
             con=DatabaseConnection.StablishDatabaseConnection();
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-            for (int i = 1; i <= 30; i++) {
+            for (int i = 1; i <= 31; i++) {
                 String newDate = CurrentDateString.substring(0, 8)+i;
                 String showingDate=currentDate.getMonth()+"/"+i;
-                String slectMax = " select count(ReservationID) from reservation where \""+newDate+"\" between pickedupdate and dropOffDate;";
+                String slectMax = " select count(ReservationID) from reservation where ReservationStatus !=\"pending\" and  \""+newDate+"\" between pickedupdate and dropOffDate;";
                 ps = con.prepareStatement(slectMax);
                 rs = ps.executeQuery();
                 rs.next();
@@ -107,6 +109,9 @@ public class StatisticalData {
 
             JFreeChart chart = ChartFactory.createBarChart("Number Of Reservations in "+currentDate.getMonth(), "Date", "Reservation Count", dataset, PlotOrientation.VERTICAL, false, false, false);
             CategoryPlot catplot = chart.getCategoryPlot();
+            NumberAxis rangeAxis=(NumberAxis)catplot.getRangeAxis();
+            rangeAxis.setRange(0,10);
+            rangeAxis.setTickUnit(new NumberTickUnit(1));
             catplot.setRangeGridlinePaint(Color.WHITE);
             chart.setBackgroundPaint(Color.WHITE);
             catplot.setBackgroundPaint(Color.WHITE);
@@ -191,10 +196,10 @@ public class StatisticalData {
         try {
             con=DatabaseConnection.StablishDatabaseConnection();
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-            for (int i = 1; i <= 30; i++) {
+            for (int i = 1; i <= 31; i++) {
                 String newDate = CurrentDateString.substring(0, 8)+i;
                 String showingDate=currentDate.getMonth()+"/"+i;
-                String slectMax = " select count(ReservationID) from reservation where dropOffDate=\""+newDate+"\";";
+                String slectMax = " select count(ReservationID) from reservation where ReservationStatus !=\"pending\" and dropOffDate=\""+newDate+"\";";
                 PreparedStatement ps = con.prepareStatement(slectMax);
                 ResultSet rs = ps.executeQuery();
                 rs.next();
@@ -205,6 +210,9 @@ public class StatisticalData {
 
             JFreeChart chart = ChartFactory.createBarChart("Number Of Reservations due in "+currentDate.getMonth(), "Date", "Reservation Count", dataset, PlotOrientation.VERTICAL, false, false, false);
             CategoryPlot catplot = chart.getCategoryPlot();
+            NumberAxis rangeAxis=(NumberAxis)catplot.getRangeAxis();
+            rangeAxis.setRange(0,10);
+            rangeAxis.setTickUnit(new NumberTickUnit(1));
             catplot.setRangeGridlinePaint(Color.WHITE);
             chart.setBackgroundPaint(Color.WHITE);
             catplot.setBackgroundPaint(Color.WHITE);

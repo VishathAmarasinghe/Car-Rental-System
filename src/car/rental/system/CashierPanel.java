@@ -985,7 +985,7 @@ public class CashierPanel extends javax.swing.JFrame {
         addCustomerBtn.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         addCustomerBtn.setForeground(new java.awt.Color(255, 255, 255));
         addCustomerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cars3.png"))); // NOI18N
-        addCustomerBtn.setText("Add Customer");
+        addCustomerBtn.setText("Customers");
         addCustomerBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addCustomerBtnActionPerformed(evt);

@@ -353,6 +353,7 @@ public class AdminPage extends javax.swing.JFrame {
         logout = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         SidepanelAdminboard.setBackground(new java.awt.Color(28, 78, 128));

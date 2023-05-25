@@ -28,7 +28,46 @@ import javax.swing.JOptionPane;
  *
  * @author Akila
  */
-public class MailGenerator {
+public class MailGenerator extends Thread{
+    
+    private String SendersEmailAddress=null;
+    private File selectedFile=null;
+    private String SenderMail=null;
+    private String employeeUserName=null;
+    private String employeePassword=null;
+    boolean billgen=false;
+    boolean cusomterf=false;
+
+    public MailGenerator(String SendersEmailAddress1,File selectedFile1) {
+       SendersEmailAddress=SendersEmailAddress1;
+       selectedFile=selectedFile1;
+       billgen=true;
+    }
+    
+    
+    public MailGenerator(String SenderMail1,String employeeUserName1,String employeePassword1) {
+       SenderMail=SenderMail1;
+       employeeUserName=employeeUserName1;
+       employeePassword=employeePassword1;
+       cusomterf=true;
+    }
+    
+    
+    
+    public void run(){
+        if (billgen) {
+            sendCustomerBill(SendersEmailAddress, selectedFile);
+        }else{
+            boolean result=sendMailsAuthentications(SenderMail, employeeUserName, employeePassword);
+            if (result) {
+                JOptionPane.showMessageDialog(null, "Email Send To the New Employee","Registration",JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+        
+    }
+    
+    
+   
     
     
     
